@@ -18,7 +18,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <Text style={styles.subtitle}>Next Steps</Text>
           <Text style={styles.text}>
-            Add your app's features, screens, and functionality.
+            Add your app&apos;s features, screens, and functionality.
           </Text>
         </View>
       </View>

@@ -1,33 +1,30 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import TabBar from '@/components/tab-bar';
+import { TabBarProvider } from '@/contexts/tab-bar-context';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+    <TabBarProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+        tabBar={(props) => <TabBar {...props} />}>
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+          }}
+        />
+        <Tabs.Screen
+          name="calendar"
+          options={{
+            title: 'Calendar',
+          }}
+        />
+      </Tabs>
+    </TabBarProvider>
   );
 }
