@@ -41,3 +41,8 @@ app-example
 # generated native folders
 /ios
 /android
+
+/app/generated/prisma
+.env
+.env.local
+.env*.local
