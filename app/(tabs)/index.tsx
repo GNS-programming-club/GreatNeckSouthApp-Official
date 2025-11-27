@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: '#000',
+    marginTop: 30,
   },
   section: {
     marginBottom: 24,
