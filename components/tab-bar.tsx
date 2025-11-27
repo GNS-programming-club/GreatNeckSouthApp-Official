@@ -35,6 +35,8 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
               : route.name;
 
         if (route.name === "navigation") label = "Map";
+        if (route.name === "events") label = "Events";
+        if (route.name === "course_desc") label = "Courses";
 
         const isFocused = state.index === index;
         
@@ -50,15 +52,6 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
       })}
     </View>
   );
-
-  function getIcon(routeName: string, color: string) {
-    switch(routeName) {
-      case "index":
-        return <Feather name="home" size={20} color={color}/>
-      case "calendar":
-        return <Feather name="calendar" size={20} color={color}/>
-    }
-  }
 }
 
 function TabBarButton({ route, label, isFocused, options, navigation, buildHref }: any) {
@@ -164,6 +157,10 @@ function getIcon(routeName: string, color: string) {
       return <Feather name="home" size={20} color={color}/>
     case "calendar":
       return <Feather name="calendar" size={20} color={color}/>
+    case "events" :
+      return <Feather name="star" size={20} color={color}/>
+    case "course_desc":
+      return <Feather name="book" size={20} color={color}/>
   }
 }
 const styles = StyleSheet.create({
