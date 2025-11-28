@@ -16,6 +16,7 @@ import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 import coursesData from '../../assets/data/courses.json';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Course {
   id: string;
@@ -796,24 +797,21 @@ const CoursePages: React.FC = () => {
         );
       default:
         return (
-          <View style={styles.container}>
-            <Text>Invalid view</Text>
-          </View>
+          <SafeAreaView>
+            <View style={styles.container}>
+              <Text>Invalid view</Text>
+            </View>
+          </SafeAreaView>
         );
     }
   };
 
   return (
-    <View style={styles.appContainer}>
-      <View style={styles.appHeader}>
-        <TouchableOpacity onPress={handleBackToList}>
-          <Text style={styles.appTitle}>Course Pages</Text>
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style={styles.appContainer}>
       <View style={styles.appMain}>
         {renderCurrentView()}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
