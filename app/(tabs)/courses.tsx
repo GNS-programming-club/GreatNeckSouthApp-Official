@@ -124,7 +124,7 @@ const CourseList: React.FC<{
       }
     });
   });
-  const gradeLevels = allGradeLevels.sort();
+  const gradeLevels = allGradeLevels.sort((a, b) => Number(a) - Number(b));
 
   const filteredCourses = filterCourses(courses, filters);
 
