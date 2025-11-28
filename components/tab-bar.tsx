@@ -23,8 +23,9 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
   return (
     <View style = {[styles.bar, { 
       bottom: Math.max(insets.bottom + 8, 16),
-      backgroundColor: colors.background,
-      marginBottom: insets.bottom ? 8 : 12, // lift bar slightly above content to avoid overlap
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      marginBottom: insets.bottom ? 8 : 12,
     }]}>
       {state.routes.map((route: { key: string | number; name: string; params: object | undefined; }, index: any) => {
         const { options } = descriptors[route.key];
@@ -177,15 +178,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 20,
     borderCurve: 'continuous',
+    borderWidth: 1,
     gap: 4,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
     overflow: 'visible',
     zIndex: 1000,
   },
@@ -196,7 +198,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     borderRadius: 10,
-    borderColor: Colors.light.background,
     paddingVertical: 0,
     paddingHorizontal: 0,
   },

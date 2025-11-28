@@ -1,22 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Animated,
-  Alert,
-  FlatList,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Alert,
+    Animated,
+    FlatList,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
-import coursesData from '../../assets/data/courses.json';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import coursesData from '../../assets/data/courses.json';
 
 interface Course {
   id: string;
@@ -807,7 +807,7 @@ const CoursePages: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.appContainer}>
+    <SafeAreaView style={styles.appContainer} edges={['top', 'left', 'right']}>
       <View style={styles.appMain}>
         {renderCurrentView()}
       </View>
@@ -821,7 +821,7 @@ const createStyles = (colors: ThemeColors) =>
     appContainer: {
       flex: 1,
       backgroundColor: colors.background,
-      paddingBottom: 100
+      paddingBottom: 120
     },
     appHeader: {
       backgroundColor: colors.surface,

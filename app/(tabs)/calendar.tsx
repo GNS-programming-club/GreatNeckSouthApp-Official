@@ -145,7 +145,7 @@ const CalendarScreen = () => {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
       <Animated.ScrollView
         contentContainerStyle={styles.scrollContent}
         style={{ opacity: fadeIn }}
@@ -208,13 +208,20 @@ const CalendarScreen = () => {
             markedDates={markedDates}
             onDayPress={handleDayPress}
             theme={{
+              calendarBackground: colors.surface,
+              backgroundColor: colors.surface,
               selectedDayBackgroundColor: colors.primary,
               selectedDayTextColor: colors.primaryText,
               todayTextColor: colors.accent,
+              todayBackgroundColor: colors.surfaceAlt,
               arrowColor: colors.primary,
               textSectionTitleColor: colors.mutedText,
               dayTextColor: colors.text,
+              textDisabledColor: colors.mutedText,
               monthTextColor: colors.text,
+              textMonthFontWeight: '700',
+              textDayFontWeight: '500',
+              textDayHeaderFontWeight: '600',
             }}
             style={styles.calendar}
           />
@@ -268,7 +275,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     scrollContent: {
       padding: 16,
       gap: 16,
-      paddingBottom: 65,
+      paddingBottom: 120,
     },
     heroCard: {
       backgroundColor: colors.surface,

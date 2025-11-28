@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
-import { CalendarList } from 'react-native-calendars';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { CalendarList } from 'react-native-calendars';
 
 interface TodayInfo {
   date: string;
@@ -77,9 +77,9 @@ const Calendar = () => {
         {/* Calendar Grid */}
         <View style={styles.SectionContainer}>
           <CalendarList
-            current={selectedDate}
-            minDate={new Date()}
-            maxDate={new Date().setMonth(new Date().getMonth() + 6)}
+            current={selectedDate.toISOString().split('T')[0]}
+            minDate={new Date().toISOString().split('T')[0]}
+            maxDate={new Date(new Date().setMonth(new Date().getMonth() + 6)).toISOString().split('T')[0]}
             onDayPress={onDayPress}
             firstDay={0}
             monthFormat={'MMMM yyyy'}
@@ -101,7 +101,7 @@ const Calendar = () => {
             </Text>
           )}
           
-          {showLunchMenu && todayInfo.lunchMenu.length > 0 && (
+          {showLunchMenu && todayInfo.lunchMenu && todayInfo.lunchMenu.length > 0 && (
             <View>
               <Text>Today's Menu:</Text>
               {todayInfo.lunchMenu.map((item, index) => (
@@ -121,11 +121,11 @@ const Calendar = () => {
         <View style={styles.SectionContainer}>
           <Text style={styles.sectionTitle}>Today's Club Events</Text>
           
-          {todayInfo.clubEvents.length > 0 ? (
-            todayInfo.clubEvents.map((event, index) => (
-              <View key={index} style={styles клубEvent}>
-                <Text>{event.name}</Text>
-                <Text>{event.time}</Text>
+          {todayInfo.clubEvents && todayInfo.clubEvents.length > 0 ? (
+            todayInfo.clubEvents.map((clubEvent, index) => (
+              <View key={index} style={styles.klubEvent}>
+                <Text>{clubEvent.name}</Text>
+                <Text>{clubEvent.time}</Text>
               </View>
             ))
           ) : (
@@ -137,20 +137,16 @@ const Calendar = () => {
         <View style={styles.SectionContainer}>
           <Text style={styles.sectionTitle}>Holidays & Special Events</Text>
           
-          {todayInfo.holidays.length > 0 && (
-            todayInfo.holidays.map((event, index) => (
-              <Text key={index}>{event}</Text>
+          {todayInfo.holidays && todayInfo.holidays.length > 0 && (
+            todayInfo.holidays.map((holiday, index) => (
+              <Text key={index}>{holiday}</Text>
             ))
           )}
         </View>
 
         {/* Status Messages */}
         <View style={styles.SectionContainer}>
-          <Text statusMessage>True</Text>
-          {status === 'loading' && <Text>Loading...</Text>}
-          {status === 'error' && (
-            <Text>Error: Failed to load some data. Please try again.</Text>
-          )}
+          <Text>Status</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
