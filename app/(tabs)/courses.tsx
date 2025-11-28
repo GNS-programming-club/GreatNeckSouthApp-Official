@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -57,7 +57,7 @@ interface FilterOptions {
   sortOrder: 'asc' | 'desc';
 }
 
-// In-memory storage
+// In-memory storage - EMPTY REVIEWS ARRAY
 let reviews: Review[] = [];
 let teachers: Teacher[] = [];
 const courses: Course[] = coursesData.courses;
@@ -124,31 +124,7 @@ const filterCourses = (courses: Course[], filters: FilterOptions, courseReviews:
   return filtered;
 };
 
-function generateSampleReviews(): Review[] {
-  const departments = Array.from(new Set(courses.map(c => c.dept)));
-  const sampleReviews: Review[] = [];
-  
-  departments.forEach(dept => {
-    const deptCourses = courses.filter(c => c.dept === dept).slice(0, 2);
-    deptCourses.forEach(course => {
-      for (let i = 0; i < 3; i++) {
-        sampleReviews.push({
-          id: `sample-${dept}-${course.id}-${i}`,
-          courseId: course.id,
-          teacher: `Teacher ${i + 1}`,
-          rating: Math.floor(Math.random() * 3) + 3,
-          reviewText: `This is a sample review for ${course.title}. Great course!`,
-          advice: 'Make sure to attend all lectures and complete assignments on time.',
-          date: new Date().toISOString(),
-          studentEmail: `student${i}@student.gn.k12.ny.us`,
-          flagged: false
-        });
-      }
-    });
-  });
-  
-  return sampleReviews;
-}
+// REMOVED THE generateSampleReviews FUNCTION
 
 function isVerifiedStudent(email: string): boolean {
   return email.endsWith('@student.gn.k12.ny.us');
@@ -383,9 +359,9 @@ const CourseDetail: React.FC<{
             </TouchableOpacity>
           </View>
           <View style={styles.ratingSummary}>
-            <Text style={styles.avgRating}>{avgRating.toFixed(1)}</Text>
+            <Text style={styles.avgRating}>{avgRating > 0 ? avgRating.toFixed(1) : 'N/A'}</Text>
             <Text style={styles.ratingStars}>
-              {'★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating))}
+              {avgRating > 0 ? '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating)) : 'No ratings yet'}
             </Text>
             <Text style={styles.reviewCount}>
               {`${reviews.length} review${reviews.length === 1 ? '' : 's'}`}
@@ -558,12 +534,16 @@ const ReviewsPage: React.FC<{
 
         <View style={styles.existingReviews}>
           <Text style={styles.sectionTitle}>Existing Reviews</Text>
-          <FlatList
-            data={reviews}
-            renderItem={renderReviewItem}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false}
-          />
+          {reviews.length > 0 ? (
+            <FlatList
+              data={reviews}
+              renderItem={renderReviewItem}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+            />
+          ) : (
+            <Text style={styles.noReviews}>No reviews yet. Be the first to review this course!</Text>
+          )}
         </View>
 
         <Modal
@@ -639,12 +619,7 @@ const CoursePages: React.FC = () => {
     sortOrder: 'asc'
   });
 
-  // Initialize sample reviews
-  useEffect(() => {
-    if (reviews.length === 0) {
-      reviews = generateSampleReviews();
-    }
-  }, []);
+  // REMOVED the useEffect that initialized sample reviews
 
   const courseReviews = selectedCourse 
     ? reviews.filter(r => r.courseId === selectedCourse.id && !r.flagged)
@@ -1119,6 +1094,12 @@ const styles = StyleSheet.create({
   },
   customTeacherInput: {
     marginTop: 16,
+  },
+  noReviews: {
+    textAlign: 'center',
+    color: '#6c757d',
+    fontStyle: 'italic',
+    padding: 20,
   },
 });
 
