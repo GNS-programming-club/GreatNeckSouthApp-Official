@@ -24,6 +24,7 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
     <View style = {[styles.bar, { 
       bottom: Math.max(insets.bottom + 8, 16),
       backgroundColor: colors.background,
+      marginBottom: insets.bottom ? 8 : 12, // lift bar slightly above content to avoid overlap
     }]}>
       {state.routes.map((route: { key: string | number; name: string; params: object | undefined; }, index: any) => {
         const { options } = descriptors[route.key];
@@ -77,7 +78,7 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
       backgroundColor: interpolateColor(
         opacity.value,
         [0, 1],
-        ['transparent', colors.text]
+        ['transparent', colors.primary]
       ),
       transform: [{ scale: scale.value }],
     };
@@ -159,8 +160,8 @@ function getIcon(routeName: string, color: string) {
       return <Feather name="calendar" size={20} color={color}/>
     case "events" :
       return <Feather name="star" size={20} color={color}/>
-    case "course_desc":
-      return <Feather name="book" size={20} color={color}/>
+    case "courses":
+      return <Feather name="book-open" size={20} color={color}/>
   }
 }
 const styles = StyleSheet.create({

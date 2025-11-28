@@ -1,7 +1,7 @@
 {
   "courses": [
     {
-      "id": "Studio Art1",
+      "id": "Studio Art 1",
       "dept": "Art",
       "code": "ART 721",
       "title": "Studio Art 1",
@@ -16,7 +16,7 @@
       "source_page": null
     },
     {
-      "id": "Studio Art2",
+      "id": "Studio Art 2",
       "dept": "Art",
       "code": "ART 722",
       "title": "Studio Art 2",

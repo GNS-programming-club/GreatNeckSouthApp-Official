@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
+  Animated,
   Alert,
   FlatList,
   Modal,
@@ -11,8 +12,10 @@ import {
   View
 } from 'react-native';
 
-// Import your courses data
-const coursesData = require('./courses.json');
+import { Colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/theme-context';
+
+import coursesData from '../../assets/data/courses.json';
 
 interface Course {
   id: string;
@@ -47,6 +50,9 @@ interface Teacher {
   department: string;
 }
 
+type ThemeColors = (typeof Colors)['light'];
+type ThemedStyles = ReturnType<typeof createStyles>;
+
 interface FilterOptions {
   searchTerm: string;
   departments: string[];
@@ -57,10 +63,12 @@ interface FilterOptions {
   sortOrder: 'asc' | 'desc';
 }
 
-// In-memory storage - EMPTY REVIEWS ARRAY
 let reviews: Review[] = [];
 let teachers: Teacher[] = [];
-const courses: Course[] = coursesData.courses;
+const courses: Course[] = (coursesData.courses as unknown as Course[]).map((course) => ({
+  ...course,
+  source_page: typeof course.source_page === "number" ? course.source_page : -1,
+}));
 
 const filterCourses = (courses: Course[], filters: FilterOptions, courseReviews: Review[]): Course[] => {
   let filtered = courses.filter(course => {
@@ -124,7 +132,31 @@ const filterCourses = (courses: Course[], filters: FilterOptions, courseReviews:
   return filtered;
 };
 
-// REMOVED THE generateSampleReviews FUNCTION
+function generateSampleReviews(): Review[] {
+  const departments = Array.from(new Set(courses.map(c => c.dept)));
+  const sampleReviews: Review[] = [];
+  
+  departments.forEach(dept => {
+    const deptCourses = courses.filter(c => c.dept === dept).slice(0, 2);
+    deptCourses.forEach(course => {
+      for (let i = 0; i < 3; i++) {
+        sampleReviews.push({
+          id: `sample-${dept}-${course.id}-${i}`,
+          courseId: course.id,
+          teacher: `Teacher ${i + 1}`,
+          rating: Math.floor(Math.random() * 3) + 3,
+          reviewText: `This is a sample review for ${course.title}. Great course!`,
+          advice: 'Make sure to attend all lectures and complete assignments on time.',
+          date: new Date().toISOString(),
+          studentEmail: `student${i}@student.gn.k12.ny.us`,
+          flagged: false
+        });
+      }
+    });
+  });
+  
+  return sampleReviews;
+}
 
 function isVerifiedStudent(email: string): boolean {
   return email.endsWith('@student.gn.k12.ny.us');
@@ -163,7 +195,9 @@ const CourseList: React.FC<{
   onFiltersChange: (filters: FilterOptions) => void;
   showAdvancedFilters: boolean;
   onToggleAdvancedFilters: () => void;
-}> = ({ courses, onCourseSelect, filters, onFiltersChange, showAdvancedFilters, onToggleAdvancedFilters }) => {
+  styles: ThemedStyles;
+  colors: ThemeColors;
+}> = ({ courses, onCourseSelect, filters, onFiltersChange, showAdvancedFilters, onToggleAdvancedFilters, styles, colors }) => {
   const departments = Array.from(new Set(courses.map(c => c.dept)));
   const creditOptions = Array.from(new Set(courses.map(c => c.credits)));
   
@@ -179,34 +213,69 @@ const CourseList: React.FC<{
 
   const filteredCourses = filterCourses(courses, filters, reviews);
 
-  const renderCourseItem = ({ item: course }: { item: Course }) => {
+  const CourseCard = ({ course, index }: { course: Course; index: number }) => {
     const courseReviews = reviews.filter(r => r.courseId === course.id && !r.flagged);
-    const avgRating = courseReviews.length > 0 
-      ? courseReviews.reduce((sum, review) => sum + review.rating, 0) / courseReviews.length 
-      : 0;
+    const avgRating =
+      courseReviews.length > 0
+        ? courseReviews.reduce((sum, review) => sum + review.rating, 0) / courseReviews.length
+        : 0;
+
+    const animation = React.useRef(new Animated.Value(0)).current;
+
+    React.useEffect(() => {
+      animation.setValue(0);
+      const delay = Math.min(index, 12) * 90;
+      const timer = setTimeout(() => {
+        Animated.spring(animation, {
+          toValue: 1,
+          friction: 9,
+          tension: 60,
+          useNativeDriver: true,
+        }).start();
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }, [animation, index]);
+
+    const animatedStyle = {
+      opacity: animation,
+      transform: [
+        {
+          translateY: animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [10, 0],
+          }),
+        },
+      ],
+    };
 
     return (
-      <TouchableOpacity
-        style={styles.courseCard}
-        onPress={() => onCourseSelect(course)}
-      >
-        <Text style={styles.courseCode}>{course.code}</Text>
-        <Text style={styles.courseTitle}>{course.title}</Text>
-        <Text style={styles.courseDept}>{course.dept}</Text>
-        <Text style={styles.courseDescription}>
-          {course.description.substring(0, 100) + (course.description.length > 100 ? '...' : '')}
-        </Text>
-        <View style={styles.courseMeta}>
-          <Text style={styles.metaItem}>{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
-          <Text style={styles.metaItem}>{`Grades: ${course.grade_levels.join(', ')}`}</Text>
-          {course.ap_flag && <Text style={[styles.metaItem, styles.apFlag]}>AP</Text>}
-          <Text style={[styles.metaItem, styles.rating]}>
-            {`Rating: ${avgRating > 0 ? avgRating.toFixed(1) : 'N/A'}`}
+      <Animated.View style={[styles.courseCardWrapper, animatedStyle]}>
+        <TouchableOpacity style={styles.courseCard} onPress={() => onCourseSelect(course)}>
+          <View style={styles.courseCardHeader}>
+            <Text style={styles.courseCode}>{course.code}</Text>
+            {course.ap_flag && <Text style={[styles.metaItem, styles.apFlag]}>AP</Text>}
+          </View>
+          <Text style={styles.courseTitle}>{course.title}</Text>
+          <Text style={styles.courseDept}>{course.dept}</Text>
+          <Text style={styles.courseDescription}>
+            {course.description.substring(0, 100) + (course.description.length > 100 ? '...' : '')}
           </Text>
-        </View>
-      </TouchableOpacity>
+          <View style={styles.courseMeta}>
+            <Text style={styles.metaItem}>{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
+            <Text style={styles.metaItem}>{`Grades: ${course.grade_levels.join(', ')}`}</Text>
+            <Text style={[styles.metaItem, styles.rating]}>
+              {`Rating: ${avgRating > 0 ? avgRating.toFixed(1) : 'N/A'}`}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
+
+  const renderCourseItem = ({ item, index }: { item: Course; index: number }) => (
+    <CourseCard course={item} index={index} />
+  );
 
   return (
     <View style={styles.container}>
@@ -214,6 +283,7 @@ const CourseList: React.FC<{
         <TextInput
           style={styles.searchInput}
           placeholder="Search courses..."
+          placeholderTextColor={colors.mutedText}
           value={filters.searchTerm}
           onChangeText={(text) => onFiltersChange({ ...filters, searchTerm: text })}
         />
@@ -310,7 +380,9 @@ const CourseDetail: React.FC<{
   reviews: Review[];
   onBack: () => void;
   onShowReviews: () => void;
-}> = ({ course, reviews, onBack, onShowReviews }) => {
+  styles: ThemedStyles;
+  colors: ThemeColors;
+}> = ({ course, reviews, onBack, onShowReviews, styles, colors: _colors }) => {
   const avgRating = reviews.length > 0 
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
     : 0;
@@ -379,7 +451,9 @@ const ReviewsPage: React.FC<{
   teachers: Teacher[];
   onBack: () => void;
   onSubmitReview: (review: Omit<Review, 'id' | 'flagged'>) => void;
-}> = ({ course, reviews, teachers, onBack, onSubmitReview }) => {
+  styles: ThemedStyles;
+  colors: ThemeColors;
+}> = ({ course, reviews, teachers, onBack, onSubmitReview, styles, colors }) => {
   const [teacher, setTeacher] = useState('');
   const [customTeacher, setCustomTeacher] = useState('');
   const [rating, setRating] = useState(0);
@@ -490,6 +564,7 @@ const ReviewsPage: React.FC<{
             value={reviewText}
             onChangeText={setReviewText}
             placeholder="Share your experience with this course..."
+            placeholderTextColor={colors.mutedText}
             multiline
             numberOfLines={4}
             maxLength={1000}
@@ -502,6 +577,7 @@ const ReviewsPage: React.FC<{
             value={advice}
             onChangeText={setAdvice}
             placeholder="Any advice for future students?"
+            placeholderTextColor={colors.mutedText}
             multiline
             numberOfLines={3}
             maxLength={300}
@@ -514,6 +590,7 @@ const ReviewsPage: React.FC<{
             value={studentEmail}
             onChangeText={setStudentEmail}
             placeholder="your.email@student.gn.k12.ny.us"
+            placeholderTextColor={colors.mutedText}
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -595,6 +672,7 @@ const ReviewsPage: React.FC<{
               value={customTeacher}
               onChangeText={setCustomTeacher}
               placeholder="Enter teacher name"
+              placeholderTextColor={colors.mutedText}
             />
           </View>
         )}
@@ -605,6 +683,9 @@ const ReviewsPage: React.FC<{
 
 // Main CoursePages component
 const CoursePages: React.FC = () => {
+  const { actualTheme } = useTheme();
+  const colors = Colors[actualTheme];
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [currentView, setCurrentView] = useState<'list' | 'detail' | 'reviews'>('list');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -619,7 +700,11 @@ const CoursePages: React.FC = () => {
     sortOrder: 'asc'
   });
 
-  // REMOVED the useEffect that initialized sample reviews
+  useEffect(() => {
+    if (reviews.length === 0) {
+      reviews = generateSampleReviews();
+    }
+  }, []);
 
   const courseReviews = selectedCourse 
     ? reviews.filter(r => r.courseId === selectedCourse.id && !r.flagged)
@@ -674,6 +759,8 @@ const CoursePages: React.FC = () => {
             onFiltersChange={setFilters}
             showAdvancedFilters={showAdvancedFilters}
             onToggleAdvancedFilters={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            styles={styles}
+            colors={colors}
           />
         );
       case 'detail':
@@ -683,6 +770,8 @@ const CoursePages: React.FC = () => {
             reviews={courseReviews}
             onBack={handleBackToList}
             onShowReviews={handleShowReviews}
+            styles={styles}
+            colors={colors}
           />
         ) : (
           <View style={styles.container}>
@@ -697,6 +786,8 @@ const CoursePages: React.FC = () => {
             teachers={teachers.filter(t => t.department === selectedCourse.dept)}
             onBack={handleBackToDetail}
             onSubmitReview={handleSubmitReview}
+            styles={styles}
+            colors={colors}
           />
         ) : (
           <View style={styles.container}>
@@ -726,381 +817,454 @@ const CoursePages: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  appContainer: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  appHeader: {
-    backgroundColor: '#f8f9fa',
-    padding: 20,
-    paddingTop: 50,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  appTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-  },
-  appMain: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  basicFilters: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    gap: 10,
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: 'white',
-  },
-  filterButton: {
-    backgroundColor: '#6c757d',
-    padding: 12,
-    borderRadius: 8,
-    justifyContent: 'center',
-  },
-  filterButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  advancedFilters: {
-    backgroundColor: '#f9f9f9',
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    marginBottom: 16,
-    maxHeight: 300,
-  },
-  filterGroupTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#2c3e50',
-  },
-  filterItem: {
-    paddingVertical: 8,
-  },
-  checkbox: {
-    fontSize: 16,
-  },
-  resultsInfo: {
-    color: '#6c757d',
-    fontStyle: 'italic',
-    marginBottom: 16,
-  },
-  coursesList: {
-    flex: 1,
-  },
-  courseCard: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  courseCode: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-  },
-  courseTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#007bff',
-    marginVertical: 4,
-  },
-  courseDept: {
-    fontSize: 14,
-    color: '#6c757d',
-    fontStyle: 'italic',
-    marginBottom: 8,
-  },
-  courseDescription: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 12,
-  },
-  courseMeta: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  metaItem: {
-    backgroundColor: '#e9ecef',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    fontSize: 12,
-  },
-  apFlag: {
-    backgroundColor: '#dc3545',
-    color: 'white',
-  },
-  rating: {
-    backgroundColor: '#ffc107',
-    color: '#212529',
-  },
-  backButton: {
-    backgroundColor: '#6c757d',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    alignSelf: 'flex-start',
-  },
-  backButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  courseHeader: {
-    marginBottom: 24,
-  },
-  courseContent: {
-    gap: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 8,
-  },
-  detailItem: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  detailLabel: {
-    fontWeight: 'bold',
-    marginRight: 8,
-  },
-  detailValue: {
-    flex: 1,
-  },
-  reviewsSummary: {
-    backgroundColor: '#f8f9fa',
-    padding: 16,
-    borderRadius: 8,
-  },
-  reviewsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  reviewButton: {
-    backgroundColor: '#28a745',
-    padding: 8,
-    borderRadius: 6,
-  },
-  reviewButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  ratingSummary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  avgRating: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffc107',
-  },
-  ratingStars: {
-    fontSize: 18,
-    color: '#ffc107',
-  },
-  reviewCount: {
-    color: '#6c757d',
-  },
-  pageTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#2c3e50',
-  },
-  reviewForm: {
-    gap: 16,
-    marginBottom: 24,
-  },
-  label: {
-    fontWeight: 'bold',
-    marginBottom: 4,
-    color: '#2c3e50',
-  },
-  pickerButton: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: 'white',
-  },
-  pickerButtonText: {
-    fontSize: 16,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  star: {
-    fontSize: 32,
-    color: '#ddd',
-  },
-  activeStar: {
-    color: '#ffc107',
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: 'white',
-  },
-  textArea: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  charCount: {
-    textAlign: 'right',
-    fontSize: 12,
-    color: '#666',
-  },
-  verificationWarning: {
-    color: '#dc3545',
-    fontSize: 14,
-    marginTop: 4,
-  },
-  submitButton: {
-    backgroundColor: '#007bff',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  disabledButton: {
-    backgroundColor: '#6c757d',
-  },
-  submitButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  existingReviews: {
-    gap: 16,
-  },
-  reviewItem: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    marginBottom: 12,
-  },
-  reviewHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-    flexWrap: 'wrap',
-  },
-  reviewTeacher: {
-    fontWeight: 'bold',
-  },
-  reviewRating: {
-    color: '#ffc107',
-  },
-  reviewDate: {
-    color: '#6c757d',
-    fontSize: 12,
-  },
-  reviewText: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  advice: {
-    backgroundColor: '#e7f3ff',
-    padding: 12,
-    borderRadius: 6,
-    marginTop: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#007bff',
-  },
-  adviceLabel: {
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  adviceText: {
-    fontSize: 14,
-  },
-  errors: {
-    backgroundColor: '#f8d7da',
-    padding: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#f5c6cb',
-  },
-  error: {
-    color: '#721c24',
-    marginBottom: 4,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    width: '80%',
-    maxHeight: '80%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  modalItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  modalItemText: {
-    fontSize: 16,
-  },
-  modalCloseButton: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: '#6c757d',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  modalCloseButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  customTeacherInput: {
-    marginTop: 16,
-  },
-  noReviews: {
-    textAlign: 'center',
-    color: '#6c757d',
-    fontStyle: 'italic',
-    padding: 20,
-  },
-});
+
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    appContainer: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingBottom: 100
+    },
+    appHeader: {
+      backgroundColor: colors.surface,
+      padding: 20,
+      paddingTop: 50,
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.12,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 6,
+    },
+    appTitle: {
+      fontSize: 24,
+      fontWeight: '800',
+      color: colors.text,
+      letterSpacing: 0.4,
+    },
+    appMain: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: colors.background,
+    },
+    basicFilters: {
+      flexDirection: 'row',
+      marginBottom: 16,
+      gap: 10,
+    },
+    searchInput: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 14,
+      padding: 12,
+      backgroundColor: colors.surface,
+      color: colors.text,
+    },
+    filterButton: {
+      backgroundColor: colors.primary,
+      padding: 12,
+      borderRadius: 14,
+      justifyContent: 'center',
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.14,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    },
+    filterButtonText: {
+      color: colors.primaryText,
+      fontWeight: '700',
+    },
+    advancedFilters: {
+      backgroundColor: colors.surface,
+      padding: 16,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 16,
+      maxHeight: 320,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.1,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
+      gap: 6,
+    },
+    filterGroupTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      marginBottom: 8,
+      color: colors.text,
+    },
+    filterItem: {
+      paddingVertical: 8,
+    },
+    checkbox: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    resultsInfo: {
+      color: colors.mutedText,
+      fontStyle: 'italic',
+      marginBottom: 16,
+    },
+    coursesList: {
+      flex: 1,
+    },
+    courseCardWrapper: {
+      marginBottom: 12,
+    },
+    courseCard: {
+      backgroundColor: colors.surface,
+      padding: 16,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: colors.border,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.12,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 5,
+      gap: 6,
+    },
+    courseCardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    courseCode: {
+      fontSize: 16,
+      fontWeight: '800',
+      color: colors.primary,
+    },
+    courseTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text,
+      marginVertical: 2,
+    },
+    courseDept: {
+      fontSize: 14,
+      color: colors.mutedText,
+      fontStyle: 'italic',
+      marginBottom: 4,
+    },
+    courseDescription: {
+      fontSize: 14,
+      color: colors.mutedText,
+      marginBottom: 10,
+      lineHeight: 20,
+    },
+    courseMeta: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    metaItem: {
+      backgroundColor: colors.surfaceAlt,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 12,
+      fontSize: 12,
+      color: colors.text,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    apFlag: {
+      backgroundColor: colors.accent,
+      color: colors.primaryText,
+      borderColor: colors.accent,
+    },
+    rating: {
+      backgroundColor: colors.primary,
+      color: colors.primaryText,
+      borderColor: colors.primary,
+    },
+    backButton: {
+      backgroundColor: colors.surface,
+      padding: 12,
+      borderRadius: 12,
+      marginBottom: 16,
+      alignSelf: 'flex-start',
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    backButtonText: {
+      color: colors.text,
+      fontWeight: '700',
+    },
+    courseHeader: {
+      marginBottom: 24,
+      gap: 8,
+    },
+    courseContent: {
+      gap: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 8,
+    },
+    detailItem: {
+      flexDirection: 'row',
+      marginBottom: 8,
+    },
+    detailLabel: {
+      fontWeight: '700',
+      marginRight: 8,
+      color: colors.text,
+    },
+    detailValue: {
+      flex: 1,
+      color: colors.mutedText,
+    },
+    reviewsSummary: {
+      backgroundColor: colors.surfaceAlt,
+      padding: 16,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    reviewsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    reviewButton: {
+      backgroundColor: colors.primary,
+      padding: 10,
+      borderRadius: 10,
+    },
+    reviewButtonText: {
+      color: colors.primaryText,
+      fontWeight: '700',
+    },
+    ratingSummary: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    avgRating: {
+      fontSize: 24,
+      fontWeight: '800',
+      color: colors.accent,
+    },
+    ratingStars: {
+      fontSize: 18,
+      color: colors.accent,
+    },
+    reviewCount: {
+      color: colors.mutedText,
+    },
+    pageTitle: {
+      fontSize: 24,
+      fontWeight: '800',
+      textAlign: 'center',
+      marginBottom: 20,
+      color: colors.text,
+    },
+    reviewForm: {
+      gap: 16,
+      marginBottom: 24,
+    },
+    label: {
+      fontWeight: '700',
+      marginBottom: 4,
+      color: colors.text,
+    },
+    pickerButton: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      padding: 12,
+      backgroundColor: colors.surface,
+    },
+    pickerButtonText: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    ratingContainer: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    star: {
+      fontSize: 32,
+      color: colors.border,
+    },
+    activeStar: {
+      color: colors.primary,
+    },
+    textInput: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      padding: 12,
+      backgroundColor: colors.surface,
+      color: colors.text,
+    },
+    textArea: {
+      minHeight: 100,
+      textAlignVertical: 'top',
+    },
+    charCount: {
+      textAlign: 'right',
+      fontSize: 12,
+      color: colors.mutedText,
+    },
+    verificationWarning: {
+      color: colors.accent,
+      fontSize: 14,
+      marginTop: 4,
+    },
+    submitButton: {
+      backgroundColor: colors.primary,
+      padding: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.16,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 6,
+    },
+    disabledButton: {
+      backgroundColor: colors.border,
+    },
+    submitButtonText: {
+      color: colors.primaryText,
+      fontWeight: '700',
+      fontSize: 16,
+    },
+    existingReviews: {
+      gap: 16,
+    },
+    reviewItem: {
+      backgroundColor: colors.surface,
+      padding: 16,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 12,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    },
+    reviewHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+      flexWrap: 'wrap',
+      gap: 6,
+    },
+    reviewTeacher: {
+      fontWeight: '700',
+      color: colors.text,
+    },
+    reviewRating: {
+      color: colors.accent,
+    },
+    reviewDate: {
+      color: colors.mutedText,
+      fontSize: 12,
+    },
+    reviewText: {
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.text,
+    },
+    advice: {
+      backgroundColor: colors.surfaceAlt,
+      padding: 12,
+      borderRadius: 10,
+      marginTop: 8,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.primary,
+    },
+    adviceLabel: {
+      fontWeight: '700',
+      marginBottom: 4,
+      color: colors.text,
+    },
+    adviceText: {
+      fontSize: 14,
+      color: colors.mutedText,
+    },
+    errors: {
+      backgroundColor: colors.accentSoft,
+      padding: 12,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.accent,
+    },
+    error: {
+      color: colors.text,
+      marginBottom: 4,
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 20,
+      width: '86%',
+      maxHeight: '80%',
+      borderWidth: 1,
+      borderColor: colors.border,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.16,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 6,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: '800',
+      marginBottom: 16,
+      textAlign: 'center',
+      color: colors.text,
+    },
+    modalItem: {
+      padding: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    modalItemText: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    modalCloseButton: {
+      marginTop: 16,
+      padding: 12,
+      backgroundColor: colors.primary,
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    modalCloseButtonText: {
+      color: colors.primaryText,
+      fontWeight: '700',
+    },
+    customTeacherInput: {
+      marginTop: 16,
+    },
+    noReviews: {
+      fontSize: 16,
+      color: colors.primaryText,
+    }
+  });
 
 export default CoursePages;
