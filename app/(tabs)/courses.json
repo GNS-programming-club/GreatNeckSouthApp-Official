@@ -1,18 +1,64 @@
 {
-    "courses": [
-      {
-        "id": "math",
-        "dept": "Mathematics",
-        "code": "MATH",
-        "title": "Algebra I",
-        "description": "Introduction to algebraic concepts and problem solving",
-        "credits": 1.0,
-        "prerequisite": "None",
-        "grade_levels": ["9", "10"],
-        "ap_flag": false,
-        "repeatable": false,
-        "additional_notes": "",
-        "source_page": 15
-      }
-    ]
-  }
+  "courses": [
+    {
+      "id": "Studio Art1",
+      "dept": "Art",
+      "code": "ART 721",
+      "title": "Studio Art 1",
+      "description": "Introduction to composition, color, and two- and three-dimensional design with work in multiple media and portfolio development.",
+      "credits": 1.0,
+      "prerequisite": "None",
+      "grade_levels": [],
+      "ap_flag": false,
+      "level": "Regular",
+      "repeatable": false,
+      "additional_notes": "Can be used towards a State Regents Sequence.",
+      "source_page": null
+    },
+    {
+      "id": "Studio Art2",
+      "dept": "Art",
+      "code": "ART 722",
+      "title": "Studio Art 2",
+      "description": "Advanced application of concepts from Studio Art 1 with emphasis on individual growth and problem solving.",
+      "credits": 1.0,
+      "prerequisite": "Studio Art 1 or juniors and seniors",
+      "grade_levels": ["11", "12"],
+      "ap_flag": false,
+      "level": "Regular",
+      "repeatable": false,
+      "additional_notes": "Can be used towards a State Regents Sequence.",
+      "source_page": null
+    },
+    {
+      "id": "Advanced Portfolio",
+      "dept": "Art",
+      "code": "ART 724",
+      "title": "Advanced Portfolio Development",
+      "description": "For juniors and seniors to work on more demanding art assignments, developing personal style and technical refinement.",
+      "credits": 1.0,
+      "prerequisite": "Advanced Art",
+      "grade_levels": ["11", "12"],
+      "ap_flag": false,
+      "level": "Advanced",
+      "repeatable": false,
+      "additional_notes": null,
+      "source_page": null
+    },
+    {
+      "id": "Graphic Novels",
+      "dept": "Art",
+      "code": "ART 725",
+      "title": "Illustrating Graphic Novels",
+      "description": "Combining text and image to create visual narrative storytelling and character development.",
+      "credits": 0.5,
+      "prerequisite": "None",
+      "grade_levels": [],
+      "ap_flag": false,
+      "level": "Regular",
+      "repeatable": false,
+      "additional_notes": null,
+      "source_page": null
+    }
+  ]
+}
