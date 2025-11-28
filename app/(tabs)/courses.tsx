@@ -44,7 +44,7 @@ interface FilterOptions {
   sortOrder: 'asc' | 'desc';
 }
 
-const courses: Course[] = (coursesData.courses as unknown as Course[]).map((course) => ({
+const courses: Course[] = (coursesData as unknown as Course[]).map((course) => ({
   ...course,
   source_page: typeof course.source_page === "number" ? course.source_page : -1,
 }));
