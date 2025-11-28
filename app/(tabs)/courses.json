@@ -1,0 +1,18 @@
+{
+    "courses": [
+      {
+        "id": "math",
+        "dept": "Mathematics",
+        "code": "MATH",
+        "title": "Algebra I",
+        "description": "Introduction to algebraic concepts and problem solving",
+        "credits": 1.0,
+        "prerequisite": "None",
+        "grade_levels": ["9", "10"],
+        "ap_flag": false,
+        "repeatable": false,
+        "additional_notes": "",
+        "source_page": 15
+      }
+    ]
+  }
