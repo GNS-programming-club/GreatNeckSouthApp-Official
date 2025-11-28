@@ -838,7 +838,7 @@
     "description": "The Advanced Placement course in Literature and Composition is a college-level course designed for the more able English student who is willing to accept the challenge of advanced work. AP English Literature includes close reading and analysis of selected works of undisputed literary excellence, the development of an intellectual approach to reading and writing, and work in composition that is more advanced than what is usually expected of high school seniors. For this reason, AP Literature students should have exceptionally strong writing skills before beginning the course. Students will also complete a research paper following the guidelines of the MLA Handbook. A high level of achievement in English 11 is required. *Students enrolled in the AP Literature and Composition course are required to take the Advanced Placement exam in May.",
     "credits": 1.0,
     "prerequisite": "Teacher recommendation",
-    "grade_levels": [],
+    "grade_levels": ["11"],
     "ap_flag": true,
     "level": "AP",
     "repeatable": false,
