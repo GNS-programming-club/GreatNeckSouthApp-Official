@@ -29,7 +29,7 @@ async function fetchMenu() {
   `;
 
   const variables = {
-    id: "686d30fabb4fd66b4830acfa"  // use your menu ID
+    id: "686d30fabb4fd66b4830acfa" 
   };
 
   const response = await fetch(API_URL, {
@@ -47,19 +47,16 @@ async function fetchMenu() {
 
   const menu = result.data.menu;
 
-  // Filter for first 5 days
-  const first5Days = menu.items.filter(item => item.day <= 31);
-
-  return first5Days;
+  return menu.items;
 }
 
 // Run test
 (async () => {
   try {
     const data = await fetchMenu();
-    console.log("First 5 Days of Menu:");
+    console.log("Days of Menu:");
     data.forEach(item => {
-      console.log(`Day ${item.day}: ${item.product.name} (${item.product.meal})`);
+      item.product?.name && console.log(`Day ${item.day}: ${item.product.name}`);
     });
   } catch (err) {
     console.error("Error:", err);
