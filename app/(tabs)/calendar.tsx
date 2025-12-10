@@ -5,6 +5,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { getMenuItemsForDay, getParsedMenu, type ParsedMenu } from '@/api/daily-menu';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -13,13 +14,13 @@ interface TodayInfo {
   dayLetter: string;
   lunchMenu: string[];
   holidays: string[];
-  clubEvents: Array<{ name: string; time: string }>;
+  clubEvents: { name: string; time: string }[];
 }
 
 interface TodayResponse {
   lunchMenu?: string[];
   holidays?: string[];
-  clubEvents?: Array<{ name: string; time: string }>;
+  clubEvents?: { name: string; time: string }[];
 }
 
 const CalendarScreen = () => {
@@ -33,7 +34,17 @@ const CalendarScreen = () => {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const formatLocalISODate = useCallback((date: Date) => {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+  }, []);
+
+  const parseLocalDate = useCallback((dateString: string) => {
+    return new Date(`${dateString}T00:00:00`);
+  }, []);
+
+  const [selectedDate, setSelectedDate] = useState<string>(formatLocalISODate(new Date()));
   const [todayInfo, setTodayInfo] = useState<TodayInfo>({
     date: '',
     dayLetter: '',
@@ -41,11 +52,84 @@ const CalendarScreen = () => {
     holidays: [],
     clubEvents: [],
   });
+  const [menuData, setMenuData] = useState<ParsedMenu | null>(null);
+  const menuItemAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
+  const holidayAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
+  const eventAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
 
   const getDayLetter = useCallback((date: Date): string => {
-    // TODO: replace placeholder with real day calculation
-    return 'A';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const daysDifference = Math.round((targetDate.getTime() - today.getTime()) / msPerDay);
+
+    const dayCycle = ['B', 'A'];
+    const dayIndex = ((daysDifference % dayCycle.length) + dayCycle.length) % dayCycle.length;
+
+    return dayCycle[dayIndex];
   }, []);
+
+  const getOrCreateAnim = useCallback((map: Map<string, Animated.Value>, key: string) => {
+    if (!map.has(key)) {
+      map.set(key, new Animated.Value(0));
+    }
+    return map.get(key)!;
+  }, []);
+
+  useEffect(() => {
+    menuItemAnims.forEach(anim => anim.setValue(0));
+    holidayAnims.forEach(anim => anim.setValue(0));
+    eventAnims.forEach(anim => anim.setValue(0));
+
+    const animations: Animated.CompositeAnimation[] = [];
+
+    todayInfo.lunchMenu.forEach((item, index) => {
+      const anim = getOrCreateAnim(menuItemAnims, `menu-${item}-${index}`);
+      anim.setValue(0);
+      animations.push(
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 400,
+          delay: index * 50,
+          useNativeDriver: true,
+        })
+      );
+    });
+
+    todayInfo.holidays.forEach((holiday, index) => {
+      const anim = getOrCreateAnim(holidayAnims, `holiday-${holiday}-${index}`);
+      anim.setValue(0);
+      animations.push(
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 400,
+          delay: (todayInfo.lunchMenu.length * 50) + (index * 50),
+          useNativeDriver: true,
+        })
+      );
+    });
+
+    todayInfo.clubEvents.forEach((event, index) => {
+      const anim = getOrCreateAnim(eventAnims, `event-${event.name}-${index}`);
+      anim.setValue(0);
+      animations.push(
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 400,
+          delay: index * 50,
+          useNativeDriver: true,
+        })
+      );
+    });
+
+    if (animations.length > 0) {
+      Animated.parallel(animations).start();
+    }
+  }, [todayInfo.lunchMenu, todayInfo.holidays, todayInfo.clubEvents, menuItemAnims, holidayAnims, eventAnims, getOrCreateAnim]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -87,18 +171,47 @@ const CalendarScreen = () => {
   useEffect(() => {
     let cancelled = false;
 
+    const loadMenuData = async () => {
+      if (menuData) return;
+
+      try {
+        const parsedMenu = await getParsedMenu();
+        if (cancelled || !isMountedRef.current) return;
+        setMenuData(parsedMenu);
+      } catch (error) {
+        if (cancelled || !isMountedRef.current) return;
+        console.error("Failed to load menu data:", error);
+      }
+    };
+
+    loadMenuData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [menuData]);
+
+  useEffect(() => {
+    let cancelled = false;
+
     const loadTodayInfo = async () => {
       try {
         const response = await axios.get<TodayResponse>(`/api/today/${selectedDate}`);
 
         if (cancelled || !isMountedRef.current) return;
 
-        const dateObj = new Date(selectedDate);
+        const dateObj = parseLocalDate(selectedDate);
+        const dayOfMonth = dateObj.getDate();
+
+        let lunchMenuItems: string[] = [];
+        if (menuData) {
+          lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
+        }
 
         setTodayInfo({
           date: dateObj.toLocaleDateString(),
           dayLetter: getDayLetter(dateObj),
-          lunchMenu: response.data?.lunchMenu || [],
+          lunchMenu: lunchMenuItems.length > 0 ? lunchMenuItems : (response.data?.lunchMenu || []),
           holidays: response.data?.holidays || [],
           clubEvents: response.data?.clubEvents || [],
         });
@@ -107,11 +220,18 @@ const CalendarScreen = () => {
 
         console.error("Failed to load today's info:", error);
 
-        const dateObj = new Date(selectedDate);
+        const dateObj = parseLocalDate(selectedDate);
+        const dayOfMonth = dateObj.getDate();
+
+        let lunchMenuItems: string[] = [];
+        if (menuData) {
+          lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
+        }
+
         setTodayInfo({
           date: dateObj.toLocaleDateString(),
           dayLetter: getDayLetter(dateObj),
-          lunchMenu: [],
+          lunchMenu: lunchMenuItems,
           holidays: [],
           clubEvents: [],
         });
@@ -123,7 +243,7 @@ const CalendarScreen = () => {
     return () => {
       cancelled = true;
     };
-  }, [selectedDate, getDayLetter]);
+  }, [selectedDate, getDayLetter, menuData, parseLocalDate]);
 
   const markedDates = useMemo(
     () => ({
@@ -219,9 +339,9 @@ const CalendarScreen = () => {
               dayTextColor: colors.text,
               textDisabledColor: colors.mutedText,
               monthTextColor: colors.text,
-              textMonthFontWeight: '700',
-              textDayFontWeight: '500',
-              textDayHeaderFontWeight: '600',
+              textMonthFontWeight: '800',
+              textDayFontWeight: '600',
+              textDayHeaderFontWeight: '700',
             }}
             style={styles.calendar}
           />
@@ -242,18 +362,116 @@ const CalendarScreen = () => {
               ],
             },
           ]}>
+          <Text style={styles.sectionTitle}>Today&apos;s Information</Text>
+
+          {todayInfo.lunchMenu && todayInfo.lunchMenu.length > 0 ? (
+            <View style={styles.menuSection}>
+              <Text style={styles.menuSectionTitle}>Lunch Menu</Text>
+              {todayInfo.lunchMenu.map((item, index) => {
+                const anim = getOrCreateAnim(menuItemAnims, `menu-${item}-${index}`);
+                return (
+                  <Animated.View
+                    key={`menu-${index}`}
+                    style={[
+                      styles.menuItem,
+                      {
+                        opacity: anim,
+                        transform: [
+                          {
+                            translateY: anim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [8, 0],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}>
+                    <View style={styles.menuDot} />
+                    <Text style={styles.menuItemText}>{item}</Text>
+                  </Animated.View>
+                );
+              })}
+            </View>
+          ) : (
+            <Text style={styles.emptyText}>No menu available for this day.</Text>
+          )}
+
+          {todayInfo.holidays && todayInfo.holidays.length > 0 && (
+            <View style={styles.holidaySection}>
+              <Text style={styles.menuSectionTitle}>Holidays</Text>
+              {todayInfo.holidays.map((holiday, index) => {
+                const anim = getOrCreateAnim(holidayAnims, `holiday-${holiday}-${index}`);
+                return (
+                  <Animated.View
+                    key={`holiday-${index}`}
+                    style={[
+                      styles.menuItem,
+                      {
+                        opacity: anim,
+                        transform: [
+                          {
+                            translateY: anim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [8, 0],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}>
+                    <View style={styles.menuDot} />
+                    <Text style={styles.menuItemText}>{holiday}</Text>
+                  </Animated.View>
+                );
+              })}
+            </View>
+          )}
+        </Animated.View>
+
+        <Animated.View
+          style={[
+            styles.card,
+            {
+              opacity: eventsAnim,
+              transform: [
+                {
+                  translateY: eventsAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [14, 0],
+                  }),
+                },
+              ],
+            },
+          ]}>
           <Text style={styles.sectionTitle}>Today&apos;s Club Events</Text>
 
           {todayInfo.clubEvents && todayInfo.clubEvents.length > 0 ? (
-            todayInfo.clubEvents.map((event, index) => (
-              <View key={`${event.name}-${index}`} style={styles.eventRow}>
-                <View style={styles.eventDot} />
-                <View style={styles.eventText}>
-                  <Text style={styles.eventName}>{event.name}</Text>
-                  <Text style={styles.eventTime}>{event.time}</Text>
-                </View>
-              </View>
-            ))
+            todayInfo.clubEvents.map((event, index) => {
+              const anim = getOrCreateAnim(eventAnims, `event-${event.name}-${index}`);
+              return (
+                <Animated.View
+                  key={`${event.name}-${index}`}
+                  style={[
+                    styles.eventRow,
+                    {
+                      opacity: anim,
+                      transform: [
+                        {
+                          translateY: anim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [8, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}>
+                  <View style={styles.eventDot} />
+                  <View style={styles.eventText}>
+                    <Text style={styles.eventName}>{event.name}</Text>
+                    <Text style={styles.eventTime}>{event.time}</Text>
+                  </View>
+                </Animated.View>
+              );
+            })
           ) : (
             <Text style={styles.emptyText}>No club events scheduled for this day.</Text>
           )}
@@ -386,6 +604,39 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     emptyText: {
       color: colors.mutedText,
       paddingVertical: 4,
+    },
+    menuSection: {
+      marginTop: 8,
+      marginBottom: 12,
+    },
+    menuSectionTitle: {
+      color: colors.text,
+      fontSize: 15,
+      fontWeight: '600',
+      marginBottom: 8,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 10,
+      paddingVertical: 8,
+      borderBottomWidth: 1,
+      borderColor: colors.border,
+    },
+    menuDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: colors.accent,
+      marginTop: 6,
+    },
+    menuItemText: {
+      color: colors.text,
+      fontSize: 14,
+      flex: 1,
+    },
+    holidaySection: {
+      marginTop: 12,
     },
     addButton: {
       backgroundColor: colors.primary,
