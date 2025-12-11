@@ -26,6 +26,7 @@ interface Course {
   prerequisite: string;
   grade_levels: string[];
   ap_flag: boolean;
+  level?: string;
   repeatable: boolean;
   additional_notes: string;
   source_page: number;
@@ -39,8 +40,10 @@ interface FilterOptions {
   departments: string[];
   credits: number[];
   gradeLevels: string[];
+  levels: string[];
   apOnly: boolean;
-  sortBy: 'code' | 'title' | 'dept';
+  repeatableOnly: boolean;
+  sortBy: 'code' | 'title' | 'dept' | 'credits';
   sortOrder: 'asc' | 'desc';
 }
 
@@ -51,60 +54,94 @@ const courses: Course[] = (coursesData as unknown as Course[]).map((course) => (
 
 const filterCourses = (courses: Course[], filters: FilterOptions): Course[] => {
   let filtered = courses.filter(course => {
-    const searchMatch = !filters.searchTerm || 
+    const searchMatch = !filters.searchTerm ||
       course.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       course.code.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       course.dept.toLowerCase().includes(filters.searchTerm.toLowerCase());
 
-    const deptMatch = filters.departments.length === 0 || 
+    const deptMatch = filters.departments.length === 0 ||
       filters.departments.includes(course.dept);
 
-    const creditMatch = filters.credits.length === 0 || 
+    const creditMatch = filters.credits.length === 0 ||
       filters.credits.includes(course.credits);
 
-    const gradeMatch = filters.gradeLevels.length === 0 || 
+    const gradeMatch = filters.gradeLevels.length === 0 ||
       course.grade_levels.some(grade => filters.gradeLevels.includes(grade));
+
+    const levelMatch = filters.levels.length === 0 ||
+      (course.level && filters.levels.includes(course.level));
 
     const apMatch = !filters.apOnly || course.ap_flag;
 
-    return searchMatch && deptMatch && creditMatch && gradeMatch && apMatch;
+    const repeatableMatch = !filters.repeatableOnly || course.repeatable;
+
+    return searchMatch && deptMatch && creditMatch && gradeMatch && levelMatch && apMatch && repeatableMatch;
   });
 
   filtered.sort((a, b) => {
-    let aValue: string, bValue: string;
-    
+    let comparison = 0;
+
     switch (filters.sortBy) {
       case 'code':
-        aValue = a.code;
-        bValue = b.code;
+        comparison = a.code.toLowerCase().localeCompare(b.code.toLowerCase());
         break;
       case 'title':
-        aValue = a.title;
-        bValue = b.title;
+        comparison = a.title.toLowerCase().localeCompare(b.title.toLowerCase());
         break;
       case 'dept':
-        aValue = a.dept;
-        bValue = b.dept;
+        comparison = a.dept.toLowerCase().localeCompare(b.dept.toLowerCase());
+        break;
+      case 'credits':
+        comparison = a.credits - b.credits;
         break;
       default:
-        aValue = a.code;
-        bValue = b.code;
+        comparison = a.code.toLowerCase().localeCompare(b.code.toLowerCase());
     }
 
-    aValue = aValue.toLowerCase();
-    bValue = bValue.toLowerCase();
-
-    if (aValue < bValue) return filters.sortOrder === 'asc' ? -1 : 1;
-    if (aValue > bValue) return filters.sortOrder === 'asc' ? 1 : -1;
-    return 0;
+    return filters.sortOrder === 'asc' ? comparison : -comparison;
   });
 
   return filtered;
 };
 
-const CourseList: React.FC<{ 
-  courses: Course[]; 
+const getActiveFilterCount = (filters: FilterOptions): number => {
+  let count = 0;
+  if (filters.departments.length > 0) count++;
+  if (filters.credits.length > 0) count++;
+  if (filters.gradeLevels.length > 0) count++;
+  if (filters.levels.length > 0) count++;
+  if (filters.apOnly) count++;
+  if (filters.repeatableOnly) count++;
+  if (filters.sortBy !== 'code' || filters.sortOrder !== 'asc') count++;
+  return count;
+};
+
+const FilterChip: React.FC<{
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+  styles: ThemedStyles;
+  colors: ThemeColors;
+}> = ({ label, selected, onPress, styles, colors }) => (
+  <TouchableOpacity
+    style={[
+      styles.filterChip,
+      selected && styles.filterChipSelected
+    ]}
+    onPress={onPress}
+  >
+    <Text style={[
+      styles.filterChipText,
+      selected && styles.filterChipTextSelected
+    ]}>
+      {label}
+    </Text>
+  </TouchableOpacity>
+);
+
+const CourseList: React.FC<{
+  courses: Course[];
   onCourseSelect: (course: Course) => void;
   filters: FilterOptions;
   onFiltersChange: (filters: FilterOptions) => void;
@@ -113,9 +150,10 @@ const CourseList: React.FC<{
   styles: ThemedStyles;
   colors: ThemeColors;
 }> = ({ courses, onCourseSelect, filters, onFiltersChange, showAdvancedFilters, onToggleAdvancedFilters, styles, colors }) => {
-  const departments = Array.from(new Set(courses.map(c => c.dept)));
-  const creditOptions = Array.from(new Set(courses.map(c => c.credits)));
-  
+  const departments = Array.from(new Set(courses.map(c => c.dept))).sort();
+  const creditOptions = Array.from(new Set(courses.map(c => c.credits))).sort((a, b) => a - b);
+  const levelOptions = Array.from(new Set(courses.map(c => c.level).filter(Boolean) as string[])).sort();
+
   const allGradeLevels: string[] = [];
   courses.forEach(course => {
     course.grade_levels.forEach(grade => {
@@ -127,18 +165,40 @@ const CourseList: React.FC<{
   const gradeLevels = allGradeLevels.sort((a, b) => Number(a) - Number(b));
 
   const filteredCourses = filterCourses(courses, filters);
+  const activeFilterCount = getActiveFilterCount(filters);
+
+  const clearAllFilters = () => {
+    onFiltersChange({
+      searchTerm: '',
+      departments: [],
+      credits: [],
+      gradeLevels: [],
+      levels: [],
+      apOnly: false,
+      repeatableOnly: false,
+      sortBy: 'code',
+      sortOrder: 'asc'
+    });
+  };
+
+  const sortOptions: { value: FilterOptions['sortBy']; label: string }[] = [
+    { value: 'code', label: 'Code' },
+    { value: 'title', label: 'Title' },
+    { value: 'dept', label: 'Dept' },
+    { value: 'credits', label: 'Credits' },
+  ];
 
   const CourseCard = ({ course, index }: { course: Course; index: number }) => {
     const animation = React.useRef(new Animated.Value(0)).current;
 
     React.useEffect(() => {
       animation.setValue(0);
-      const delay = Math.min(index, 12) * 90;
+      const delay = Math.min(index, 12) * 60;
       const timer = setTimeout(() => {
         Animated.spring(animation, {
           toValue: 1,
-          friction: 9,
-          tension: 60,
+          friction: 10,
+          tension: 70,
           useNativeDriver: true,
         }).start();
       }, delay);
@@ -152,7 +212,7 @@ const CourseList: React.FC<{
         {
           translateY: animation.interpolate({
             inputRange: [0, 1],
-            outputRange: [10, 0],
+            outputRange: [12, 0],
           }),
         },
       ],
@@ -163,16 +223,24 @@ const CourseList: React.FC<{
         <TouchableOpacity style={styles.courseCard} onPress={() => onCourseSelect(course)}>
           <View style={styles.courseCardHeader}>
             <Text style={styles.courseCode}>{course.code}</Text>
-            {course.ap_flag && <Text style={[styles.metaItem, styles.apFlag]}>AP</Text>}
+            <View style={styles.badgeRow}>
+              {course.ap_flag && <Text style={[styles.badge, styles.apBadge]}>AP</Text>}
+              {course.level && course.level !== 'Regular' && !course.ap_flag && (
+                <Text style={[styles.badge, styles.levelBadge]}>{course.level}</Text>
+              )}
+              {course.repeatable && <Text style={[styles.badge, styles.repeatableBadge]}>Repeatable</Text>}
+            </View>
           </View>
           <Text style={styles.courseTitle}>{course.title}</Text>
           <Text style={styles.courseDept}>{course.dept}</Text>
-          <Text style={styles.courseDescription}>
-            {course.description.substring(0, 100) + (course.description.length > 100 ? '...' : '')}
+          <Text style={styles.courseDescription} numberOfLines={2}>
+            {course.description}
           </Text>
           <View style={styles.courseMeta}>
             <Text style={styles.metaItem}>{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
-            <Text style={styles.metaItem}>{`Grades: ${course.grade_levels.join(', ')}`}</Text>
+            {course.grade_levels.length > 0 && (
+              <Text style={styles.metaItem}>{`Grades: ${course.grade_levels.join(', ')}`}</Text>
+            )}
           </View>
         </TouchableOpacity>
       </Animated.View>
@@ -185,104 +253,199 @@ const CourseList: React.FC<{
 
   return (
     <View style={styles.container}>
-      <View style={styles.basicFilters}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search courses..."
-          placeholderTextColor={colors.mutedText}
-          value={filters.searchTerm}
-          onChangeText={(text) => onFiltersChange({ ...filters, searchTerm: text })}
-        />
-        <TouchableOpacity style={styles.filterButton} onPress={onToggleAdvancedFilters}>
-          <Text style={styles.filterButtonText}>
-            {showAdvancedFilters ? 'Hide Filters' : 'Show Filters'}
-          </Text>
+      <View style={styles.searchRow}>
+        <View style={styles.searchInputWrapper}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search courses, codes, departments..."
+            placeholderTextColor={colors.mutedText}
+            value={filters.searchTerm}
+            onChangeText={(text) => onFiltersChange({ ...filters, searchTerm: text })}
+          />
+          {filters.searchTerm.length > 0 && (
+            <TouchableOpacity onPress={() => onFiltersChange({ ...filters, searchTerm: '' })}>
+              <Text style={styles.clearSearchIcon}>×</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      <View style={styles.filterToggleRow}>
+        <TouchableOpacity style={styles.filterToggleButton} onPress={onToggleAdvancedFilters}>
+          <Text style={styles.filterToggleText}>{showAdvancedFilters ? 'Hide Filters' : 'Filters'}</Text>
+          {activeFilterCount > 0 && (
+            <View style={styles.filterCountBadge}>
+              <Text style={styles.filterCountText}>{activeFilterCount}</Text>
+            </View>
+          )}
         </TouchableOpacity>
+        {activeFilterCount > 0 && (
+          <TouchableOpacity style={styles.clearFiltersButton} onPress={clearAllFilters}>
+            <Text style={styles.clearFiltersText}>Clear All</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {showAdvancedFilters && (
-        <ScrollView style={styles.advancedFilters}>
-          <Text style={styles.filterGroupTitle}>Departments</Text>
-          {departments.map(dept => (
-            <TouchableOpacity
-              key={dept}
-              style={styles.filterItem}
-              onPress={() => {
-                const newDepartments = filters.departments.includes(dept)
-                  ? filters.departments.filter(d => d !== dept)
-                  : [...filters.departments, dept];
-                onFiltersChange({ ...filters, departments: newDepartments });
-              }}
-            >
-              <Text style={styles.checkbox}>
-                {filters.departments.includes(dept) ? '✓' : '○'} {dept}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <ScrollView style={styles.advancedFilters} showsVerticalScrollIndicator={false}>
+          <View style={styles.filterSection}>
+            <Text style={styles.filterSectionTitle}>Sort By</Text>
+            <View style={styles.sortRow}>
+              <View style={styles.chipContainer}>
+                {sortOptions.map(option => (
+                  <FilterChip
+                    key={option.value}
+                    label={option.label}
+                    selected={filters.sortBy === option.value}
+                    onPress={() => onFiltersChange({ ...filters, sortBy: option.value })}
+                    styles={styles}
+                    colors={colors}
+                  />
+                ))}
+              </View>
+              <TouchableOpacity
+                style={styles.sortOrderButton}
+                onPress={() => onFiltersChange({
+                  ...filters,
+                  sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc'
+                })}
+              >
+                <Text style={styles.sortOrderText}>
+                  {filters.sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-          <Text style={styles.filterGroupTitle}>Credits</Text>
-          {creditOptions.map(credit => (
-            <TouchableOpacity
-              key={credit}
-              style={styles.filterItem}
-              onPress={() => {
-                const newCredits = filters.credits.includes(credit)
-                  ? filters.credits.filter(c => c !== credit)
-                  : [...filters.credits, credit];
-                onFiltersChange({ ...filters, credits: newCredits });
-              }}
-            >
-              <Text style={styles.checkbox}>
-                {filters.credits.includes(credit) ? '✓' : '○'} {credit} credit{credit === 1 ? '' : 's'}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          <View style={styles.filterSection}>
+            <Text style={styles.filterSectionTitle}>Quick Filters</Text>
+            <View style={styles.chipContainer}>
+              <FilterChip
+                label="AP Only"
+                selected={filters.apOnly}
+                onPress={() => onFiltersChange({ ...filters, apOnly: !filters.apOnly })}
+                styles={styles}
+                colors={colors}
+              />
+              <FilterChip
+                label="Repeatable"
+                selected={filters.repeatableOnly}
+                onPress={() => onFiltersChange({ ...filters, repeatableOnly: !filters.repeatableOnly })}
+                styles={styles}
+                colors={colors}
+              />
+            </View>
+          </View>
 
-          <Text style={styles.filterGroupTitle}>Grade Levels</Text>
-          {gradeLevels.map(grade => (
-            <TouchableOpacity
-              key={grade}
-              style={styles.filterItem}
-              onPress={() => {
-                const newGradeLevels = filters.gradeLevels.includes(grade)
-                  ? filters.gradeLevels.filter(g => g !== grade)
-                  : [...filters.gradeLevels, grade];
-                onFiltersChange({ ...filters, gradeLevels: newGradeLevels });
-              }}
-            >
-              <Text style={styles.checkbox}>
-                {filters.gradeLevels.includes(grade) ? '✓' : '○'} Grade {grade}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          <View style={styles.filterSection}>
+            <Text style={styles.filterSectionTitle}>Grade Levels</Text>
+            <View style={styles.chipContainer}>
+              {gradeLevels.map(grade => (
+                <FilterChip
+                  key={grade}
+                  label={`Grade ${grade}`}
+                  selected={filters.gradeLevels.includes(grade)}
+                  onPress={() => {
+                    const newGradeLevels = filters.gradeLevels.includes(grade)
+                      ? filters.gradeLevels.filter(g => g !== grade)
+                      : [...filters.gradeLevels, grade];
+                    onFiltersChange({ ...filters, gradeLevels: newGradeLevels });
+                  }}
+                  styles={styles}
+                  colors={colors}
+                />
+              ))}
+            </View>
+          </View>
 
-          <TouchableOpacity
-            style={styles.filterItem}
-            onPress={() => onFiltersChange({ ...filters, apOnly: !filters.apOnly })}
-          >
-            <Text style={styles.checkbox}>
-              {filters.apOnly ? '✓' : '○'} AP Courses Only
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.filterSection}>
+            <Text style={styles.filterSectionTitle}>Credits</Text>
+            <View style={styles.chipContainer}>
+              {creditOptions.map(credit => (
+                <FilterChip
+                  key={credit}
+                  label={`${credit} cr`}
+                  selected={filters.credits.includes(credit)}
+                  onPress={() => {
+                    const newCredits = filters.credits.includes(credit)
+                      ? filters.credits.filter(c => c !== credit)
+                      : [...filters.credits, credit];
+                    onFiltersChange({ ...filters, credits: newCredits });
+                  }}
+                  styles={styles}
+                  colors={colors}
+                />
+              ))}
+            </View>
+          </View>
+
+          {levelOptions.length > 0 && (
+            <View style={styles.filterSection}>
+              <Text style={styles.filterSectionTitle}>Course Level</Text>
+              <View style={styles.chipContainer}>
+                {levelOptions.map(level => (
+                  <FilterChip
+                    key={level}
+                    label={level}
+                    selected={filters.levels.includes(level)}
+                    onPress={() => {
+                      const newLevels = filters.levels.includes(level)
+                        ? filters.levels.filter(l => l !== level)
+                        : [...filters.levels, level];
+                      onFiltersChange({ ...filters, levels: newLevels });
+                    }}
+                    styles={styles}
+                    colors={colors}
+                  />
+                ))}
+              </View>
+            </View>
+          )}
+
+          <View style={styles.filterSection}>
+            <Text style={styles.filterSectionTitle}>Departments</Text>
+            <View style={styles.chipContainer}>
+              {departments.map(dept => (
+                <FilterChip
+                  key={dept}
+                  label={dept}
+                  selected={filters.departments.includes(dept)}
+                  onPress={() => {
+                    const newDepartments = filters.departments.includes(dept)
+                      ? filters.departments.filter(d => d !== dept)
+                      : [...filters.departments, dept];
+                    onFiltersChange({ ...filters, departments: newDepartments });
+                  }}
+                  styles={styles}
+                  colors={colors}
+                />
+              ))}
+            </View>
+          </View>
         </ScrollView>
       )}
 
-      <Text style={styles.resultsInfo}>
-        Showing {filteredCourses.length} of {courses.length} courses
-      </Text>
+      <View style={styles.resultsRow}>
+        <Text style={styles.resultsInfo}>
+          {filteredCourses.length === courses.length
+            ? `${courses.length} courses`
+            : `${filteredCourses.length} of ${courses.length} courses`}
+        </Text>
+      </View>
 
       <FlatList
         data={filteredCourses}
         renderItem={renderCourseItem}
         keyExtractor={(item) => item.id}
         style={styles.coursesList}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
 };
 
-const CourseDetail: React.FC<{ 
-  course: Course; 
+const CourseDetail: React.FC<{
+  course: Course;
   onBack: () => void;
   styles: ThemedStyles;
 }> = ({ course, onBack, styles }) => {
@@ -334,13 +497,15 @@ const CoursePages: React.FC = () => {
   const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  
+
   const [filters, setFilters] = useState<FilterOptions>({
     searchTerm: '',
     departments: [],
     credits: [],
     gradeLevels: [],
+    levels: [],
     apOnly: false,
+    repeatableOnly: false,
     sortBy: 'code',
     sortOrder: 'asc'
   });
@@ -444,11 +609,8 @@ const createStyles = (colors: ThemeColors) =>
     },
     searchInput: {
       flex: 1,
-      borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: 14,
-      padding: 12,
-      backgroundColor: colors.surface,
+      paddingVertical: 14,
+      fontSize: 15,
       color: colors.text,
     },
     filterButton: {
@@ -604,6 +766,149 @@ const createStyles = (colors: ThemeColors) =>
     detailValue: {
       flex: 1,
       color: colors.mutedText,
+    },
+    searchRow: {
+      marginBottom: 12,
+    },
+    searchInputWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 14,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 3,
+    },
+    clearSearchIcon: {
+      fontSize: 18,
+      color: colors.mutedText,
+      padding: 8,
+      fontWeight: '300',
+    },
+    filterToggleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 12,
+    },
+    filterToggleButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    filterToggleText: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    filterCountBadge: {
+      backgroundColor: colors.primary,
+      borderRadius: 10,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      marginLeft: 6,
+    },
+    filterCountText: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: colors.primaryText,
+    },
+    clearFiltersButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    clearFiltersText: {
+      fontSize: 14,
+      color: colors.accent,
+      fontWeight: '600',
+    },
+    filterSection: {
+      marginBottom: 16,
+    },
+    filterSectionTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: colors.mutedText,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 10,
+    },
+    sortRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    chipContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    filterChip: {
+      backgroundColor: colors.surfaceAlt,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    filterChipSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    filterChipText: {
+      fontSize: 13,
+      fontWeight: '500',
+      color: colors.text,
+    },
+    filterChipTextSelected: {
+      color: colors.primaryText,
+    },
+    sortOrderButton: {
+      backgroundColor: colors.surfaceAlt,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    sortOrderText: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    resultsRow: {
+      marginBottom: 12,
+    },
+    badgeRow: {
+      flexDirection: 'row',
+      gap: 6,
+    },
+    badge: {
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 8,
+      fontSize: 11,
+      fontWeight: '700',
+      overflow: 'hidden',
+    },
+    apBadge: {
+      backgroundColor: colors.accent,
+      color: colors.primaryText,
+    },
+    levelBadge: {
+      backgroundColor: colors.primary,
+      color: colors.primaryText,
+    },
+    repeatableBadge: {
+      backgroundColor: colors.surfaceAlt,
+      color: colors.text,
+      borderWidth: 1,
+      borderColor: colors.border,
     },
   });
 
