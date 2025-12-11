@@ -1,7 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
+
 import axios from 'axios';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -24,7 +24,6 @@ interface TodayResponse {
 }
 
 const CalendarScreen = () => {
-  const navigation = useNavigation();
   const isMountedRef = useRef(true);
   const fadeIn = useRef(new Animated.Value(0)).current;
   const heroAnim = useRef(new Animated.Value(0)).current;
@@ -260,9 +259,7 @@ const CalendarScreen = () => {
     setSelectedDate((current) => (current === day.dateString ? current : day.dateString));
   }, []);
 
-  const handleAddEvent = useCallback(() => {
-    navigation.navigate('SubmitClubEvent' as never);
-  }, [navigation]);
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
@@ -477,9 +474,7 @@ const CalendarScreen = () => {
           )}
         </Animated.View>
 
-        <Pressable onPress={handleAddEvent} style={styles.addButton}>
-          <Text style={styles.addButtonText}>Add New Club Event</Text>
-        </Pressable>
+
       </Animated.ScrollView>
     </SafeAreaView>
   );
@@ -638,23 +633,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     holidaySection: {
       marginTop: 12,
     },
-    addButton: {
-      backgroundColor: colors.primary,
-      paddingVertical: 14,
-      alignItems: 'center',
-      borderRadius: 14,
-      marginBottom: 24,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.18,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 6,
-    },
-    addButtonText: {
-      color: colors.primaryText,
-      fontWeight: '700',
-      letterSpacing: 0.3,
-    },
+
   });
 
 export default CalendarScreen;
