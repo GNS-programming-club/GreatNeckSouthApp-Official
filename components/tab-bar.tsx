@@ -15,6 +15,7 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
   const colors = Colors[actualTheme];
 
   const buildHref = (name: string) => (name === 'index' ? './' : `./${name}`);
+  const visibleTabs = new Set(['index', 'calendar', 'courses', 'tools', 'settings']);
 
   if (!isTabBarVisible) {
     return null;
@@ -27,8 +28,13 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
       borderColor: colors.border,
       marginBottom: insets.bottom ? 8 : 12,
     }]}>
-      {state.routes.map((route: { key: string | number; name: string; params: object | undefined; }, index: any) => {
+      {state.routes.map((route: { key: string | number; name: string; params: object | undefined }, index: any) => {
         const { options } = descriptors[route.key];
+
+        if (options?.href === null || !visibleTabs.has(route.name)) {
+          return null;
+        }
+
         let label =
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
@@ -36,9 +42,11 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
               ? options.title
               : route.name;
 
-        if (route.name === "navigation") label = "Map";
-        if (route.name === "events") label = "Events";
-        if (route.name === "course_desc") label = "Courses";
+        if (route.name === "index") label = "Home";
+        if (route.name === "calendar") label = "Calendar";
+        if (route.name === "courses") label = "Courses";
+        if (route.name === "tools") label = "Tools";
+        if (route.name === "settings") label = "Settings";
 
         const isFocused = state.index === index;
         
@@ -159,10 +167,12 @@ function getIcon(routeName: string, color: string) {
       return <Feather name="home" size={20} color={color}/>
     case "calendar":
       return <Feather name="calendar" size={20} color={color}/>
-    case "events" :
-      return <Feather name="star" size={20} color={color}/>
     case "courses":
       return <Feather name="book-open" size={20} color={color}/>
+    case "tools":
+      return <Feather name="tool" size={20} color={color}/>
+    case "settings":
+      return <Feather name="settings" size={20} color={color}/>
   }
 }
 const styles = StyleSheet.create({
@@ -221,7 +231,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 12,
     paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: 9,
     minHeight: 42,
   }
 });

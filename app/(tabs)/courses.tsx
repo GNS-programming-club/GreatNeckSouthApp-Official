@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useMemo, useState } from 'react';
 import {
   Animated,
@@ -149,7 +150,9 @@ const CourseList: React.FC<{
   onToggleAdvancedFilters: () => void;
   styles: ThemedStyles;
   colors: ThemeColors;
-}> = ({ courses, onCourseSelect, filters, onFiltersChange, showAdvancedFilters, onToggleAdvancedFilters, styles, colors }) => {
+  showBackButton?: boolean;
+  onBack?: () => void;
+}> = ({ courses, onCourseSelect, filters, onFiltersChange, showAdvancedFilters, onToggleAdvancedFilters, styles, colors, showBackButton, onBack }) => {
   const departments = Array.from(new Set(courses.map(c => c.dept))).sort();
   const creditOptions = Array.from(new Set(courses.map(c => c.credits))).sort((a, b) => a - b);
   const levelOptions = Array.from(new Set(courses.map(c => c.level).filter(Boolean) as string[])).sort();
@@ -489,11 +492,13 @@ const CourseDetail: React.FC<{
   );
 };
 
-// Main CoursePages component
-const CoursePages: React.FC = () => {
+// Main Courses component
+const Courses: React.FC = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const navigation = useNavigation<any>(); // Use any to bypass TypeScript
+  
   const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -520,6 +525,10 @@ const CoursePages: React.FC = () => {
     setSelectedCourse(null);
   };
 
+  const handleBackToMore = () => {
+    navigation.goBack();
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'list':
@@ -533,6 +542,8 @@ const CoursePages: React.FC = () => {
             onToggleAdvancedFilters={() => setShowAdvancedFilters(!showAdvancedFilters)}
             styles={styles}
             colors={colors}
+            showBackButton={true}
+            onBack={handleBackToMore}
           />
         );
       case 'detail':
@@ -549,11 +560,9 @@ const CoursePages: React.FC = () => {
         );
       default:
         return (
-          <SafeAreaView>
-            <View style={styles.container}>
-              <Text>Invalid view</Text>
-            </View>
-          </SafeAreaView>
+          <View style={styles.container}>
+            <Text>Invalid view</Text>
+          </View>
         );
     }
   };
@@ -573,7 +582,7 @@ const createStyles = (colors: ThemeColors) =>
     appContainer: {
       flex: 1,
       backgroundColor: colors.background,
-      paddingBottom: 120
+      paddingBottom: 100
     },
     appHeader: {
       backgroundColor: colors.surface,
@@ -912,4 +921,4 @@ const createStyles = (colors: ThemeColors) =>
     },
   });
 
-export default CoursePages;
+export default Courses;
