@@ -72,7 +72,7 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
       duration: 250,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     });
-  }, [isFocused]);
+  }, [isFocused, opacity, scale]);
 
   const animatedButtonStyle = useAnimatedStyle(() => {
     return {

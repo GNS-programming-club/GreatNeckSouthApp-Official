@@ -1,3 +1,4 @@
+/* eslint-disable import/no-duplicates */
 import { PropsWithChildren, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from '@react-navigation/elements';
@@ -5,7 +6,6 @@ import { ThemeProvider } from '@/contexts/theme-context'
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
-import { processFontWeight } from 'react-native-reanimated/lib/typescript/css/native';
 
 export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
   const [isOpen, setIsOpen] = useState(false);
