@@ -19,14 +19,28 @@ export default function ToolsPage() {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
-  const itemAnims = useRef([new Animated.Value(0), new Animated.Value(0)]).current;
+  
+  const itemAnims = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0)
+  ]).current;
 
   const onSchedulePress = () => {
-    router.push({ pathname: "/tools-routes/schedule" });
+    router.push("/tools-routes/schedule" as any);
   };
 
   const onMapPress = () => {
-    router.push({ pathname: "/tools-routes/school-map" });
+    router.push("/tools-routes/school-map" as any);
+  };
+
+  const onBusPress = () => {
+    router.push("/tools-routes/bus" as any);
+  };
+
+  const onCoursesPress = () => {
+    router.push("/tools-routes/courses" as any);
   };
 
   useEffect(() => {
@@ -55,29 +69,45 @@ export default function ToolsPage() {
     title: string,
     subtitle: string,
     onPress: () => void
-  ) => (
-    <Animated.View
-      style={{
-        opacity: itemAnims[index],
-        transform: [
-          {
-            translateY: itemAnims[index].interpolate({
-              inputRange: [0, 1],
-              outputRange: [10, 0],
-            }),
-          },
-        ],
-      }}
-    >
-      <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
-        <View style={styles.navBarLeft}>
-          <Text style={styles.navBarTitle}>{title}</Text>
-          <Text style={styles.navBarSub}>{subtitle}</Text>
-        </View>
-        <Text style={styles.arrow}>→</Text>
-      </TouchableOpacity>
-    </Animated.View>
-  );
+  ) => {
+    const anim = itemAnims[index];
+    
+    if (!anim) {
+      return (
+        <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
+          <View style={styles.navBarLeft}>
+            <Text style={styles.navBarTitle}>{title}</Text>
+            <Text style={styles.navBarSub}>{subtitle}</Text>
+          </View>
+          <Text style={styles.arrow}>→</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    return (
+      <Animated.View
+        style={{
+          opacity: anim,
+          transform: [
+            {
+              translateY: anim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [10, 0],
+              }),
+            },
+          ],
+        }}
+      >
+        <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
+          <View style={styles.navBarLeft}>
+            <Text style={styles.navBarTitle}>{title}</Text>
+            <Text style={styles.navBarSub}>{subtitle}</Text>
+          </View>
+          <Text style={styles.arrow}>→</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -88,6 +118,8 @@ export default function ToolsPage() {
       <ScrollView style={styles.content}>
         {renderToolRow(0, "Daily Schedule", "View period times and daily timeline", onSchedulePress)}
         {renderToolRow(1, "School Map", "Find rooms and key locations", onMapPress)}
+        {renderToolRow(2, "Bus Schedule", "View bus routes and times", onBusPress)}
+        {renderToolRow(3, "Offered Courses", "View all courses and their information", onCoursesPress)}
       </ScrollView>
     </SafeAreaView>
   );

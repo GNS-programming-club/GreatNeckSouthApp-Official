@@ -15,7 +15,7 @@ import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
-import coursesData from '../../assets/data/courses.json';
+import coursesData from '../../../assets/data/courses.json';
 
 interface Course {
   id: string;
@@ -367,7 +367,7 @@ const CourseList: React.FC<{
               {creditOptions.map(credit => (
                 <FilterChip
                   key={credit}
-                  label={`${credit} cr`}
+                  label={`${credit} credit`}
                   selected={filters.credits.includes(credit)}
                   onPress={() => {
                     const newCredits = filters.credits.includes(credit)
