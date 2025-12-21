@@ -367,7 +367,7 @@ const CourseList: React.FC<{
               {creditOptions.map(credit => (
                 <FilterChip
                   key={credit}
-                  label={`${credit} cr`}
+                  label={`${credit} credit`}
                   selected={filters.credits.includes(credit)}
                   onPress={() => {
                     const newCredits = filters.credits.includes(credit)
