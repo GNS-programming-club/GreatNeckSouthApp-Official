@@ -1,25 +1,82 @@
-import { useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from "expo-router";
+import React, { useEffect, useMemo, useRef } from "react";
+import {
+  Animated,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Colors } from '@/constants/theme';
-import { useTheme } from '@/contexts/theme-context';
+import { Colors } from "@/constants/theme";
+import { useTheme } from "@/contexts/theme-context";
 
-const ToolsPage = () => {
+export default function ToolsPage() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
+  const itemAnims = useRef([new Animated.Value(0), new Animated.Value(0)]).current;
 
-  const renderMenuButton = (title: string, subtitle: string, onPress: () => void) => (
-    <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.navBarLeft}>
-        <Text style={styles.navBarTitle}>{title}</Text>
-        <Text style={styles.navBarSub}>{subtitle}</Text>
-      </View>
-      <Text style={styles.arrow}>→</Text>
-    </TouchableOpacity>
+  const onSchedulePress = () => {
+    router.push({ pathname: "/tools-routes/schedule" });
+  };
+
+  const onMapPress = () => {
+    router.push({ pathname: "/tools-routes/school-map" });
+  };
+
+  useEffect(() => {
+    itemAnims.forEach((anim) => {
+      anim.stopAnimation();
+      anim.setValue(0);
+    });
+
+    const sequence = Animated.stagger(
+      90,
+      itemAnims.map((anim) =>
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 420,
+          useNativeDriver: true,
+        })
+      )
+    );
+
+    sequence.start();
+    return () => sequence.stop();
+  }, [itemAnims]);
+
+  const renderToolRow = (
+    index: number,
+    title: string,
+    subtitle: string,
+    onPress: () => void
+  ) => (
+    <Animated.View
+      style={{
+        opacity: itemAnims[index],
+        transform: [
+          {
+            translateY: itemAnims[index].interpolate({
+              inputRange: [0, 1],
+              outputRange: [10, 0],
+            }),
+          },
+        ],
+      }}
+    >
+      <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
+        <View style={styles.navBarLeft}>
+          <Text style={styles.navBarTitle}>{title}</Text>
+          <Text style={styles.navBarSub}>{subtitle}</Text>
+        </View>
+        <Text style={styles.arrow}>→</Text>
+      </TouchableOpacity>
+    </Animated.View>
   );
 
   return (
@@ -29,9 +86,8 @@ const ToolsPage = () => {
       </View>
 
       <ScrollView style={styles.content}>
-        {renderMenuButton('Daily Schedule', 'View period times and daily timeline', () =>
-          router.push({ pathname: '/tools-routes/schedule' })
-        )}
+        {renderToolRow(0, "Daily Schedule", "View period times and daily timeline", onSchedulePress)}
+        {renderToolRow(1, "School Map", "Find rooms and key locations", onMapPress)}
       </ScrollView>
     </SafeAreaView>
   );
@@ -45,12 +101,12 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     header: {
       paddingHorizontal: 16,
-      paddingTop: Platform.OS === 'ios' ? 50 : 30,
+      paddingTop: Platform.OS === "ios" ? 50 : 30,
       paddingBottom: 12,
     },
     title: {
       fontSize: 28,
-      fontWeight: '800',
+      fontWeight: "800",
       color: colors.text,
       letterSpacing: 0.3,
     },
@@ -62,9 +118,9 @@ const createStyles = (colors: typeof Colors.light) =>
       backgroundColor: colors.surface,
       padding: 20,
       borderRadius: 16,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       marginTop: 20,
       borderWidth: 1,
       borderColor: colors.border,
@@ -80,7 +136,7 @@ const createStyles = (colors: typeof Colors.light) =>
     navBarTitle: {
       color: colors.text,
       fontSize: 18,
-      fontWeight: '700',
+      fontWeight: "700",
     },
     navBarSub: {
       color: colors.mutedText,
@@ -90,8 +146,6 @@ const createStyles = (colors: typeof Colors.light) =>
     arrow: {
       color: colors.mutedText,
       fontSize: 20,
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
   });
-
-export default ToolsPage;

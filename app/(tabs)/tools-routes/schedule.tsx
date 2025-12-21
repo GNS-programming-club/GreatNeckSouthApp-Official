@@ -1,5 +1,4 @@
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -19,25 +18,29 @@ const scheduleData = require('../../../assets/data/schedule.json');
 
 const { width } = Dimensions.get('window');
 
-function getEasternMinutes() {
+function getEasternSeconds() {
   try {
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: 'America/New_York',
       hour: '2-digit',
       minute: '2-digit',
+      second: '2-digit',
       hour12: false,
     });
 
     const parts = formatter.formatToParts(new Date());
     const hour = Number(parts.find(p => p.type === 'hour')?.value);
     const minute = Number(parts.find(p => p.type === 'minute')?.value);
-    if (Number.isFinite(hour) && Number.isFinite(minute)) return hour * 60 + minute;
+    const second = Number(parts.find(p => p.type === 'second')?.value);
+    if (Number.isFinite(hour) && Number.isFinite(minute) && Number.isFinite(second)) {
+      return hour * 3600 + minute * 60 + second;
+    }
   } catch {
-    // TODO: create a fallback
+    // TODO: fallback to local timezone (if anything)
   }
 
   const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
+  return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 }
 
 interface Period {
@@ -60,12 +63,12 @@ const SchedulePage = () => {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
   const periodAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
-  const [nowMinutesET, setNowMinutesET] = useState<number>(() => getEasternMinutes());
+  const [nowSecondsET, setNowSecondsET] = useState<number>(() => getEasternSeconds());
 
   const schedule = scheduleData as ScheduleData;
   const periods: Period[] = schedule.periods;
 
-  const parseTimeToMinutes = useCallback((timeString: string) => {
+  const parseTimeToSeconds = useCallback((timeString: string) => {
     const match = timeString.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
     if (!match) return null;
     const [, hourRaw, minuteRaw, ampmRaw] = match;
@@ -82,11 +85,11 @@ const SchedulePage = () => {
       if (hour !== 12) hour += 12;
     }
 
-    return hour * 60 + minute;
+    return hour * 3600 + minute * 60;
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => setNowMinutesET(getEasternMinutes()), 15_000);
+    const interval = setInterval(() => setNowSecondsET(getEasternSeconds()), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -97,31 +100,26 @@ const SchedulePage = () => {
     return periodAnims.get(key)!;
   }, [periodAnims]);
 
-  useFocusEffect(
-    useCallback(() => {
-      const animations: Animated.CompositeAnimation[] = [];
+  useEffect(() => {
+    const animations: Animated.CompositeAnimation[] = [];
 
-      periods.forEach((period) => {
-        const anim = getOrCreateAnim(period.id);
-        anim.stopAnimation();
-        anim.setValue(0);
-        animations.push(
-          Animated.timing(anim, {
-            toValue: 1,
-            duration: 380,
-            useNativeDriver: true,
-          })
-        );
-      });
+    periods.forEach((period) => {
+      const anim = getOrCreateAnim(period.id);
+      anim.stopAnimation();
+      anim.setValue(0);
+      animations.push(
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 380,
+          useNativeDriver: true,
+        })
+      );
+    });
 
-      const sequence = Animated.stagger(70, animations);
-      sequence.start();
-
-      return () => {
-        sequence.stop();
-      };
-    }, [getOrCreateAnim, periods])
-  );
+    const sequence = Animated.stagger(70, animations);
+    sequence.start();
+    return () => sequence.stop();
+  }, [getOrCreateAnim, periods]);
 
   /*
   useEffect(() => {
@@ -144,16 +142,16 @@ const SchedulePage = () => {
   const renderPeriodCard = (period: Period, index: number) => {
     const isEven = index % 2 === 0;
     const anim = getOrCreateAnim(period.id);
-    const startMinutes = parseTimeToMinutes(period.start);
-    const endMinutes = parseTimeToMinutes(period.end);
-    const isValidRange = startMinutes !== null && endMinutes !== null && endMinutes > startMinutes;
-    const isActive = isValidRange && nowMinutesET >= startMinutes! && nowMinutesET < endMinutes!;
-    const isCompleted = isValidRange && nowMinutesET >= endMinutes!;
+    const startSeconds = parseTimeToSeconds(period.start);
+    const endSeconds = parseTimeToSeconds(period.end);
+    const isValidRange = startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
+    const isActive = isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
+    const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
     const progress = isValidRange
       ? isCompleted
         ? 1
         : isActive
-          ? Math.min(1, Math.max(0, (nowMinutesET - startMinutes!) / (endMinutes! - startMinutes!)))
+          ? Math.min(1, Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!)))
           : 0
       : 0;
     
@@ -221,7 +219,7 @@ const SchedulePage = () => {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => router.replace('/tools')}
           activeOpacity={0.8}
           accessibilityRole="button"
           accessibilityLabel="Back"
@@ -304,6 +302,7 @@ const SchedulePage = () => {
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
     container: {
+      paddingBottom: 75,
       flex: 1,
       backgroundColor: colors.background,
     },

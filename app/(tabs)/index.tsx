@@ -18,16 +18,9 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.subtitle}>Get Started</Text>
+          <Text style={styles.subtitle}>Home page in development</Text>
           <Text style={styles.text}>
-            This is your home screen. Start building your app here!
-          </Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.subtitle}>Next Steps</Text>
-          <Text style={styles.text}>
-            Add your app&apos;s features, screens, and functionality.
+            Come back later...
           </Text>
         </View>
       </ScrollView>
