@@ -20,7 +20,6 @@ export default function ToolsPage() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
   
-  // Create 4 Animated.Value objects for the 4 tool items
   const itemAnims = useRef([
     new Animated.Value(0),
     new Animated.Value(0),
@@ -40,7 +39,9 @@ export default function ToolsPage() {
     router.push("/tools-routes/bus" as any);
   };
 
-
+  const onCoursesPress = () => {
+    router.push("/tools-routes/courses" as any);
+  };
 
   useEffect(() => {
     itemAnims.forEach((anim) => {
@@ -71,7 +72,6 @@ export default function ToolsPage() {
   ) => {
     const anim = itemAnims[index];
     
-    // Add safety check in case anim is undefined
     if (!anim) {
       return (
         <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
@@ -119,6 +119,7 @@ export default function ToolsPage() {
         {renderToolRow(0, "Daily Schedule", "View period times and daily timeline", onSchedulePress)}
         {renderToolRow(1, "School Map", "Find rooms and key locations", onMapPress)}
         {renderToolRow(2, "Bus Schedule", "View bus routes and times", onBusPress)}
+        {renderToolRow(3, "Offered Courses", "View all courses and their information", onCoursesPress)}
       </ScrollView>
     </SafeAreaView>
   );

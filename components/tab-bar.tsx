@@ -15,7 +15,7 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
   const colors = Colors[actualTheme];
 
   const buildHref = (name: string) => (name === 'index' ? './' : `./${name}`);
-  const visibleTabs = new Set(['index', 'calendar', 'courses', 'tools', 'settings']);
+  const visibleTabs = new Set(['index', 'calendar', 'tools', 'settings']);
 
   if (!isTabBarVisible) {
     return null;
@@ -44,7 +44,6 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
 
         if (route.name === "index") label = "Home";
         if (route.name === "calendar") label = "Calendar";
-        if (route.name === "courses") label = "Courses";
         if (route.name === "tools") label = "Tools";
         if (route.name === "settings") label = "Settings";
 
@@ -167,8 +166,6 @@ function getIcon(routeName: string, color: string) {
       return <Feather name="home" size={20} color={color}/>
     case "calendar":
       return <Feather name="calendar" size={20} color={color}/>
-    case "courses":
-      return <Feather name="book-open" size={20} color={color}/>
     case "tools":
       return <Feather name="tool" size={20} color={color}/>
     case "settings":

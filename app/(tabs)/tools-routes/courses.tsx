@@ -15,7 +15,7 @@ import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
-import coursesData from '../../assets/data/courses.json';
+import coursesData from '../../../assets/data/courses.json';
 
 interface Course {
   id: string;
