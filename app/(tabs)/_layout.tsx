@@ -39,9 +39,15 @@ export default function TabLayout() {
               }}
             />
             <Tabs.Screen
-              name="events"
+              name="tools"
               options={{
-                title: 'Events',
+                title: 'Tools',
+              }}
+            />
+            <Tabs.Screen
+              name="tools-routes/schedule"
+              options={{
+                href: null,
               }}
             />
           </Tabs>

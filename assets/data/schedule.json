@@ -1,0 +1,15 @@
+{
+  "totalSchoolDay": "7:59 AM – 2:33 PM",
+  "totalDuration": "6h 34m",
+  "periods": [
+    { "id": "1", "period": "Period 1", "start": "7:59 AM", "end": "8:39 AM", "duration": "40 min" },
+    { "id": "2", "period": "Period 2", "start": "8:43 AM", "end": "9:23 AM", "duration": "40 min" },
+    { "id": "3", "period": "Period 3", "start": "9:27 AM", "end": "10:07 AM", "duration": "40 min" },
+    { "id": "4", "period": "Period 4", "start": "10:11 AM", "end": "10:51 AM", "duration": "40 min" },
+    { "id": "5", "period": "Period 5", "start": "10:57 AM", "end": "11:37 AM", "duration": "40 min" },
+    { "id": "6", "period": "Period 6", "start": "11:41 AM", "end": "12:21 PM", "duration": "40 min" },
+    { "id": "7", "period": "Period 7", "start": "12:25 PM", "end": "1:05 PM", "duration": "40 min" },
+    { "id": "8", "period": "Period 8", "start": "1:09 PM", "end": "1:49 PM", "duration": "40 min" },
+    { "id": "9", "period": "Period 9", "start": "1:53 PM", "end": "2:33 PM", "duration": "40 min" }
+  ]
+}

@@ -422,56 +422,41 @@ const CalendarScreen = () => {
               })}
             </View>
           )}
-        </Animated.View>
+          <View style={styles.holidaySection}>
+            <Text style={styles.menuSectionTitle}>Events</Text>
 
-        <Animated.View
-          style={[
-            styles.card,
-            {
-              opacity: eventsAnim,
-              transform: [
-                {
-                  translateY: eventsAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [14, 0],
-                  }),
-                },
-              ],
-            },
-          ]}>
-          <Text style={styles.sectionTitle}>Today&apos;s Club Events</Text>
-
-          {todayInfo.clubEvents && todayInfo.clubEvents.length > 0 ? (
-            todayInfo.clubEvents.map((event, index) => {
-              const anim = getOrCreateAnim(eventAnims, `event-${event.name}-${index}`);
-              return (
-                <Animated.View
-                  key={`${event.name}-${index}`}
-                  style={[
-                    styles.eventRow,
-                    {
-                      opacity: anim,
-                      transform: [
-                        {
-                          translateY: anim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [8, 0],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}>
-                  <View style={styles.eventDot} />
-                  <View style={styles.eventText}>
-                    <Text style={styles.eventName}>{event.name}</Text>
-                    <Text style={styles.eventTime}>{event.time}</Text>
-                  </View>
-                </Animated.View>
-              );
-            })
-          ) : (
-            <Text style={styles.emptyText}>No club events scheduled for this day.</Text>
-          )}
+            {todayInfo.clubEvents && todayInfo.clubEvents.length > 0 ? (
+              todayInfo.clubEvents.map((event, index) => {
+                const anim = getOrCreateAnim(eventAnims, `event-${event.name}-${index}`);
+                return (
+                  <Animated.View
+                    key={`${event.name}-${index}`}
+                    style={[
+                      styles.eventRow,
+                      {
+                        opacity: anim,
+                        transform: [
+                          {
+                            translateY: anim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [8, 0],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}>
+                    <View style={styles.eventDot} />
+                    <View style={styles.eventText}>
+                      <Text style={styles.eventName}>{event.name}</Text>
+                      <Text style={styles.eventTime}>{event.time}</Text>
+                    </View>
+                  </Animated.View>
+                );
+              })
+            ) : (
+              <Text style={styles.emptyText}>No events scheduled for this day.</Text>
+            )}
+          </View>
         </Animated.View>
 
 
