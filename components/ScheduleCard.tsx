@@ -1,5 +1,7 @@
+import { Colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/theme-context';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, } from "react";
 import {
     FlatList,
     Modal,
@@ -22,6 +24,8 @@ interface Course {
 }
 
 const STORAGE_KEY = "userSchedule_v1";
+
+
 
 function formatMinutes(totalMinutes: number) {
   const h = Math.floor(totalMinutes / 60);
@@ -56,6 +60,10 @@ function getDayLetter(date: Date): string {
 } 
 
 export default function ScheduleCard({ periods = 9, day, style }: { periods?: number; day?: 'A' | 'B'; style?: any }) {
+  const { actualTheme } = useTheme();
+  const colors = Colors[actualTheme];
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const storageKey = day ? `${STORAGE_KEY}_${day}` : STORAGE_KEY;
   const [schedule, setSchedule] = useState<(string | null)[]>(() => Array(periods).fill(null));
   const [modalVisible, setModalVisible] = useState(false);
@@ -225,153 +233,158 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 6,   
-    width: "50%",
-    margin: 8,
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    marginBottom: 12,
-  },
-  content: {
-    gap: 10,
-    paddingBottom: 8,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 5,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    backgroundColor: "#f6f6f6",
-  },
-  left: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  periodBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#007AFF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  periodNumber: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-  right: {
-    maxWidth: "60%",
-  },
-  period: {
-    fontWeight: "700",
-  },
-  time: {
-    color: "#666",
-    fontSize: 12,
-  },
-  addText: {
-    color: "#007AFF",
-    fontWeight: "600",
-  },
-  courseContainer: {},
-  courseTitle: {
-    fontWeight: "700",
-  },
-  courseMeta: {
-    color: "#666",
-    fontSize: 12,
-  },
-  footer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingTop: 10,
-    paddingHorizontal: 6,
-  },
-  savedText: {
-    color: "#666",
-    fontSize: 12,
-  },
-  clearAllBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#eee",
-  },
-  clearAllText: {
-    color: "#FF3B30",
-    fontWeight: "600",
-  },
-  modalHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  closeBtn: {},
-  closeText: {
-    color: "#007AFF",
-    fontWeight: "600",
-  },
-  modalSearch: {
-    padding: 12,
-  },
-  searchInput: {
-    borderWidth: 1,
-    borderColor: "#eee",
-    borderRadius: 8,
-    padding: 8,
-  },
-  courseRow: {
-    padding: 12,
-  },
-  courseTitleRow: {
-    fontWeight: "700",
-  },
-  courseMetaRow: {
-    color: "#666",
-    fontSize: 12,
-  },
-  sep: {
-    height: 1,
-    backgroundColor: "#f0f0f0",
-  },
-  modalFooter: {
-    padding: 12,
-    borderTopWidth: 1,
-    borderColor: "#eee",
-  },
-  clearBtn: {
-    padding: 12,
-    alignItems: "center",
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#eee",
-  },
-  clearText: {
-    color: "#FF3B30",
-    fontWeight: "600",
-  },
-});
+function createStyles(colors: typeof Colors.light) {
+  return StyleSheet.create({
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      padding: 20,
+      shadowColor: "#000",
+      shadowOpacity: 0.08,
+      shadowRadius: 10,
+      elevation: 6,
+      margin: 8,
+      minWidth: 0,
+    },
+    cardTitle: {
+      fontSize: 25,
+      fontWeight: "800",
+      marginBottom: 12,
+      color: colors.text,
+    },
+    content: {
+      gap: 10,
+      paddingBottom: 8,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 5,
+      paddingHorizontal: 12,
+      borderRadius: 10,
+      backgroundColor: colors.surfaceAlt,
+    },
+    left: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    periodBadge: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    periodNumber: {
+      color: colors.primaryText,
+      fontWeight: "700",
+    },
+    right: {
+      maxWidth: "60%",
+    },
+    period: {
+      fontWeight: "700",
+      color: colors.text,
+    },
+    time: {
+      color: colors.mutedText,
+      fontSize: 12,
+    },
+    addText: {
+      color: colors.primary,
+      fontWeight: "600",
+    },
+    courseContainer: {},
+    courseTitle: {
+      fontWeight: "700",
+    },
+    courseMeta: {
+      color: colors.mutedText,
+      fontSize: 12,
+    },
+    footer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingTop: 10,
+      paddingHorizontal: 6,
+    },
+    savedText: {
+      color: colors.mutedText,
+      fontSize: 12,
+    },
+    clearAllBtn: {
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    clearAllText: {
+      color: colors.accent,
+      fontWeight: "600",
+    },
+    modalHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 16,
+      borderBottomWidth: 1,
+      borderColor: colors.border,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    closeBtn: {},
+    closeText: {
+      color: colors.primary,
+      fontWeight: "600",
+    },
+    modalSearch: {
+      padding: 12,
+    },
+    searchInput: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 8,
+      padding: 8,
+      backgroundColor: colors.surfaceAlt,
+      color: colors.text,
+    },
+    courseRow: {
+      padding: 12,
+    },
+    courseTitleRow: {
+      fontWeight: "700",
+    },
+    courseMetaRow: {
+      color: colors.mutedText,
+      fontSize: 12,
+    },
+    sep: {
+      height: 1,
+      backgroundColor: colors.surfaceAlt,
+    },
+    modalFooter: {
+      padding: 12,
+      borderTopWidth: 1,
+      borderColor: colors.border,
+    },
+    clearBtn: {
+      padding: 12,
+      alignItems: "center",
+      borderRadius: 8,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    clearText: {
+      color: colors.accent,
+      fontWeight: "600",
+    },
+  });
+}
