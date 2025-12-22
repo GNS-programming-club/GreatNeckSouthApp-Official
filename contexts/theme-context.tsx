@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useColorScheme as useDeviceColorScheme } from 'react-native';
+import { Text, useColorScheme as useDeviceColorScheme } from 'react-native';
+
+import { Colors } from '@/constants/theme';
 
 type ThemeMode = 'light' | 'dark' | 'auto';
 
@@ -11,6 +13,8 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+let baseTextDefaultStyle: unknown = undefined;
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const deviceColorScheme = useDeviceColorScheme();
@@ -24,6 +28,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     loadThemePreference();
   }, []);
+
+  useEffect(() => {
+    if (baseTextDefaultStyle === undefined) {
+      baseTextDefaultStyle = Text.defaultProps?.style;
+    }
+
+    const base = baseTextDefaultStyle;
+    const baseArray = Array.isArray(base) ? base : base ? [base] : [];
+
+    Text.defaultProps = Text.defaultProps ?? {};
+    Text.defaultProps.style = [{ color: Colors[actualTheme].text }, ...baseArray];
+  }, [actualTheme]);
 
   const loadThemePreference = async () => {
     try {

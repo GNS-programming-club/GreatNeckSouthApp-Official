@@ -6,6 +6,7 @@ import {
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ThemeProvider as AppThemeProvider } from '@/contexts/theme-context';
 
@@ -19,16 +20,18 @@ export default function RootLayout() {
 
   return (
     <AppThemeProvider>
-      <NavigationThemeProvider value={navTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: 'modal', title: 'Modal' }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </NavigationThemeProvider>
+      <SafeAreaProvider>
+        <NavigationThemeProvider value={navTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="modal"
+              options={{ presentation: 'modal', title: 'Modal' }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+        </NavigationThemeProvider>
+      </SafeAreaProvider>
     </AppThemeProvider>
   );
 }

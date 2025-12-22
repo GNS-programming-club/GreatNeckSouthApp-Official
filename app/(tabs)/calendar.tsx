@@ -255,6 +255,33 @@ const CalendarScreen = () => {
     [colors.primary, colors.primaryText, selectedDate],
   );
 
+  const calendarTheme = useMemo(
+    () => ({
+      calendarBackground: colors.surface,
+      backgroundColor: colors.surface,
+      selectedDayBackgroundColor: colors.primary,
+      selectedDayTextColor: colors.primaryText,
+      todayTextColor: colors.accent,
+      todayBackgroundColor: colors.surfaceAlt,
+      arrowColor: colors.primary,
+      textSectionTitleColor: colors.mutedText,
+      dayTextColor: colors.text,
+      textDisabledColor: colors.mutedText,
+      monthTextColor: colors.text,
+      textMonthFontWeight: '800' as const,
+      textDayFontWeight: '600' as const,
+      textDayHeaderFontWeight: '700' as const,
+      dotColor: colors.accent,
+      selectedDotColor: colors.primaryText,
+      disabledArrowColor: colors.mutedText,
+      indicatorColor: colors.accent,
+      textDayHeaderFontSize: 13,
+      textDayFontSize: 16,
+      textMonthFontSize: 16,
+    }),
+    [colors],
+  );
+
   const handleDayPress = useCallback((day: { dateString: string }) => {
     setSelectedDate((current) => (current === day.dateString ? current : day.dateString));
   }, []);
@@ -320,28 +347,16 @@ const CalendarScreen = () => {
             },
           ]}>
           <Text style={styles.sectionTitle}>Calendar</Text>
-          <Calendar
-            current={selectedDate}
-            markedDates={markedDates}
-            onDayPress={handleDayPress}
-            theme={{
-              calendarBackground: colors.surface,
-              backgroundColor: colors.surface,
-              selectedDayBackgroundColor: colors.primary,
-              selectedDayTextColor: colors.primaryText,
-              todayTextColor: colors.accent,
-              todayBackgroundColor: colors.surfaceAlt,
-              arrowColor: colors.primary,
-              textSectionTitleColor: colors.mutedText,
-              dayTextColor: colors.text,
-              textDisabledColor: colors.mutedText,
-              monthTextColor: colors.text,
-              textMonthFontWeight: '800',
-              textDayFontWeight: '600',
-              textDayHeaderFontWeight: '700',
-            }}
-            style={styles.calendar}
-          />
+          <View style={[styles.calendarWrapper, { backgroundColor: colors.surface }]}>
+            <Calendar
+              key={actualTheme}
+              current={selectedDate}
+              markedDates={markedDates}
+              onDayPress={handleDayPress}
+              theme={calendarTheme}
+              style={styles.calendar}
+            />
+          </View>
         </Animated.View>
 
         <Animated.View
@@ -550,6 +565,11 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       fontWeight: '700',
       color: colors.text,
       letterSpacing: 0.2,
+    },
+    calendarWrapper: {
+      borderRadius: 16,
+      overflow: 'hidden',
+      backgroundColor: colors.surface,
     },
     calendar: {
       borderRadius: 16,
