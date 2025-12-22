@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef } from "react";
+import Feather from "@expo/vector-icons/Feather";
 import {
   Animated,
   Platform,
@@ -26,6 +27,7 @@ export default function ToolsPage() {
     new Animated.Value(0),
     new Animated.Value(0)
   ]).current;
+  const hasAnimatedOnce = useRef(false);
 
   const onSchedulePress = () => {
     router.push("/tools-routes/schedule" as any);
@@ -44,6 +46,9 @@ export default function ToolsPage() {
   };
 
   useEffect(() => {
+    if (hasAnimatedOnce.current) return;
+    hasAnimatedOnce.current = true;
+
     itemAnims.forEach((anim) => {
       anim.stopAnimation();
       anim.setValue(0);
@@ -79,7 +84,7 @@ export default function ToolsPage() {
             <Text style={styles.navBarTitle}>{title}</Text>
             <Text style={styles.navBarSub}>{subtitle}</Text>
           </View>
-          <Text style={styles.arrow}>→</Text>
+          <Feather name="chevron-right" size={22} color={colors.mutedText} />
         </TouchableOpacity>
       );
     }
@@ -103,7 +108,7 @@ export default function ToolsPage() {
             <Text style={styles.navBarTitle}>{title}</Text>
             <Text style={styles.navBarSub}>{subtitle}</Text>
           </View>
-          <Text style={styles.arrow}>→</Text>
+          <Feather name="chevron-right" size={22} color={colors.mutedText} />
         </TouchableOpacity>
       </Animated.View>
     );

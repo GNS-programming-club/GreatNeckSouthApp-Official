@@ -1,6 +1,6 @@
 import { Redirect } from 'expo-router';
 
 export default function Index() {
-  // Always land in the tab-based home screen.
+  // always land in the tabbed home screen (index)
   return <Redirect href="/(tabs)" />;
 }

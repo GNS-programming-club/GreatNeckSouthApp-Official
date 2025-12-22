@@ -63,6 +63,7 @@ const SchedulePage = () => {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
   const periodAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
+  const hasAnimatedOnce = useRef(false);
   const [nowSecondsET, setNowSecondsET] = useState<number>(() => getEasternSeconds());
 
   const schedule = scheduleData as ScheduleData;
@@ -101,6 +102,9 @@ const SchedulePage = () => {
   }, [periodAnims]);
 
   useEffect(() => {
+    if (hasAnimatedOnce.current) return;
+    hasAnimatedOnce.current = true;
+
     const animations: Animated.CompositeAnimation[] = [];
 
     periods.forEach((period) => {
@@ -211,7 +215,17 @@ const SchedulePage = () => {
   };
 
   const calculateTimeBetween = (currentEnd: string, nextStart: string) => {
-    return "4 min";
+    const endSeconds = parseTimeToSeconds(currentEnd);
+    const startSeconds = parseTimeToSeconds(nextStart);
+    if (endSeconds == null || startSeconds == null) return '—';
+
+    let deltaSeconds = startSeconds - endSeconds;
+    if (deltaSeconds < 0) {
+      deltaSeconds += 24 * 3600;
+    }
+
+    const minutes = Math.max(0, Math.round(deltaSeconds / 60));
+    return `${minutes} min`;
   };
 
   return (
@@ -234,7 +248,6 @@ const SchedulePage = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Summary Card */}
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>School Day Overview</Text>
           <View style={styles.summaryGrid}>
@@ -264,7 +277,7 @@ const SchedulePage = () => {
                 <View style={styles.breakContainer}>
                   <View style={styles.breakLine} />
                   <Text style={styles.breakText}>
-                    {calculateTimeBetween(period.end, periods[index + 1].start)} break
+                    {calculateTimeBetween(period.end, periods[index + 1].start)} transition
                   </Text>
                   <View style={styles.breakLine} />
                 </View>
