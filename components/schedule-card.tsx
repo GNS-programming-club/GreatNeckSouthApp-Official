@@ -18,7 +18,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import courses from "../assets/data/courses.json";
+import courses from "../assets/data/coursesHomepage.json";
 
 
 interface Course {
