@@ -1,6 +1,6 @@
+import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef } from "react";
-import Feather from "@expo/vector-icons/Feather";
 import {
   Animated,
   Platform,
@@ -25,6 +25,7 @@ export default function ToolsPage() {
     new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
+    new Animated.Value(0),
     new Animated.Value(0)
   ]).current;
   const hasAnimatedOnce = useRef(false);
@@ -45,6 +46,9 @@ export default function ToolsPage() {
     router.push("/tools-routes/courses" as any);
   };
 
+  const onClubPress = () => {
+    router.push("/tools-routes/club" as any);
+  };
   useEffect(() => {
     if (hasAnimatedOnce.current) return;
     hasAnimatedOnce.current = true;
@@ -124,7 +128,8 @@ export default function ToolsPage() {
         {renderToolRow(0, "Daily Schedule", "View period times and daily timeline", onSchedulePress)}
         {renderToolRow(1, "School Map", "Find rooms and key locations", onMapPress)}
         {renderToolRow(2, "Bus Schedule", "View bus routes and times", onBusPress)}
-        {renderToolRow(3, "Offered Courses", "View all courses and their information", onCoursesPress)}
+        {renderToolRow(3, "Course Planner", "Plan your courses for next year", onCoursesPress)}
+        {renderToolRow(4, "Club Directory", "Explore and join school clubs", onClubPress)}
       </ScrollView>
     </SafeAreaView>
   );
