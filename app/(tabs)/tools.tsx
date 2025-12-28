@@ -26,6 +26,7 @@ export default function ToolsPage() {
     new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
+    new Animated.Value(0),
     new Animated.Value(0)
   ]).current;
   const hasAnimatedOnce = useRef(false);
@@ -48,6 +49,10 @@ export default function ToolsPage() {
 
   const onClubPress = () => {
     router.push("/tools-routes/club" as any);
+  };
+
+   const onReferenceTablePress = () => {
+    router.push("/tools-routes/reference-table" as any);
   };
   useEffect(() => {
     if (hasAnimatedOnce.current) return;
@@ -130,6 +135,7 @@ export default function ToolsPage() {
         {renderToolRow(2, "Bus Schedule", "View bus routes and times", onBusPress)}
         {renderToolRow(3, "Course Planner", "Plan your courses for next year", onCoursesPress)}
         {renderToolRow(4, "Club Directory", "Explore and join school clubs", onClubPress)}
+        {renderToolRow(5, "Reference Table", "Quick access to important info", onReferenceTablePress)}
       </ScrollView>
     </SafeAreaView>
   );

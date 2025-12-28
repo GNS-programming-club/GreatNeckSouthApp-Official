@@ -1,3 +1,6 @@
+import { Colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/theme-context';
+import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -10,9 +13,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Feather from '@expo/vector-icons/Feather';
-import { Colors } from '@/constants/theme';
-import { useTheme } from '@/contexts/theme-context';
 
 const scheduleData = require('../../../assets/data/schedule.json');
 
