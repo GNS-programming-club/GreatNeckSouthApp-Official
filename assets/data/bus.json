@@ -1,0 +1,688 @@
+[
+  {
+    "id": "6606-PM-c-SMS/SHS-LATE-4:00",
+    "title": "Bus 6606 – PM Late Route (SMS/SHS)",
+    "vehicle": "6606",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:09", "students": 0, "location": "NSUH Community Dr" },
+      { "stop": 4, "time": "4:14", "students": 0, "location": "Grace Ave & Singley Ct" },
+      { "stop": 5, "time": "4:16", "students": 0, "location": "Gilchrest St & Grace Ave" },
+      { "stop": 6, "time": "4:19", "students": 0, "location": "Bond St & Grace Ave" },
+      { "stop": 7, "time": "4:21", "students": 0, "location": "Beverly Rd & West Dr" },
+      { "stop": 8, "time": "4:22", "students": 0, "location": "Beverly Rd & East Dr" },
+      { "stop": 9, "time": "4:24", "students": 0, "location": "Beverly Rd & Gilchrest Rd" },
+      { "stop": 10, "time": "4:26", "students": 0, "location": "Beverly Rd & Park Rd" },
+      { "stop": 11, "time": "4:27", "students": 0, "location": "Beverly Rd & Nassau Dr" },
+      { "stop": 12, "time": "4:28", "students": 0, "location": "Beverly Ln & Nassau Dr" },
+      { "stop": 13, "time": "4:28", "students": 0, "location": "MAPLE ST & NORTHERN BLVD" }
+    ]
+  },
+  {
+    "id": "6616-PM-c-SMS/SHS-LATE-4:00",
+    "title": "Bus 6616 – PM Late Route (SMS/SHS)",
+    "vehicle": "6616",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:10", "students": 0, "location": "Lodge Rd & Schenck Ave" },
+      { "stop": 4, "time": "4:12", "students": 0, "location": "Prospect St & Susquehanna Ave" },
+      { "stop": 5, "time": "4:13", "students": 0, "location": "Prospect St & Schenck Ave" },
+      { "stop": 6, "time": "4:14", "students": 0, "location": "Highland Ave & Shoreward Dr" },
+      { "stop": 7, "time": "4:16", "students": 0, "location": "Gilchrest Rd & Welwyn Rd" },
+      { "stop": 8, "time": "4:18", "students": 0, "location": "S Middle Neck Rd & Schenck Ave" }
+    ]
+  },
+  {
+    "id": "6620-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6620 – PM Late Route (SMS/SHS)",
+    "vehicle": "6620",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:09", "students": 0, "location": "Cumberland School" },
+      { "stop": 4, "time": "4:10", "students": 0, "location": "Clark Dr & Summer Ave" },
+      { "stop": 5, "time": "4:11", "students": 0, "location": "Grandview Ave & Spinney Hill" },
+      { "stop": 6, "time": "4:13", "students": 0, "location": "Briarfield Dr & University Pl" },
+      { "stop": 7, "time": "4:14", "students": 0, "location": "Into and Around Briarfield Dr" }
+    ]
+  },
+  {
+    "id": "6622-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6622 – PM Late Route (SMS/SHS)",
+    "vehicle": "6622",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:04", "students": 0, "location": "Lake Rd & Lakeview Dr" },
+      { "stop": 4, "time": "4:05", "students": 0, "location": "Lake Rd & Lake Rd S" },
+      { "stop": 5, "time": "4:07", "students": 0, "location": "Lake Rd & Lake Rd W" },
+      { "stop": 6, "time": "4:08", "students": 0, "location": "LAKE RD West- Cul-de- Sac" },
+      { "stop": 7, "time": "4:12", "students": 0, "location": "Olive St & Tanners Rd" },
+      { "stop": 8, "time": "4:19", "students": 0, "location": "79th Ave & Stewart Ave" },
+      { "stop": 9, "time": "4:21", "students": 0, "location": "80th Ave & Stewart Ave" },
+      { "stop": 10, "time": "4:23", "students": 0, "location": "81st Ave & Fairfield Ln & Stewart Ave" },
+      { "stop": 11, "time": "4:24", "students": 0, "location": "Peter Ln & Stewart Ave" },
+      { "stop": 12, "time": "4:26", "students": 0, "location": "Kalda Ave & Peter Ln" },
+      { "stop": 13, "time": "4:28", "students": 0, "location": "Fairfield Ln & Stephan Marc Ln" }
+    ]
+  },
+  {
+    "id": "6623-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6623 – PM Late Route (SMS/SHS)",
+    "vehicle": "6623",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:06", "students": 0, "location": "Lakeville Rd & Windsor Gate" },
+      { "stop": 4, "time": "4:07", "students": 0, "location": "Birch Hill Rd & Lakeville Rd" },
+      { "stop": 5, "time": "4:08", "students": 0, "location": "Farm Ln & Lakeville Rd" },
+      { "stop": 6, "time": "4:09", "students": 0, "location": "Lakeville Rd & River Dr Gate" },
+      { "stop": 7, "time": "4:14", "students": 0, "location": "Gussack Plz & Walnut" },
+      { "stop": 8, "time": "4:16", "students": 0, "location": "Ash Pl & Cutter Mill Rd" },
+      { "stop": 9, "time": "4:18", "students": 0, "location": "Amherst Rd & Bayview Ave" },
+      { "stop": 10, "time": "4:20", "students": 0, "location": "Ascot Ridge & Mirrielees cir" }
+    ]
+  },
+  {
+    "id": "6624-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6624 – PM Late Route (SMS/SHS)",
+    "vehicle": "6624",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 3, "time": "4:05", "students": 0, "location": "Elm Ln & Meadow Woods Rd" },
+      { "stop": 4, "time": "4:07", "students": 0, "location": "Meadow Woods Rd & Old Field Ln" },
+      { "stop": 5, "time": "4:08", "students": 0, "location": "Meadow Woods Rd & Old Farm Rd" },
+      { "stop": 6, "time": "4:09", "students": 0, "location": "Old Farm Rd & West Woods Rd" },
+      { "stop": 7, "time": "4:10", "students": 0, "location": "Old Farm Rd & Soundview Dr" },
+      { "stop": 8, "time": "4:12", "students": 0, "location": "HoraceHarding BD & Vanderbilt Dr" },
+      { "stop": 9, "time": "4:13", "students": 0, "location": "Dale Carnegie Ct & Vanderbilt" },
+      { "stop": 10, "time": "4:14", "students": 0, "location": "Horizon Rd & Links Dr" }
+    ]
+  },
+  {
+    "id": "6626-PM-c-SMS/SHS-LATE-4:00",
+    "title": "Bus 6626 – PM Late Route (SMS/SHS)",
+    "vehicle": "6626",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:03", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:07", "students": 0, "location": "Merrivale Rd & Merrivale Ter" },
+      { "stop": 4, "time": "4:08", "students": 0, "location": "Merrivale Rd & Somerset Dr S" },
+      { "stop": 5, "time": "4:10", "students": 0, "location": "Dorset Rd & Hereford Rd" },
+      { "stop": 6, "time": "4:11", "students": 0, "location": "Merrivale Rd & Somerset Dr N" },
+      { "stop": 7, "time": "4:13", "students": 0, "location": "Melbourne Rd & Merrivale Rd" },
+      { "stop": 8, "time": "4:15", "students": 0, "location": "Clent Rd & Tain Dr" },
+      { "stop": 9, "time": "4:16", "students": 0, "location": "Clent Rd & Merrivale Rd" }
+    ]
+  },
+  {
+    "id": "6631-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6631 – PM Late Route (SMS/SHS)",
+    "vehicle": "6631",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:03", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:07", "students": 0, "location": "Cornell Dr & Wilwade Rd" },
+      { "stop": 4, "time": "4:10", "students": 0, "location": "25 OVERLOOK RD" },
+      { "stop": 5, "time": "4:11", "students": 0, "location": "Soundview Dr & Upland Rd" },
+      { "stop": 6, "time": "4:12", "students": 0, "location": "Bates Rd & Soundview Dr" },
+      { "stop": 7, "time": "4:13", "students": 0, "location": "Bates Rd & Westminster Rd" },
+      { "stop": 8, "time": "4:15", "students": 0, "location": "Robbins Ln & Westminster Rd" }
+    ]
+  },
+  {
+    "id": "6628-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6628 – PM Late Route (SMS/SHS)",
+    "vehicle": "6628",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:11", "students": 0, "location": "Great Neck Rd & Knightsbridge" },
+      { "stop": 4, "time": "4:12", "students": 0, "location": "Clent Rd & Knightsbridge Rd" },
+      { "stop": 5, "time": "4:13", "students": 0, "location": "Pont St & S Middle Neck Rd" },
+      { "stop": 6, "time": "4:16", "students": 0, "location": "Brompton Rd & Pont St" },
+      { "stop": 7, "time": "4:17", "students": 0, "location": "Melbourne Rd & S Middle Neck" },
+      { "stop": 8, "time": "4:18", "students": 0, "location": "Russell Woods & S Middle Neck" }
+    ]
+  },
+  {
+    "id": "6629-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6629 – PM Late Route (SMS/SHS)",
+    "vehicle": "6629",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:14", "students": 0, "location": "Cedar Dr & Myrtle Dr" },
+      { "stop": 4, "time": "4:15", "students": 0, "location": "Bayview Ave & Cedar Dr" },
+      { "stop": 5, "time": "4:17", "students": 0, "location": "Boxwood Dr & Laurel Dr" },
+      { "stop": 6, "time": "4:18", "students": 0, "location": "Boxwood Dr & Cedar Dr" },
+      { "stop": 7, "time": "4:20", "students": 0, "location": "Ridge Dr E & Stewart Dr" },
+      { "stop": 8, "time": "4:21", "students": 0, "location": "Hickory Dr & Ridge Dr E" },
+      { "stop": 9, "time": "4:23", "students": 0, "location": "Bayview Ave & Hickory Dr" },
+      { "stop": 10, "time": "4:24", "students": 0, "location": "Deepdale Dr & N Clover Dr" },
+      { "stop": 11, "time": "4:25", "students": 0, "location": "Myrtle Dr & N Clover Dr" },
+      { "stop": 12, "time": "4:27", "students": 0, "location": "Clover Dr & Gateway Dr" },
+      { "stop": 13, "time": "4:29", "students": 0, "location": "Hilltop Dr E & Linden Blvd" },
+      { "stop": 14, "time": "4:31", "students": 0, "location": "Cedar Dr & Deepdale Dr" },
+      { "stop": 15, "time": "4:32", "students": 0, "location": "Hillside Ave & Maple Dr" },
+      { "stop": 16, "time": "4:33", "students": 0, "location": "Maple Dr & Middle Neck Rd" }
+    ]
+  },
+  {
+    "id": "6630-pm-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6630 – PM Late Route (SMS/SHS)",
+    "vehicle": "6630",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 2, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 3, "time": "4:17", "students": 0, "location": "Claudy Ln & Patton Blvd" },
+      { "stop": 4, "time": "4:19", "students": 0, "location": "Haddon Rd & Lawrence St" },
+      { "stop": 5, "time": "4:20", "students": 0, "location": "Campbell St & Haddon Rd" },
+      { "stop": 6, "time": "4:21", "students": 0, "location": "Haddon Rd & Nugent St" },
+      { "stop": 7, "time": "4:22", "students": 0, "location": "Blossom Ln & Haddon Rd" },
+      { "stop": 8, "time": "4:23", "students": 0, "location": "Maple Ln & Rose Ln" }
+    ]
+  },
+  {
+    "id": "6632-PM-c-SMS/SHS-LATE-4:00",
+    "title": "Bus 6632 – PM Late Route (SMS/SHS)",
+    "vehicle": "6632",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:02", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:11", "students": 0, "location": "Schenck Ave & Windsor Rd" },
+      { "stop": 4, "time": "4:13", "students": 0, "location": "Lodge Rd & Schenck Ave" },
+      { "stop": 5, "time": "4:14", "students": 0, "location": "Lodge Rd & Valley View Rd" },
+      { "stop": 6, "time": "4:16", "students": 0, "location": "Lodge Rd & Shoreward Dr" },
+      { "stop": 7, "time": "4:19", "students": 0, "location": "3 ST GEORGE RD" },
+      { "stop": 8, "time": "4:20", "students": 0, "location": "Highland Ave & Shoreward Dr" },
+      { "stop": 9, "time": "4:22", "students": 0, "location": "Ardsley PI & Shoreward Dr" },
+      { "stop": 10, "time": "4:24", "students": 0, "location": "Gilchrest Rd & Schenck Ave" },
+      { "stop": 11, "time": "4:26", "students": 0, "location": "Schenck Ave & South Middle Neck Rd" }
+    ]
+  },
+  {
+    "id": "6633-PM-c-SMS/SHS-LATE-4:00",
+    "title": "Bus 6633 – PM Late Route (SMS/SHS)",
+    "vehicle": "6633",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:03", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:09", "students": 0, "location": "Pembroke Ave & Westminster Rd" },
+      { "stop": 4, "time": "4:10", "students": 0, "location": "Nassau Rd & Northern Blvd" },
+      { "stop": 5, "time": "4:13", "students": 0, "location": "Terrace Cir & West Mill Dr" },
+      { "stop": 6, "time": "4:14", "students": 0, "location": "East Mill Dr & Terrace Cir" },
+      { "stop": 7, "time": "4:16", "students": 0, "location": "Melbourne Rd & Tain Dr" }
+    ]
+  },
+  {
+    "id": "6648-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6648 – PM Late Route (SMS/SHS)",
+    "vehicle": "6648",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "3:58", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:00", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:16", "students": 0, "location": "Executive Dr & Holiday Gate" },
+      { "stop": 4, "time": "4:18", "students": 0, "location": "Executive Dr & Suburban Gate" },
+      { "stop": 5, "time": "4:19", "students": 0, "location": "New Hyde Park Rd & Windsor Gate Dr" },
+      { "stop": 6, "time": "4:20", "students": 0, "location": "New Hyde Park Rd @ Ritz Carlton Gate" },
+      { "stop": 7, "time": "4:22", "students": 0, "location": "1000 Royal Ct" }
+    ]
+  },
+  {
+    "id": "6656-PM-d-SMS/SHS-LATE-4:00",
+    "title": "Bus 6656 – PM Late Route (SMS/SHS)",
+    "vehicle": "6656",
+    "departureTime": "4:00 PM",
+    "stops": [
+      { "stop": 1, "time": "4:00", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:03", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:10", "students": 0, "location": "Concord Ave & W End Dr" },
+      { "stop": 4, "time": "4:11", "students": 0, "location": "Buttonwood Rd & Pembroke Ave" },
+      { "stop": 5, "time": "4:13", "students": 0, "location": "Lakeville Scope" },
+      { "stop": 6, "time": "4:15", "students": 0, "location": "Broadway & Jayson Ave" },
+      { "stop": 7, "time": "4:17", "students": 0, "location": "Great Neck Rd & Jayson Ave" }
+    ]
+  },
+  {
+    "id": "6606-PM-d-SMS/SHS-LATE-4:50",
+    "title": "Bus 6606 – PM Late Route (SMS/SHS)",
+    "vehicle": "6606",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:52", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:56", "students": 0, "location": "Lakeville Rd & Windsor Gate" },
+      { "stop": 4, "time": "4:57", "students": 0, "location": "Birch Hill Rd & Lakeville Rd" },
+      { "stop": 5, "time": "4:58", "students": 0, "location": "Farm Ln & Lakeville Rd" },
+      { "stop": 6, "time": "4:59", "students": 0, "location": "Rivers Dr & Rivers Dr Gate" },
+      { "stop": 7, "time": "5:01", "students": 0, "location": "Spinney Hill Dr & Summer Ave" },
+      { "stop": 8, "time": "5:04", "students": 0, "location": "Schenck Ave & Windsor Rd" },
+      { "stop": 9, "time": "5:05", "students": 0, "location": "Lodge Rd & Valley View Rd" },
+      { "stop": 10, "time": "5:06", "students": 0, "location": "Lodge Rd & Shoreward Dr" },
+      { "stop": 11, "time": "5:08", "students": 0, "location": "Highland Ave & Shoreward Dr" },
+      { "stop": 12, "time": "5:09", "students": 0, "location": "Ardsley PI & Shadow Ln & Shoreward Dr" },
+      { "stop": 13, "time": "5:11", "students": 0, "location": "Gilchrest Rd & Schenck Ave" },
+      { "stop": 14, "time": "5:12", "students": 0, "location": "S Middle Neck Rd & Schenck Ave" },
+      { "stop": 15, "time": "5:14", "students": 0, "location": "Middle Neck Rd & Susquehanna" },
+      { "stop": 16, "time": "5:16", "students": 0, "location": "Prospect St & Susquehanna Ave" },
+      { "stop": 17, "time": "5:17", "students": 0, "location": "Highland Ave & Schenck Ave" },
+      { "stop": 18, "time": "5:18", "students": 0, "location": "Linden St & Schenck Ave" }
+    ]
+  },
+  {
+    "id": "6611-PM-c-SMS/SHS-LATE-4:50",
+    "title": "Bus 6611 – PM Late Route (SMS/SHS)",
+    "vehicle": "6611",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:57", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:06", "students": 0, "location": "Nassau Rd & 41 st." },
+      { "stop": 4, "time": "5:08", "students": 0, "location": "Terrace Cir & West Mill Dr" },
+      { "stop": 5, "time": "5:09", "students": 0, "location": "East Mill Dr & Terrace Cir" },
+      { "stop": 6, "time": "5:10", "students": 0, "location": "Clair St & Jayson Ave" },
+      { "stop": 7, "time": "5:11", "students": 0, "location": "Broadway & Tobin Ave" },
+      { "stop": 8, "time": "5:14", "students": 0, "location": "Amherst Rd & Bayview Ave" },
+      { "stop": 9, "time": "5:16", "students": 0, "location": "Bayview Ave & Cedar Dr" },
+      { "stop": 10, "time": "5:17", "students": 0, "location": "Boxwood Dr & Cedar Dr" },
+      { "stop": 11, "time": "5:18", "students": 0, "location": "Ridge Dr E & Stewart Dr" },
+      { "stop": 12, "time": "5:20", "students": 0, "location": "Bayview Ave & Hickory Dr" },
+      { "stop": 13, "time": "5:23", "students": 0, "location": "GREAT NECK LIBRARY" },
+      { "stop": 14, "time": "5:27", "students": 0, "location": "260 MIDDLE NECK RD" }
+    ]
+  },
+  {
+    "id": "6617-PM-c-SMS/SHS-LATE-4:50",
+    "title": "Bus 6617 – PM Late Route (SMS/SHS)",
+    "vehicle": "6617",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:52", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:00", "students": 0, "location": "NSUH Community Dr" },
+      { "stop": 4, "time": "5:03", "students": 0, "location": "Colonial Rd & East Shore Rd" },
+      { "stop": 5, "time": "5:05", "students": 0, "location": "East Shore Rd & Grace Ave" },
+      { "stop": 6, "time": "5:07", "students": 0, "location": "Grace Ave & Singley Ct" },
+      { "stop": 7, "time": "5:09", "students": 0, "location": "Gilchrest Rd & Grace Ave" },
+      { "stop": 8, "time": "5:10", "students": 0, "location": "Beverly Rd & Gilchrest Rd" },
+      { "stop": 9, "time": "5:13", "students": 0, "location": "Beverly Rd & West Dr" },
+      { "stop": 10, "time": "5:14", "students": 0, "location": "Bond St & Maple Dr" }
+    ]
+  },
+  {
+    "id": "6618-PM-c-SMS/SHS-LATE-4:50",
+    "title": "Bus 6618 – PM Late Route (SMS/SHS)",
+    "vehicle": "6618",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:52", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:58", "students": 0, "location": "Briarfield Dr & University Pl" },
+      { "stop": 4, "time": "4:59", "students": 0, "location": "Into & Around Briafield Dr" },
+      { "stop": 5, "time": "5:02", "students": 0, "location": "Merrivale Rd & Somerset Dr S" },
+      { "stop": 6, "time": "5:04", "students": 0, "location": "Merrivale Rd & Somerset Dr N" },
+      { "stop": 7, "time": "5:05", "students": 0, "location": "Linford Rd & Merrivale Rd" },
+      { "stop": 8, "time": "5:07", "students": 0, "location": "Clent Rd & Tain Dr" },
+      { "stop": 9, "time": "5:09", "students": 0, "location": "Clent Rd & Knightsbridge Rd" },
+      { "stop": 10, "time": "5:11", "students": 0, "location": "Great Neck Rd & Knightsbridge" },
+      { "stop": 11, "time": "5:13", "students": 0, "location": "Brompton Rd & Pont St" },
+      { "stop": 12, "time": "5:15", "students": 0, "location": "Darley Rd & S Middle Neck Rd" }
+    ]
+  },
+  {
+    "id": "6620-PM-e-SMS/SHS-LATE-4:50",
+    "title": "Bus 6620 – PM Late Route (SMS/SHS)",
+    "vehicle": "6620",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:53", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:03", "students": 0, "location": "Ascot Ridge & Mirrielees cir" },
+      { "stop": 4, "time": "5:05", "students": 0, "location": "12 Amherst Rd" },
+      { "stop": 5, "time": "5:06", "students": 0, "location": "Amherst Rd & Bayview Ave" },
+      { "stop": 6, "time": "5:10", "students": 0, "location": "Myrtle Dr & N Clover Dr" },
+      { "stop": 7, "time": "5:12", "students": 0, "location": "Clover Dr & Linden Blvd" },
+      { "stop": 8, "time": "5:14", "students": 0, "location": "Cedar Dr & Deepdale Dr" },
+      { "stop": 9, "time": "5:15", "students": 0, "location": "Maple Dr & Middle Neck Rd" },
+      { "stop": 10, "time": "5:16", "students": 0, "location": "Gussack Plz & Walnut Pl" }
+    ]
+  },
+  {
+    "id": "6623-PM-e-SMS/SHS-LATE-4:50",
+    "title": "Bus 6623 – PM Late Route (SMS/SHS)",
+    "vehicle": "6623",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:52", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:54", "students": 0, "location": "Lake Rd & Lakeview Dr" },
+      { "stop": 4, "time": "4:55", "students": 0, "location": "Lake Rd & Lake Rd S" },
+      { "stop": 5, "time": "4:57", "students": 0, "location": "Lake Rd & Lake Rd W" },
+      { "stop": 6, "time": "4:58", "students": 0, "location": "LAKE RD West Cul-de-Sac" },
+      { "stop": 7, "time": "5:02", "students": 0, "location": "Olive St & Tanners Rd" },
+      { "stop": 8, "time": "5:09", "students": 0, "location": "79th Ave & Stewart Ave" },
+      { "stop": 9, "time": "5:11", "students": 0, "location": "80st Ave & Stewart Ave" },
+      { "stop": 10, "time": "5:12", "students": 0, "location": "Peter Ln & Stewart Ave" },
+      { "stop": 11, "time": "5:14", "students": 0, "location": "Kalda Ave & Peter Ln" },
+      { "stop": 12, "time": "5:16", "students": 0, "location": "Fairfield Ln & Stephan Marc Ln" }
+    ]
+  },
+  {
+    "id": "6627-PM-e-SMS/SHS-LATE-4:50",
+    "title": "Bus 6627 – PM Late Route (SMS/SHS)",
+    "vehicle": "6627",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:53", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:56", "students": 0, "location": "Meadow Woods Rd & Old Field Ln" },
+      { "stop": 4, "time": "4:57", "students": 0, "location": "Horace Harding Blvd & Foxhunt Ln" },
+      { "stop": 5, "time": "4:58", "students": 0, "location": "Horizon Rd & Links Dr" },
+      { "stop": 6, "time": "4:59", "students": 0, "location": "Vanderbilt Dr & Horace Harding Bd" },
+      { "stop": 7, "time": "5:00", "students": 0, "location": "Dale Carnegie & Vanderbilt Dr" },
+      { "stop": 8, "time": "5:02", "students": 0, "location": "Soundview Dr & Upland Rd" },
+      { "stop": 9, "time": "5:03", "students": 0, "location": "Centre Ln & Upland Rd" },
+      { "stop": 10, "time": "5:04", "students": 0, "location": "Bates Rd & Westminster Rd" },
+      { "stop": 11, "time": "5:06", "students": 0, "location": "Old Farm Rd & Soundview Dr" },
+      { "stop": 12, "time": "5:08", "students": 0, "location": "Robbins Ln & Westminster Rd" },
+      { "stop": 13, "time": "5:09", "students": 0, "location": "Pembroke Ave & Westminster Rd" }
+    ]
+  },
+  {
+    "id": "6630-PM-e-SMS/SHS-LATE-4:50",
+    "title": "Bus 6630 – PM Late Route (SMS/SHS)",
+    "vehicle": "6630",
+    "departureTime": "4:50 PM",
+    "stops": [
+      { "stop": 1, "time": "4:50", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "4:52", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "4:59", "students": 0, "location": "1000 Royal Ct" },
+      { "stop": 4, "time": "5:02", "students": 0, "location": "New Hyde Park Rd & Windsor Gate Dr" },
+      { "stop": 5, "time": "5:04", "students": 0, "location": "Executive Dr & Suburban Gate" },
+      { "stop": 6, "time": "5:05", "students": 0, "location": "Executive Dr & Holiday Gate" },
+      { "stop": 7, "time": "5:09", "students": 0, "location": "Haddon Rd & Lawrence St" },
+      { "stop": 8, "time": "5:11", "students": 0, "location": "Claudy Ln & Patton Blvd" },
+      { "stop": 9, "time": "5:13", "students": 0, "location": "Campbell St & Claudy Ln" },
+      { "stop": 10, "time": "5:14", "students": 0, "location": "Campbell St & Haddon Rd" },
+      { "stop": 11, "time": "5:15", "students": 0, "location": "Haddon Rd & Nugent St" },
+      { "stop": 12, "time": "5:16", "students": 0, "location": "Blossom Ln & Haddon Rd" },
+      { "stop": 13, "time": "5:17", "students": 0, "location": "Maple Ln & Rose Ln" }
+    ]
+  },
+  {
+    "id": "6608-PM-e-SMS/SHS-LATE-5:20",
+    "title": "Bus 6608 – PM Late Route (SMS/SHS)",
+    "vehicle": "6608",
+    "departureTime": "5:20 PM",
+    "stops": [
+      { "stop": 1, "time": "5:20", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "5:22", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:26", "students": 0, "location": "Birch Hill Rd & Lakeville Rd" },
+      { "stop": 4, "time": "5:27", "students": 0, "location": "Farm Ln & Lakeville Rd" },
+      { "stop": 5, "time": "5:28", "students": 0, "location": "Rivers Dr & Rivers Dr Gate" },
+      { "stop": 6, "time": "5:30", "students": 0, "location": "Cumberland & Spinney Hill Dr" },
+      { "stop": 7, "time": "5:31", "students": 0, "location": "Clark Dr & Summer Ave" },
+      { "stop": 8, "time": "5:32", "students": 0, "location": "Grandview Ave & Spinney Hill" },
+      { "stop": 9, "time": "5:33", "students": 0, "location": "Spinney Hill Dr & Summer Ave" },
+      { "stop": 10, "time": "5:36", "students": 0, "location": "Gilchrest Rd & Schenck Ave" },
+      { "stop": 11, "time": "5:37", "students": 0, "location": "Middle Neck Rd & Pont St & S Middle Neck Rd & Schenck Ave" },
+      { "stop": 12, "time": "5:38", "students": 0, "location": "Brompton Rd & Pont St" },
+      { "stop": 13, "time": "5:40", "students": 0, "location": "Darley Rd & S Middle Neck Rd" }
+    ]
+  },
+  {
+    "id": "6614-PM-d-SMS/SHS-LATE-5:20",
+    "title": "Bus 6614 – PM Late Route (SMS/SHS)",
+    "vehicle": "6614",
+    "departureTime": "5:20 PM",
+    "stops": [
+      { "stop": 1, "time": "5:20", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "5:22", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:32", "students": 0, "location": "Cuttermill Rd & Town House PI" },
+      { "stop": 4, "time": "5:33", "students": 0, "location": "Cuttermill Rd & Ipswich Ave" },
+      { "stop": 5, "time": "5:35", "students": 0, "location": "Ascot Ridge & Mirrielees cir" },
+      { "stop": 6, "time": "5:37", "students": 0, "location": "Amherst Rd & Bayview Ave" },
+      { "stop": 7, "time": "5:39", "students": 0, "location": "Bayview Ave & Cedar Dr" },
+      { "stop": 8, "time": "5:41", "students": 0, "location": "Ridge Dr E & Ridge Dr W" },
+      { "stop": 9, "time": "5:43", "students": 0, "location": "Bayview Ave & Hickory Dr" },
+      { "stop": 10, "time": "5:45", "students": 0, "location": "Myrtle Dr & N Clover Dr" },
+      { "stop": 11, "time": "5:47", "students": 0, "location": "Clover Dr & Linden Blvd" },
+      { "stop": 12, "time": "5:49", "students": 0, "location": "Hillside Ave & Maple Dr" },
+      { "stop": 13, "time": "5:50", "students": 0, "location": "104 MIDDLE NECK RD" },
+      { "stop": 14, "time": "5:52", "students": 0, "location": "Beverly Rd & West Dr" },
+      { "stop": 15, "time": "5:55", "students": 0, "location": "Beverly Rd & Gilchrest Rd" },
+      { "stop": 16, "time": "5:56", "students": 0, "location": "Gilchrest Rd & Grace Ave" },
+      { "stop": 17, "time": "5:58", "students": 0, "location": "Grace Ave & Singley Ct" }
+    ]
+  },
+  {
+    "id": "6620-PM-f-SMS/SHS-LATE-5:20",
+    "title": "Bus 6620 – PM Late Route (SMS/SHS)",
+    "vehicle": "6620",
+    "departureTime": "5:20 PM",
+    "stops": [
+      { "stop": 1, "time": "5:20", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "5:21", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:29", "students": 0, "location": "NSUH Community Dr" },
+      { "stop": 4, "time": "5:39", "students": 0, "location": "Schenck Ave & Valley View Rd & Windsor" },
+      { "stop": 5, "time": "5:33", "students": 0, "location": "Lodge Rd & Valley View Rd" },
+      { "stop": 6, "time": "5:34", "students": 0, "location": "Shoreward Dr & Windsor Rd" },
+      { "stop": 7, "time": "5:35", "students": 0, "location": "Highland Ave & Shoreward Dr" },
+      { "stop": 8, "time": "5:35", "students": 0, "location": "Highland Ave & Schenck Ave" },
+      { "stop": 9, "time": "5:36", "students": 0, "location": "Linden St & Schenck Ave" },
+      { "stop": 10, "time": "5:37", "students": 0, "location": "Prospect St & Susquehanna Ave" }
+    ]
+  },
+  {
+    "id": "6624-PM-f-SMS/SHS-LATE-5:20",
+    "title": "Bus 6624 – PM Late Route (SMS/SHS)",
+    "vehicle": "6624",
+    "departureTime": "5:20 PM",
+    "stops": [
+      { "stop": 1, "time": "5:20", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "5:21", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:23", "students": 0, "location": "Lake Rd & Lake Rd S" },
+      { "stop": 4, "time": "5:25", "students": 0, "location": "Olive St & Tanners Rd" },
+      { "stop": 5, "time": "5:31", "students": 0, "location": "Kalda Ave & Stephan Marc Ln" },
+      { "stop": 6, "time": "5:32", "students": 0, "location": "Kalda Ave & Peter Ln" },
+      { "stop": 7, "time": "5:33", "students": 0, "location": "Peter Ln & Stewart Ave" },
+      { "stop": 8, "time": "5:34", "students": 0, "location": "82nd Ave & Leslie Ln & Stewart Ave" },
+      { "stop": 9, "time": "5:35", "students": 0, "location": "81st Ave & Fairfield Ln & Stewart Ave" },
+      { "stop": 10, "time": "5:36", "students": 0, "location": "80th Ave & Stewart Ave" },
+      { "stop": 11, "time": "5:37", "students": 0, "location": "79th Ave & Stewart Ave" }
+    ]
+  },
+  {
+    "id": "6627-PN-f-SMS/SHS-LATE-5:20",
+    "title": "Bus 6627 – PM Late Route (SMS/SHS)",
+    "vehicle": "6627",
+    "departureTime": "5:20 PM",
+    "stops": [
+      { "stop": 1, "time": "5:20", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "5:22", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:26", "students": 0, "location": "Elm Ln & Meadow Woods Rd" },
+      { "stop": 4, "time": "5:28", "students": 0, "location": "Meadow Woods Rd & Old Field Ln" },
+      { "stop": 5, "time": "5:30", "students": 0, "location": "Birch Hill Rd & Meadow Woods Rd" },
+      { "stop": 6, "time": "5:31", "students": 0, "location": "Meadow Woods Rd & Old Farm Rd" },
+      { "stop": 7, "time": "5:33", "students": 0, "location": "Horizon Rd & Links Dr" },
+      { "stop": 8, "time": "5:35", "students": 0, "location": "Horace Harding Bd & Vanderbilt Dr" },
+      { "stop": 9, "time": "5:36", "students": 0, "location": "Soundview Dr & Upland Rd" },
+      { "stop": 10, "time": "5:37", "students": 0, "location": "Bates Rd & Centre Ln" },
+      { "stop": 11, "time": "5:40", "students": 0, "location": "Dale Carnegie Ct & Vanderbilt" },
+      { "stop": 12, "time": "5:44", "students": 0, "location": "Concord Ave & Highland PI" },
+      { "stop": 13, "time": "5:46", "students": 0, "location": "Robbins Ln & Westminster Rd" },
+      { "stop": 14, "time": "5:47", "students": 0, "location": "Pembroke Ave & Westminster Rd" },
+      { "stop": 15, "time": "5:48", "students": 0, "location": "Jayson Ave & Pembroke Ave" }
+    ]
+  },
+  {
+    "id": "6629-PM-e-SMS/SHS-LATE-5:20",
+    "title": "Bus 6629 – PM Late Route (SMS/SHS)",
+    "vehicle": "6629",
+    "departureTime": "5:20 PM",
+    "stops": [
+      { "stop": 1, "time": "5:20", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "5:22", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:28", "students": 0, "location": "Briarfield Dr & University PI" },
+      { "stop": 4, "time": "5:30", "students": 0, "location": "Merrivale Rd & Somerset Dr S" },
+      { "stop": 5, "time": "5:32", "students": 0, "location": "Merrivale Rd & Somerset Dr N" },
+      { "stop": 6, "time": "5:33", "students": 0, "location": "Melbourne Rd & Merrivale Rd" },
+      { "stop": 7, "time": "5:34", "students": 0, "location": "Melbourne Rd & Tain Dr" },
+      { "stop": 8, "time": "5:36", "students": 0, "location": "Clent Rd & Knightsbridge Rd" },
+      { "stop": 9, "time": "5:37", "students": 0, "location": "Great Neck Rd & Knightsbridge" },
+      { "stop": 10, "time": "5:40", "students": 0, "location": "Clair St & Jayson Ave" },
+      { "stop": 11, "time": "5:42", "students": 0, "location": "Nassau Rd & Northern Blvd" },
+      { "stop": 12, "time": "5:44", "students": 0, "location": "Terrace Cir & W Mill Dr" },
+      { "stop": 13, "time": "5:45", "students": 0, "location": "E Mill Dr & Terrace Cir" }
+    ]
+  },
+  {
+    "id": "6630-PM-f-SMS/SHS-LATE-5:20",
+    "title": "Bus 6630 – PM Late Route (SMS/SHS)",
+    "vehicle": "6630",
+    "departureTime": "5:20 PM",
+    "stops": [
+      { "stop": 1, "time": "5:20", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "5:22", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "5:29", "students": 0, "location": "1000 Royal Ct" },
+      { "stop": 4, "time": "5:32", "students": 0, "location": "New Hyde Park Rd & Windsor Gate Dr" },
+      { "stop": 5, "time": "5:33", "students": 0, "location": "Executive Dr & Suburban Gate" },
+      { "stop": 6, "time": "5:34", "students": 0, "location": "Executive Dr & Holiday Gate" },
+      { "stop": 7, "time": "5:38", "students": 0, "location": "Haddon Rd & Lawrence St" },
+      { "stop": 8, "time": "5:40", "students": 0, "location": "Claudy Ln & Patton Blvd" },
+      { "stop": 9, "time": "5:41", "students": 0, "location": "Campbell St & Claudy Ln" },
+      { "stop": 10, "time": "5:42", "students": 0, "location": "Campbell St & Haddon Rd" },
+      { "stop": 11, "time": "5:43", "students": 0, "location": "Haddon Rd & Nugent St" },
+      { "stop": 12, "time": "5:44", "students": 0, "location": "Blossom Ln & Haddon Rd" },
+      { "stop": 13, "time": "5:45", "students": 0, "location": "Rose Ln & Sylvia Ln" },
+      { "stop": 14, "time": "5:46", "students": 0, "location": "Lakeville Rd & Sylvia Ln" }
+    ]
+  },
+  {
+    "id": "6605-PM-f-SMS/SHS-LATE-6:30",
+    "title": "Bus 6605 – PM Late Route (SMS/SHS)",
+    "vehicle": "6605",
+    "departureTime": "6:30 PM",
+    "stops": [
+      { "stop": 1, "time": "6:30", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "6:31", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "6:33", "students": 0, "location": "Olive St & Tanners Rd" },
+      { "stop": 4, "time": "6:37", "students": 0, "location": "79th Ave & Stewart Ave" },
+      { "stop": 5, "time": "6:38", "students": 0, "location": "80th Ave & Stewart Ave" },
+      { "stop": 6, "time": "6:39", "students": 0, "location": "Fairfield Ln & Stephan Marc Ln" },
+      { "stop": 7, "time": "6:41", "students": 0, "location": "Fairfield Ln & Stewart Ave" },
+      { "stop": 8, "time": "6:42", "students": 0, "location": "Peter Ln & Stewart Ave" },
+      { "stop": 9, "time": "6:45", "students": 0, "location": "Rose Ln & Sylvia Ln" },
+      { "stop": 10, "time": "6:46", "students": 0, "location": "Blossom Ln & Rose Ln" },
+      { "stop": 11, "time": "6:48", "students": 0, "location": "Blossom Ln & Haddon Rd" },
+      { "stop": 12, "time": "6:49", "students": 0, "location": "Evans St & Haddon Rd" },
+      { "stop": 13, "time": "6:51", "students": 0, "location": "Haddon Rd & Lawrence St" },
+      { "stop": 14, "time": "6:53", "students": 0, "location": "Claudy Ln & Patton Blvd" }
+    ]
+  },
+  {
+    "id": "6609-PM-f-SMS/SHS-LATE-6:30",
+    "title": "Bus 6609 – PM Late Route (SMS/SHS)",
+    "vehicle": "6609",
+    "departureTime": "6:30 PM",
+    "stops": [
+      { "stop": 1, "time": "6:30", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "6:33", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "6:36", "students": 0, "location": "Horizon Rd & Links Dr" },
+      { "stop": 4, "time": "6:37", "students": 0, "location": "Vanderbilt Dr & Horace Harding Bd" },
+      { "stop": 5, "time": "6:38", "students": 0, "location": "Dale Carnegie & Vanderbilt Dr" },
+      { "stop": 6, "time": "6:40", "students": 0, "location": "Soundview Dr & Upland Rd" },
+      { "stop": 7, "time": "6:41", "students": 0, "location": "Bates Rd & Centre Ln" },
+      { "stop": 8, "time": "6:43", "students": 0, "location": "Robbins Ln & Westminster Rd" },
+      { "stop": 9, "time": "6:44", "students": 0, "location": "Pembroke Ave & Westminster Rd" },
+      { "stop": 10, "time": "6:45", "students": 0, "location": "Jayson Ave & Pembroke Ave" },
+      { "stop": 11, "time": "6:46", "students": 0, "location": "Clair St & Jayson Ave" },
+      { "stop": 12, "time": "6:48", "students": 0, "location": "Nassau Rd & Northern Blvd" },
+      { "stop": 13, "time": "6:50", "students": 0, "location": "Terrace Cir & West Mill Dr" },
+      { "stop": 14, "time": "6:51", "students": 0, "location": "East Mill Dr & Terrace Cir" },
+      { "stop": 15, "time": "6:54", "students": 0, "location": "Ascot Ridge & Mirrielees cir" },
+      { "stop": 16, "time": "6:55", "students": 0, "location": "142 Amherst Rd" },
+      { "stop": 17, "time": "6:56", "students": 0, "location": "Amherst Rd & Bayview Ave" },
+      { "stop": 18, "time": "6:58", "students": 0, "location": "Bayview Ave & Cedar Dr" },
+      { "stop": 19, "time": "7:00", "students": 0, "location": "Ridge Dr E & Stewart Dr" },
+      { "stop": 20, "time": "7:02", "students": 0, "location": "Bayview Ave & Hickory Dr" },
+      { "stop": 21, "time": "7:04", "students": 0, "location": "Myrtle Dr & N Clover Dr" },
+      { "stop": 22, "time": "7:05", "students": 0, "location": "Clover Dr & Linden Blvd" },
+      { "stop": 23, "time": "7:07", "students": 0, "location": "Cedar Dr & Middle Neck Rd" },
+      { "stop": 24, "time": "7:09", "students": 0, "location": "Cuttermill Rd & Townhousecir" },
+      { "stop": 25, "time": "7:10", "students": 0, "location": "Cuttermill Rd & lpswich Ave" },
+      { "stop": 26, "time": "7:15", "students": 0, "location": "GREAT NECK LIBRARY" }
+    ]
+  },
+  {
+    "id": "6612-PM-f-SMS/SHS-LATE-6:30",
+    "title": "Bus 6612 – PM Late Route (SMS/SHS)",
+    "vehicle": "6612",
+    "departureTime": "6:30 PM",
+    "stops": [
+      { "stop": 1, "time": "6:30", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "6:32", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "6:37", "students": 0, "location": "Meadow Woods Rd & Old Field Ln" },
+      { "stop": 4, "time": "6:38", "students": 0, "location": "Meadow Woods Rd & Old Farm Rd" },
+      { "stop": 5, "time": "6:39", "students": 0, "location": "Birch Hill Rd & Meadow Woods Rd" },
+      { "stop": 6, "time": "6:41", "students": 0, "location": "Birch Hill Rd & Lakeville Rd" },
+      { "stop": 7, "time": "6:42", "students": 0, "location": "Farm Ln & Lakeville Rd" },
+      { "stop": 8, "time": "6:44", "students": 0, "location": "River Dr Gate & Rivers Dr" },
+      { "stop": 9, "time": "6:46", "students": 0, "location": "Clark Dr & Summer Ave" },
+      { "stop": 10, "time": "6:47", "students": 0, "location": "Spinney Hill Dr & Summer Ave" },
+      { "stop": 11, "time": "6:48", "students": 0, "location": "Bowers Lane Gate & Cumberland Av" },
+      { "stop": 12, "time": "6:49", "students": 0, "location": "Briarfield Dr & Lakeville Rd" },
+      { "stop": 13, "time": "6:51", "students": 0, "location": "Merrivale Rd & Somerset Dr S" },
+      { "stop": 14, "time": "6:53", "students": 0, "location": "Merrivale Rd & Somerset Dr N" },
+      { "stop": 15, "time": "6:54", "students": 0, "location": "Melbourne Rd & Merrivale Rd" },
+      { "stop": 16, "time": "6:56", "students": 0, "location": "Darley Rd & South Middle Neck Rd" }
+    ]
+  },
+  {
+    "id": "6629-PM-e-SMS/SHS-LATE-6:30",
+    "title": "Bus 6629 – PM Late Route (SMS/SHS)",
+    "vehicle": "6629",
+    "departureTime": "6:30 PM",
+    "stops": [
+      { "stop": 1, "time": "6:30", "students": 0, "location": "SOUTH MIDDLE SCHOOL" },
+      { "stop": 2, "time": "6:31", "students": 0, "location": "SOUTH HIGH SCHOOL" },
+      { "stop": 3, "time": "6:37", "students": 0, "location": "Executive Dr & Holiday Gate" },
+      { "stop": 4, "time": "6:38", "students": 0, "location": "Executive Dr & Suburban Gate" },
+      { "stop": 5, "time": "6:40", "students": 0, "location": "New Hyde Park Rd & Windsor Gate Dr" },
+      { "stop": 6, "time": "6:42", "students": 0, "location": "New Hyde Park Rd @ Ritz Carlton Gate" },
+      { "stop": 7, "time": "6:48", "students": 0, "location": "Community Dr NSUH" },
+      { "stop": 8, "time": "6:51", "students": 0, "location": "Schenck Ave & Windsor Ave" },
+      { "stop": 9, "time": "6:53", "students": 0, "location": "Shoreward Dr & Windsor Rd" },
+      { "stop": 10, "time": "6:54", "students": 0, "location": "45 Windsor Rd" },
+      { "stop": 11, "time": "6:56", "students": 0, "location": "Highland Ave & Shoreward Dr" },
+      { "stop": 12, "time": "6:57", "students": 0, "location": "Highland Ave & Schenck Ave" },
+      { "stop": 13, "time": "6:58", "students": 0, "location": "Linden St & Schenck Ave" },
+      { "stop": 14, "time": "7:00", "students": 0, "location": "Prospect St & Susquehanna Ave" },
+      { "stop": 15, "time": "7:02", "students": 0, "location": "Gilchrest Rd & Schenck Ave" },
+      { "stop": 16, "time": "7:04", "students": 0, "location": "Schenck Ave & S Middle Neck Rd" },
+      { "stop": 17, "time": "7:05", "students": 0, "location": "Brompton Rd & Pont St" },
+      { "stop": 18, "time": "7:08", "students": 0, "location": "Beverly Rd & West Dr" },
+      { "stop": 19, "time": "7:14", "students": 0, "location": "Beverly Rd & Gilchrest Rd" },
+      { "stop": 20, "time": "7:12", "students": 0, "location": "Gilchrest Rd & Grace Ave" },
+      { "stop": 21, "time": "7:13", "students": 0, "location": "Grace Ave & Singley Ct" }
+    ]
+  }
+]
