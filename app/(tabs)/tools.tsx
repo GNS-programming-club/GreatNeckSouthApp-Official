@@ -128,7 +128,7 @@ export default function ToolsPage() {
         {renderToolRow(1, "School Map", "Find rooms and key locations", onMapPress)}
         {renderToolRow(2, "Bus Schedule", "View bus routes and times", onBusPress)}
         {renderToolRow(3, "Offered Courses", "View all courses and their information", onCoursesPress)}
-        {renderToolRow(4, "Club", "View all clubs and their information", onCoursesPress)}
+        {renderToolRow(4, "Club", "View all clubs and their information", onClubPress)}
       </ScrollView>
     </SafeAreaView>
   );
