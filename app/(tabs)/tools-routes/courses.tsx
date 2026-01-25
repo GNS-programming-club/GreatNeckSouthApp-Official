@@ -1,14 +1,16 @@
+import Feather from '@expo/vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
-  Animated,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Animated,
+    FlatList,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 
 import { Colors } from '@/constants/theme';
@@ -254,8 +256,22 @@ const CourseList: React.FC<{
     <CourseCard course={item} index={index} />
   );
 
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.replace("/tools")}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <Feather name="arrow-left" size={25} color={colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Offered Courses</Text>
+      </View>
       <View style={styles.searchRow}>
         <View style={styles.searchInputWrapper}>
           <TextInput
@@ -454,7 +470,7 @@ const CourseDetail: React.FC<{
 }> = ({ course, onBack, styles }) => {
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
+      <TouchableOpacity style={styles.detailBackButton} onPress={onBack}>
         <Text style={styles.backButtonText}>← Back to Courses</Text>
       </TouchableOpacity>
 
@@ -498,7 +514,7 @@ const Courses: React.FC = () => {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const navigation = useNavigation<any>(); // Use any to bypass TypeScript
-  
+
   const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -582,7 +598,31 @@ const createStyles = (colors: ThemeColors) =>
     appContainer: {
       flex: 1,
       backgroundColor: colors.background,
-      paddingBottom: 100
+      paddingBottom: 75
+    },
+    header: {
+      justifyContent: "center",
+      alignContent: "center",
+      paddingHorizontal: 16,
+      paddingTop: 25,
+      paddingBottom: 16,
+      marginBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      backgroundColor: colors.background,
+    },
+    backButton: {
+      alignSelf: "flex-start",
+      height: 36,
+      width: 36,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    title: {
+      marginTop: 10,
+      fontSize: 24,
+      fontWeight: "800",
+      color: colors.text,
     },
     appHeader: {
       backgroundColor: colors.surface,
@@ -609,6 +649,7 @@ const createStyles = (colors: ThemeColors) =>
     container: {
       flex: 1,
       padding: 16,
+      paddingBottom: 46,
       backgroundColor: colors.background,
     },
     basicFilters: {
@@ -737,7 +778,7 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.primaryText,
       borderColor: colors.accent,
     },
-    backButton: {
+    detailBackButton: {
       backgroundColor: colors.surface,
       padding: 12,
       borderRadius: 12,

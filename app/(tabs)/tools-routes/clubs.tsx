@@ -1,14 +1,15 @@
-import { useNavigation } from '@react-navigation/native';
+import Feather from '@expo/vector-icons/Feather';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
-  Animated,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Animated,
+    FlatList,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 
 import { Colors } from '@/constants/theme';
@@ -83,35 +84,35 @@ const ClubCard: React.FC<{
   };
 
   return (
-    <Animated.View style={[styles.clubCardWrapper, animatedStyle]}>
-      <TouchableOpacity style={styles.clubCard} onPress={() => onClubSelect(club)}>
-        <View style={styles.clubCardHeader}>
-          <Text style={styles.clubTitle}>{club.title}</Text>
+    <Animated.View style={[styles.cardWrapper, animatedStyle]}>
+      <TouchableOpacity style={styles.card} onPress={() => onClubSelect(club)}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardTitle}>{club.title}</Text>
         </View>
 
-        <View style={styles.clubMeta}>
+        <View style={styles.cardMeta}>
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Advisor(s):</Text>
-            <Text style={styles.metaValue}>{club.advisors}</Text>
+            <Text style={styles.metaValue} numberOfLines={1} ellipsizeMode="tail">{club.advisors}</Text>
           </View>
 
           {club.googleclasscode && (
             <View style={styles.metaItem}>
               <Text style={styles.metaLabel}>Google Classroom:</Text>
-              <Text style={[styles.metaValue, styles.googleCode]}>{club.googleclasscode}</Text>
+              <Text style={[styles.metaValue, styles.highlightCode]}>{club.googleclasscode}</Text>
             </View>
           )}
         </View>
 
-        <Text style={styles.clubDescription} numberOfLines={3}>
+        <Text style={styles.cardDescription} numberOfLines={3}>
           {club.description}
         </Text>
 
-        {club.meetinginfo && (
-          <View style={styles.meetingInfo}>
+        {club.meetinginfo !== "Unknown" && (
+            <View style={styles.meetingInfo}>
             <Text style={styles.meetingLabel}>Meeting Info:</Text>
             <Text style={styles.meetingValue}>{club.meetinginfo}</Text>
-          </View>
+            </View>
         )}
       </TouchableOpacity>
     </Animated.View>
@@ -122,43 +123,58 @@ const ClubDetail: React.FC<{
   club: Club;
   onBack: () => void;
   styles: ThemedStyles;
-}> = ({ club, onBack, styles }) => {
+  colors: ThemeColors;
+}> = ({ club, onBack, styles, colors }) => {
   return (
-    <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
-        <Text style={styles.backButtonText}>← Back to Clubs</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={onBack}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <Feather name="arrow-left" size={25} color={colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Club Details</Text>
+      </View>
 
-      <View style={styles.clubHeader}>
-        <Text style={styles.clubTitle}>{club.title}</Text>
+      <ScrollView style={styles.detailScroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.detailHeader}>
+          <Text style={styles.detailTitle}>{club.title}</Text>
 
-        <View style={styles.clubMeta}>
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Advisor(s):</Text>
-            <Text style={styles.detailValue}>{club.advisors}</Text>
-          </View>
-
-          {club.googleclasscode && (
-            <View style={styles.detailItem}>
-              <Text style={styles.detailLabel}>Google Classroom Code:</Text>
-              <Text style={[styles.detailValue, styles.googleCode]}>{club.googleclasscode}</Text>
+          <View style={styles.detailMeta}>
+            <View style={styles.detailItemVertical}>
+              <Text style={styles.detailLabel}>Advisor(s):</Text>
+              <Text style={styles.detailValue}>{club.advisors}</Text>
             </View>
+
+            {club.googleclasscode && (
+              <View style={styles.detailItemVertical}>
+                <Text style={styles.detailLabel}>Google Classroom Code:</Text>
+                <View style={styles.codeContainer}>
+                    <Text style={[styles.detailValue, styles.highlightCode]}>{club.googleclasscode}</Text>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+
+        <View style={styles.detailContent}>
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.descriptionText}>{club.description}</Text>
+
+          {club.meetinginfo !== "Unknown" && (
+            <>
+              <Text style={styles.sectionTitle}>Meeting Information</Text>
+              <Text style={styles.descriptionText}>{club.meetinginfo}</Text>
+            </>
           )}
         </View>
-      </View>
-
-      <View style={styles.clubContent}>
-        <Text style={styles.sectionTitle}>Description</Text>
-        <Text style={styles.clubDescription}>{club.description}</Text>
-
-        {club.meetinginfo && (
-          <>
-            <Text style={styles.sectionTitle}>Meeting Information</Text>
-            <Text style={styles.clubDescription}>{club.meetinginfo}</Text>
-          </>
-        )}
-      </View>
-    </ScrollView>
+        <View style={{height: 40}} />
+      </ScrollView>
+    </View>
   );
 };
 
@@ -167,12 +183,11 @@ const ClubList: React.FC<{
   onClubSelect: (club: Club) => void;
   styles: ThemedStyles;
   colors: ThemeColors;
-  showBackButton?: boolean;
-  onBack?: () => void;
   searchTerm: string;
   onSearchChange: (term: string) => void;
-}> = ({ clubs, onClubSelect, styles, colors, showBackButton, onBack, searchTerm, onSearchChange }) => {
+}> = ({ clubs, onClubSelect, styles, colors, searchTerm, onSearchChange }) => {
   const filteredClubs = filterClubs(clubs, searchTerm);
+  const router = useRouter();
 
   const renderClubItem = ({ item, index }: { item: Club; index: number }) => (
     <ClubCard club={item} index={index} onClubSelect={onClubSelect} styles={styles} />
@@ -180,11 +195,18 @@ const ClubList: React.FC<{
 
   return (
     <View style={styles.container}>
-      {showBackButton && onBack && (
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backButtonText}>← Back</Text>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.replace("/tools")}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <Feather name="arrow-left" size={25} color={colors.text} />
         </TouchableOpacity>
-      )}
+        <Text style={styles.title}>School Clubs</Text>
+      </View>
 
       <View style={styles.searchRow}>
         <View style={styles.searchInputWrapper}>
@@ -215,7 +237,7 @@ const ClubList: React.FC<{
         data={filteredClubs}
         renderItem={renderClubItem}
         keyExtractor={(item) => item.id}
-        style={styles.clubsList}
+        style={styles.list}
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -226,7 +248,6 @@ const Clubs: React.FC = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const navigation = useNavigation<any>();
 
   const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
@@ -242,10 +263,6 @@ const Clubs: React.FC = () => {
     setSelectedClub(null);
   };
 
-  const handleBackToMore = () => {
-    navigation.goBack();
-  };
-
   const renderCurrentView = () => {
     switch (currentView) {
       case 'list':
@@ -255,8 +272,6 @@ const Clubs: React.FC = () => {
             onClubSelect={handleClubSelect}
             styles={styles}
             colors={colors}
-            showBackButton={true}
-            onBack={handleBackToMore}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
           />
@@ -267,6 +282,7 @@ const Clubs: React.FC = () => {
             club={selectedClub}
             onBack={handleBackToList}
             styles={styles}
+            colors={colors}
           />
         ) : (
           <View style={styles.container}>
@@ -296,7 +312,7 @@ const createStyles = (colors: ThemeColors) =>
     appContainer: {
       flex: 1,
       backgroundColor: colors.background,
-      paddingBottom: 100
+      paddingBottom: 75
     },
     appMain: {
       flex: 1,
@@ -305,6 +321,31 @@ const createStyles = (colors: ThemeColors) =>
       flex: 1,
       padding: 16,
       backgroundColor: colors.background,
+      paddingBottom: 46,
+    },
+    header: {
+      justifyContent: "center",
+      alignContent: "center",
+      paddingHorizontal: 16,
+      paddingTop: 25,
+      paddingBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      backgroundColor: colors.background,
+      marginBottom: 16,
+    },
+    backButton: {
+      alignSelf: "flex-start",
+      height: 36,
+      width: 36,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    title: {
+      marginTop: 10,
+      fontSize: 24,
+      fontWeight: "800",
+      color: colors.text,
     },
     searchRow: {
       marginBottom: 12,
@@ -340,13 +381,13 @@ const createStyles = (colors: ThemeColors) =>
       fontStyle: 'italic',
       marginBottom: 16,
     },
-    clubsList: {
+    list: {
       flex: 1,
     },
-    clubCardWrapper: {
+    cardWrapper: {
       marginBottom: 12,
     },
-    clubCard: {
+    card: {
       backgroundColor: colors.surface,
       padding: 16,
       borderRadius: 18,
@@ -357,17 +398,17 @@ const createStyles = (colors: ThemeColors) =>
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 6 },
       elevation: 5,
-      gap: 8,
+      gap: 6,
     },
-    clubCardHeader: {
-      marginBottom: 4,
+    cardHeader: {
+        marginBottom: 4,
     },
-    clubTitle: {
+    cardTitle: {
       fontSize: 20,
       fontWeight: '700',
       color: colors.text,
     },
-    clubMeta: {
+    cardMeta: {
       gap: 6,
       marginBottom: 8,
     },
@@ -386,7 +427,7 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.text,
       flex: 1,
     },
-    googleCode: {
+    highlightCode: {
       backgroundColor: colors.surfaceAlt,
       paddingHorizontal: 8,
       paddingVertical: 4,
@@ -397,31 +438,32 @@ const createStyles = (colors: ThemeColors) =>
       borderWidth: 1,
       borderColor: colors.border,
     },
-    clubDescription: {
+    cardDescription: {
       fontSize: 14,
       color: colors.mutedText,
       lineHeight: 20,
       marginBottom: 8,
     },
     meetingInfo: {
-      backgroundColor: colors.surfaceAlt,
-      padding: 12,
-      borderRadius: 12,
-      borderLeftWidth: 4,
-      borderLeftColor: colors.primary,
+        backgroundColor: colors.surfaceAlt,
+        padding: 12,
+        borderColor: colors.border,
+        borderWidth: 1,
+        borderRadius: 12,
+        marginTop: 4,
     },
     meetingLabel: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 4,
+        fontSize: 13,
+        fontWeight: '700',
+        color: colors.text,
+        marginBottom: 4,
     },
     meetingValue: {
-      fontSize: 14,
-      color: colors.mutedText,
-      lineHeight: 20,
+        fontSize: 14,
+        color: colors.mutedText,
+        lineHeight: 20,
     },
-    backButton: {
+    detailBackButton: {
       backgroundColor: colors.surface,
       padding: 12,
       borderRadius: 12,
@@ -429,22 +471,25 @@ const createStyles = (colors: ThemeColors) =>
       alignSelf: 'flex-start',
       borderWidth: 1,
       borderColor: colors.border,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
     },
     backButtonText: {
       color: colors.text,
       fontWeight: '700',
-      fontSize: 14,
     },
-    clubHeader: {
+    detailHeader: {
       marginBottom: 24,
-      gap: 12,
+      gap: 8,
     },
-    clubContent: {
+    detailTitle: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: colors.text,
+        marginBottom: 8,
+    },
+    detailMeta: {
+       gap: 12,
+    },
+    detailContent: {
       gap: 24,
     },
     sectionTitle: {
@@ -454,24 +499,46 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: 8,
     },
     detailItem: {
-      marginBottom: 12,
+      flexDirection: 'row',
+      marginBottom: 8,
     },
     detailLabel: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: colors.mutedText,
-      marginBottom: 4,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
+        fontSize: 14,
+        fontWeight: '700',
+        color: colors.mutedText,
+        marginRight: 8,
     },
     detailValue: {
+      flex: 1,
       fontSize: 16,
       color: colors.text,
       lineHeight: 24,
     },
+    descriptionText: {
+        fontSize: 16,
+        color: colors.mutedText,
+        lineHeight: 24,
+    },
     resultsRow: {
       marginBottom: 12,
     },
+    detailItemVertical: {
+      flexDirection: 'column',
+      marginBottom: 16,
+      gap: 6,
+    },
+    detailScroll: {
+      flex: 1,
+    },
+    codeContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        alignSelf: 'flex-start',
+        height: 35,
+    }
   });
 
 export default Clubs;

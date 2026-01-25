@@ -47,7 +47,7 @@ export default function ToolsPage() {
   };
 
   const onClubPress = () => {
-    router.push("/tools-routes/club" as any);
+    router.push("/tools-routes/clubs" as any);
   };
 
   useEffect(() => {
