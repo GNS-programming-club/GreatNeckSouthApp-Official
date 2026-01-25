@@ -20,12 +20,13 @@ export default function ToolsPage() {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
-  
+
   const itemAnims = useRef([
     new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
-    new Animated.Value(0)
+    new Animated.Value(0),
+    new Animated.Value(0),
   ]).current;
   const hasAnimatedOnce = useRef(false);
 
@@ -44,6 +45,7 @@ export default function ToolsPage() {
   const onCoursesPress = () => {
     router.push("/tools-routes/courses" as any);
   };
+
   const onClubPress = () => {
     router.push("/tools-routes/club" as any);
   };
@@ -79,7 +81,7 @@ export default function ToolsPage() {
     onPress: () => void
   ) => {
     const anim = itemAnims[index];
-    
+
     if (!anim) {
       return (
         <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
@@ -128,7 +130,7 @@ export default function ToolsPage() {
         {renderToolRow(1, "School Map", "Find rooms and key locations", onMapPress)}
         {renderToolRow(2, "Bus Schedule", "View bus routes and times", onBusPress)}
         {renderToolRow(3, "Offered Courses", "View all courses and their information", onCoursesPress)}
-        {renderToolRow(4, "Club", "View all clubs and their information", onClubPress)}
+        {renderToolRow(4, "School Clubs", "View all clubs and their information", onClubPress)}
       </ScrollView>
     </SafeAreaView>
   );

@@ -77,7 +77,7 @@ export default function SchoolMap() {
       <View style={styles.searchWrap}>
         <Feather name="search" size={16} color={colors.mutedText} />
         <TextInput
-         
+
         />
         {query.length > 0 && (
           <TouchableOpacity
@@ -124,6 +124,7 @@ export default function SchoolMap() {
             contentFit="contain"
             style={styles.mapImage}
           />
+          <Text style={styles.mapHint}>Pinch-zoom to inspect the schedule</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

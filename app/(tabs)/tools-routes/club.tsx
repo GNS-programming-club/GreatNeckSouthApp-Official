@@ -33,9 +33,9 @@ const clubs: Club[] = clubsData as unknown as Club[];
 // Search function
 const filterClubs = (clubs: Club[], searchTerm: string): Club[] => {
   if (!searchTerm.trim()) return clubs;
-  
+
   const term = searchTerm.toLowerCase().trim();
-  
+
   return clubs.filter(club => {
     return (
       club.title.toLowerCase().includes(term) ||
@@ -88,13 +88,13 @@ const ClubCard: React.FC<{
         <View style={styles.clubCardHeader}>
           <Text style={styles.clubTitle}>{club.title}</Text>
         </View>
-        
+
         <View style={styles.clubMeta}>
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Advisor(s):</Text>
             <Text style={styles.metaValue}>{club.advisors}</Text>
           </View>
-          
+
           {club.googleclasscode && (
             <View style={styles.metaItem}>
               <Text style={styles.metaLabel}>Google Classroom:</Text>
@@ -102,11 +102,11 @@ const ClubCard: React.FC<{
             </View>
           )}
         </View>
-        
+
         <Text style={styles.clubDescription} numberOfLines={3}>
           {club.description}
         </Text>
-        
+
         {club.meetinginfo && (
           <View style={styles.meetingInfo}>
             <Text style={styles.meetingLabel}>Meeting Info:</Text>
@@ -131,13 +131,13 @@ const ClubDetail: React.FC<{
 
       <View style={styles.clubHeader}>
         <Text style={styles.clubTitle}>{club.title}</Text>
-        
+
         <View style={styles.clubMeta}>
           <View style={styles.detailItem}>
             <Text style={styles.detailLabel}>Advisor(s):</Text>
             <Text style={styles.detailValue}>{club.advisors}</Text>
           </View>
-          
+
           {club.googleclasscode && (
             <View style={styles.detailItem}>
               <Text style={styles.detailLabel}>Google Classroom Code:</Text>
@@ -185,8 +185,7 @@ const ClubList: React.FC<{
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
       )}
-      
-      {/* Search Bar - Same design as Courses page */}
+
       <View style={styles.searchRow}>
         <View style={styles.searchInputWrapper}>
           <TextInput
@@ -203,7 +202,7 @@ const ClubList: React.FC<{
           )}
         </View>
       </View>
-      
+
       <View style={styles.resultsRow}>
         <Text style={styles.resultsInfo}>
           {filteredClubs.length === clubs.length
@@ -223,13 +222,12 @@ const ClubList: React.FC<{
   );
 };
 
-// Main Clubs component
 const Clubs: React.FC = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const navigation = useNavigation<any>();
-  
+
   const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [searchTerm, setSearchTerm] = useState('');

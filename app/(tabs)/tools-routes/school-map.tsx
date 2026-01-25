@@ -13,7 +13,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// eslint-disable-next-line import/no-unresolved
 import { Colors } from "@/constants/theme";
+// eslint-disable-next-line import/no-unresolved
 import { useTheme } from "@/contexts/theme-context";
 
 const MAP_IMAGE = require("../../../assets/images/school-map.png");
