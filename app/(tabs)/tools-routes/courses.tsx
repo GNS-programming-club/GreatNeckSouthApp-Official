@@ -467,44 +467,56 @@ const CourseDetail: React.FC<{
   course: Course;
   onBack: () => void;
   styles: ThemedStyles;
-}> = ({ course, onBack, styles }) => {
+  colors: ThemeColors;
+}> = ({ course, onBack, styles, colors }) => {
   return (
-    <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.detailBackButton} onPress={onBack}>
-        <Text style={styles.backButtonText}>← Back to Courses</Text>
-      </TouchableOpacity>
-
-      <View style={styles.courseHeader}>
-        <Text style={styles.courseTitle}>{course.title}</Text>
-        <Text style={styles.courseCode}>{course.code}</Text>
-        <View style={styles.courseMeta}>
-          <Text style={styles.metaItem}>{course.dept}</Text>
-          <Text style={styles.metaItem}>{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
-          {course.ap_flag && <Text style={[styles.metaItem, styles.apFlag]}>AP Course</Text>}
-        </View>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={onBack}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
+          <Feather name="arrow-left" size={25} color={colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Offered Courses</Text>
       </View>
 
-      <View style={styles.courseContent}>
-        <Text style={styles.sectionTitle}>Description</Text>
-        <Text style={styles.courseDescription}>{course.description}</Text>
-
-        <Text style={styles.sectionTitle}>Course Details</Text>
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Prerequisite:</Text>
-          <Text style={styles.detailValue}>{course.prerequisite || 'None'}</Text>
-        </View>
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Grade Levels:</Text>
-          <Text style={styles.detailValue}>{course.grade_levels.join(', ')}</Text>
-        </View>
-        {course.additional_notes && (
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Additional Notes:</Text>
-            <Text style={styles.detailValue}>{course.additional_notes}</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.detailContent}>
+        <View style={styles.courseHeader}>
+          <Text style={styles.courseTitle}>{course.title}</Text>
+          <Text style={styles.courseCode}>{course.code}</Text>
+          <View style={styles.courseMeta}>
+            <Text style={styles.metaItem}>{course.dept}</Text>
+            <Text style={styles.metaItem}>{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
+            {course.ap_flag && <Text style={[styles.metaItem, styles.apFlag]}>AP Course</Text>}
           </View>
-        )}
-      </View>
-    </ScrollView>
+        </View>
+
+        <View style={styles.courseContent}>
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.courseDescription}>{course.description}</Text>
+
+          <Text style={styles.sectionTitle}>Course Details</Text>
+          <View style={styles.detailItem}>
+            <Text style={styles.detailLabel}>Prerequisite:</Text>
+            <Text style={styles.detailValue}>{course.prerequisite || 'None'}</Text>
+          </View>
+          <View style={styles.detailItem}>
+            <Text style={styles.detailLabel}>Grade Levels:</Text>
+            <Text style={styles.detailValue}>{course.grade_levels.join(', ')}</Text>
+          </View>
+          {course.additional_notes && (
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Additional Notes:</Text>
+              <Text style={styles.detailValue}>{course.additional_notes}</Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -568,6 +580,7 @@ const Courses: React.FC = () => {
             course={selectedCourse}
             onBack={handleBackToList}
             styles={styles}
+            colors={colors}
           />
         ) : (
           <View style={styles.container}>
@@ -651,6 +664,9 @@ const createStyles = (colors: ThemeColors) =>
       padding: 16,
       paddingBottom: 46,
       backgroundColor: colors.background,
+    },
+    detailContent: {
+      paddingBottom: 24,
     },
     basicFilters: {
       flexDirection: 'row',
@@ -777,19 +793,6 @@ const createStyles = (colors: ThemeColors) =>
       backgroundColor: colors.accent,
       color: colors.primaryText,
       borderColor: colors.accent,
-    },
-    detailBackButton: {
-      backgroundColor: colors.surface,
-      padding: 12,
-      borderRadius: 12,
-      marginBottom: 16,
-      alignSelf: 'flex-start',
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    backButtonText: {
-      color: colors.text,
-      fontWeight: '700',
     },
     courseHeader: {
       marginBottom: 24,
