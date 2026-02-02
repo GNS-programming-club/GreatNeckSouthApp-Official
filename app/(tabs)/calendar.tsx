@@ -1,11 +1,10 @@
-
 import axios from 'axios';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { getMenuItemsForDay, getParsedMenu, type ParsedMenu } from '@/api/daily-menu';
+import { getMenuItemsForDay, getParsedMenuForMonth, type ParsedMenu } from '@/api/daily-menu';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -52,6 +51,12 @@ const CalendarScreen = () => {
     clubEvents: [],
   });
   const [menuData, setMenuData] = useState<ParsedMenu | null>(null);
+
+  const [currentViewMonth, setCurrentViewMonth] = useState<{ year: number; month: number }>(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() + 1 };
+  });
+  const [isLoadingMenu, setIsLoadingMenu] = useState(false);
   const menuItemAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
   const holidayAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
   const eventAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
@@ -171,15 +176,30 @@ const CalendarScreen = () => {
     let cancelled = false;
 
     const loadMenuData = async () => {
-      if (menuData) return;
+
+      if (menuData &&
+        menuData.year === currentViewMonth.year &&
+        menuData.month === currentViewMonth.month) {
+        return;
+      }
+
+      setIsLoadingMenu(true);
 
       try {
-        const parsedMenu = await getParsedMenu();
+        const parsedMenu = await getParsedMenuForMonth(
+          currentViewMonth.year,
+          currentViewMonth.month
+        );
         if (cancelled || !isMountedRef.current) return;
         setMenuData(parsedMenu);
       } catch (error) {
         if (cancelled || !isMountedRef.current) return;
         console.error("Failed to load menu data:", error);
+        setMenuData(null);
+      } finally {
+        if (!cancelled && isMountedRef.current) {
+          setIsLoadingMenu(false);
+        }
       }
     };
 
@@ -188,7 +208,7 @@ const CalendarScreen = () => {
     return () => {
       cancelled = true;
     };
-  }, [menuData]);
+  }, [currentViewMonth.year, currentViewMonth.month]);
 
   useEffect(() => {
     let cancelled = false;
@@ -201,9 +221,15 @@ const CalendarScreen = () => {
 
         const dateObj = parseLocalDate(selectedDate);
         const dayOfMonth = dateObj.getDate();
+        const selectedMonth = dateObj.getMonth() + 1;
+
+        const selectedYear = dateObj.getFullYear();
 
         let lunchMenuItems: string[] = [];
-        if (menuData) {
+
+        if (menuData &&
+          menuData.month === selectedMonth &&
+          menuData.year === selectedYear) {
           lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
         }
 
@@ -221,9 +247,15 @@ const CalendarScreen = () => {
 
         const dateObj = parseLocalDate(selectedDate);
         const dayOfMonth = dateObj.getDate();
+        const selectedMonth = dateObj.getMonth() + 1;
+
+        const selectedYear = dateObj.getFullYear();
 
         let lunchMenuItems: string[] = [];
-        if (menuData) {
+
+        if (menuData &&
+          menuData.month === selectedMonth &&
+          menuData.year === selectedYear) {
           lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
         }
 
@@ -286,7 +318,9 @@ const CalendarScreen = () => {
     setSelectedDate((current) => (current === day.dateString ? current : day.dateString));
   }, []);
 
-
+  const handleMonthChange = useCallback((month: { year: number; month: number }) => {
+    setCurrentViewMonth({ year: month.year, month: month.month });
+  }, []);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
@@ -353,6 +387,7 @@ const CalendarScreen = () => {
               current={selectedDate}
               markedDates={markedDates}
               onDayPress={handleDayPress}
+              onMonthChange={handleMonthChange}
               theme={calendarTheme}
               style={styles.calendar}
             />
@@ -473,7 +508,6 @@ const CalendarScreen = () => {
             )}
           </View>
         </Animated.View>
-
 
       </Animated.ScrollView>
     </SafeAreaView>
@@ -642,3 +676,4 @@ const createStyles = (colors: (typeof Colors)['light']) =>
   });
 
 export default CalendarScreen;
+
