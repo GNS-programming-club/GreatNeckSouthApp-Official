@@ -13,11 +13,11 @@ import {
 } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-    runOnJS,
     useAnimatedReaction,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
+    runOnJS
 } from 'react-native-reanimated';
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -92,7 +92,7 @@ const LOCATIONS: MapLocation[] = [
   makeLocation("Attendance 730", "attendance-730", ["attendance", "730"], 0.33, 0.15),
   makeLocation("Guidance", "guidance", ["guidance"], 0.33, 0.15),
   makeLocation("Special Ed 720", "special-ed-720", ["special", "ed", "720"], 0.33, 0.15),
-  makeLocation("East Gym 808", "east-gym-808", ["east", "gym", "808"], 0.33, 0.15),
+  makeLocation("East Gym 808", "east-gym-808", ["east", "gym", "808"], 0.092, 0.62),
   makeLocation("West Gym 102", "west-gym-102", ["west", "gym", "102"], 0.33, 0.15),
   makeLocation("Aux. Gym 100", "aux-gym-100", ["aux", "gym", "100"], 0.33, 0.15),
   makeLocation("Aux. Gym 809", "aux-gym-809", ["aux", "gym", "809"], 0.33, 0.15),
@@ -310,40 +310,39 @@ export default function SchoolMap() {
     (curr) => {
       if (!curr.w || !curr.h || !curr.s) return;
 
-      const containerAspect = curr.w / curr.h;
-
-      let renderedW, renderedH;
-
-      if (containerAspect > IMG_ASPECT) {
-        renderedH = curr.h;
-        renderedW = curr.h * IMG_ASPECT;
-      } else {
-        renderedW = curr.w;
-        renderedH = curr.w / IMG_ASPECT;
-      }
-
       const dxPrime = -curr.tx / curr.s;
       const dyPrime = -curr.ty / curr.s;
 
-      let x = 0.5 + dxPrime / curr.w;
-      let y = 0.5 + dyPrime / curr.h;
+      let viewX = 0.5 + dxPrime / curr.w;
+      let viewY = 0.5 + dyPrime / curr.h;
 
-      x = Math.max(0, Math.min(1, x));
-      y = Math.max(0, Math.min(1, y));
+      let imageX: number;
+      let imageY: number;
+
+      if (curr.portrait === 1) {
+        imageX = 1 - viewY;
+        imageY = viewX;
+      } else {
+        imageX = viewX;
+        imageY = viewY;
+      }
+
+      imageX = Math.max(0, Math.min(1, imageX));
+      imageY = Math.max(0, Math.min(1, imageY));
 
       if (
-        Math.abs(x - lastCoordX.value) < 0.001 &&
-        Math.abs(y - lastCoordY.value) < 0.001 &&
+        Math.abs(imageX - lastCoordX.value) < 0.001 &&
+        Math.abs(imageY - lastCoordY.value) < 0.001 &&
         Math.abs(curr.s - lastCoordScale.value) < 0.01
       ) {
         return;
       }
 
-      lastCoordX.value = x;
-      lastCoordY.value = y;
+      lastCoordX.value = imageX;
+      lastCoordY.value = imageY;
       lastCoordScale.value = curr.s;
 
-      runOnJS(updateCenterCoord)(x, y, curr.s);
+      runOnJS(updateCenterCoord)(imageX, imageY, curr.s);
     }
   );
 
@@ -355,8 +354,19 @@ export default function SchoolMap() {
     const w = mapWidth.value;
     const h = mapHeight.value;
 
-    const dx = (loc.x - 0.5) * w;
-    const dy = (loc.y - 0.5) * h;
+    let viewX: number;
+    let viewY: number;
+
+    if (isMobilePortrait) {
+      viewX = loc.y;
+      viewY = 1 - loc.x;
+    } else {
+      viewX = loc.x;
+      viewY = loc.y;
+    }
+
+    const dx = (viewX - 0.5) * w;
+    const dy = (viewY - 0.5) * h;
 
     const targetTranslateX = -dx * targetScale;
     const targetTranslateY = -dy * targetScale;
@@ -367,8 +377,6 @@ export default function SchoolMap() {
     translateY.value = withTiming(targetTranslateY);
     savedTranslateX.value = targetTranslateX;
     savedTranslateY.value = targetTranslateY;
-
-    return;
   };
 
   const pinchGesture = Gesture.Pinch()
