@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
+    Image as RNImage,
     StyleSheet,
     Text,
     TextInput,
@@ -20,10 +21,15 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// eslint-disable-next-line import/no-unresolved
 import { Colors } from "@/constants/theme";
+// eslint-disable-next-line import/no-unresolved
 import { useTheme } from "@/contexts/theme-context";
 
 const MAP_IMAGE = require("../../../assets/images/school-map.png");
+
+const { width: IMG_W, height: IMG_H } = RNImage.resolveAssetSource(MAP_IMAGE);
+const IMG_ASPECT = IMG_W / IMG_H;
 
 type MapLocation = {
   id: string;
@@ -256,6 +262,9 @@ export default function SchoolMap() {
   const { width, height } = useWindowDimensions();
   const isMobilePortrait = width < 768 && width < height;
 
+  const baseScale = useSharedValue(1);
+  const [baseScaleValue, setBaseScaleValue] = useState(1);
+
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
@@ -273,13 +282,13 @@ export default function SchoolMap() {
   const [centerCoord, setCenterCoord] = useState({ x: 0.5, y: 0.5, scale: 1 });
 
   React.useEffect(() => {
-    scale.value = withTiming(1);
-    savedScale.value = 1;
+    scale.value = withTiming(baseScaleValue);
+    savedScale.value = baseScaleValue;
     translateX.value = withTiming(0);
     translateY.value = withTiming(0);
     savedTranslateX.value = 0;
     savedTranslateY.value = 0;
-  }, [width, height, scale, savedScale, translateX, translateY, savedTranslateX, savedTranslateY]);
+  }, [width, height, baseScaleValue, scale, savedScale, translateX, translateY, savedTranslateX, savedTranslateY]);
 
   React.useEffect(() => {
     portraitFlag.value = isMobilePortrait ? 1 : 0;
@@ -301,19 +310,23 @@ export default function SchoolMap() {
     (curr) => {
       if (!curr.w || !curr.h || !curr.s) return;
 
+      const containerAspect = curr.w / curr.h;
+
+      let renderedW, renderedH;
+
+      if (containerAspect > IMG_ASPECT) {
+        renderedH = curr.h;
+        renderedW = curr.h * IMG_ASPECT;
+      } else {
+        renderedW = curr.w;
+        renderedH = curr.w / IMG_ASPECT;
+      }
+
       const dxPrime = -curr.tx / curr.s;
       const dyPrime = -curr.ty / curr.s;
 
-      let dx = dxPrime;
-      let dy = dyPrime;
-
-      if (curr.portrait) {
-        dx = -dyPrime;
-        dy = dxPrime;
-      }
-
-      let x = 0.5 + dx / curr.w;
-      let y = 0.5 + dy / curr.h;
+      let x = 0.5 + dxPrime / curr.w;
+      let y = 0.5 + dyPrime / curr.h;
 
       x = Math.max(0, Math.min(1, x));
       y = Math.max(0, Math.min(1, y));
@@ -337,17 +350,13 @@ export default function SchoolMap() {
   const zoomToLocation = (loc: MapLocation) => {
     setQuery("");
 
-    const targetScale = 2.5;
+    const targetScale = Math.max(baseScale.value * 2.5, baseScale.value + 1);
 
-    let dx = (loc.x - 0.5) * mapDimensions.width;
-    let dy = (loc.y - 0.5) * mapDimensions.height;
+    const w = mapWidth.value;
+    const h = mapHeight.value;
 
-    if (isMobilePortrait) {
-
-        const temp = dx;
-        dx = dy;
-        dy = -temp;
-    }
+    const dx = (loc.x - 0.5) * w;
+    const dy = (loc.y - 0.5) * h;
 
     const targetTranslateX = -dx * targetScale;
     const targetTranslateY = -dy * targetScale;
@@ -358,6 +367,8 @@ export default function SchoolMap() {
     translateY.value = withTiming(targetTranslateY);
     savedTranslateX.value = targetTranslateX;
     savedTranslateY.value = targetTranslateY;
+
+    return;
   };
 
   const pinchGesture = Gesture.Pinch()
@@ -365,9 +376,9 @@ export default function SchoolMap() {
       scale.value = savedScale.value * e.scale;
     })
     .onEnd(() => {
-      if (scale.value < 1) {
-        scale.value = withTiming(1);
-        savedScale.value = 1;
+      if (scale.value < baseScale.value) {
+        scale.value = withTiming(baseScale.value);
+        savedScale.value = baseScale.value;
         translateX.value = withTiming(0);
         translateY.value = withTiming(0);
         savedTranslateX.value = 0;
@@ -379,7 +390,7 @@ export default function SchoolMap() {
 
   const panGesture = Gesture.Pan()
     .onUpdate((e) => {
-      if (scale.value > 1) {
+      if (scale.value > baseScale.value) {
         translateX.value = savedTranslateX.value + e.translationX;
         translateY.value = savedTranslateY.value + e.translationY;
       }
@@ -392,16 +403,17 @@ export default function SchoolMap() {
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => {
-        if (scale.value !== 1) {
-            scale.value = withTiming(1);
-            savedScale.value = 1;
+        if (scale.value !== baseScale.value) {
+            scale.value = withTiming(baseScale.value);
+            savedScale.value = baseScale.value;
             translateX.value = withTiming(0);
             translateY.value = withTiming(0);
             savedTranslateX.value = 0;
             savedTranslateY.value = 0;
         } else {
-            scale.value = withTiming(2.5);
-            savedScale.value = 2.5;
+            const zoomScale = Math.max(baseScale.value * 2.5, baseScale.value + 1);
+            scale.value = withTiming(zoomScale);
+            savedScale.value = zoomScale;
         }
     });
 
@@ -423,7 +435,7 @@ export default function SchoolMap() {
   }));
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -478,24 +490,64 @@ export default function SchoolMap() {
         </View>
       )}
 
-      <View style={styles.mapContainer}>
+      <View
+        style={styles.mapContainer}
+        onLayout={(e) => {
+          const { width, height } = e.nativeEvent.layout;
+          setMapDimensions({ width, height });
+        }}
+      >
         <GestureDetector gesture={composedGesture}>
           <Animated.View
-            style={[styles.mapContent, animatedStyle]}
+            style={[
+              styles.mapContent,
+              animatedStyle,
+              {
+                width: (() => {
+                  if (mapDimensions.width === 0) return '100%';
+                  const containerW = mapDimensions.width;
+                  const containerH = mapDimensions.height;
+
+                  if (isMobilePortrait) {
+                    const scale = Math.min(containerW / IMG_H, containerH / IMG_W);
+
+                    return IMG_W * scale;
+                  } else {
+                    const scale = Math.min(containerW / IMG_W, containerH / IMG_H);
+
+                    return IMG_W * scale;
+                  }
+                })(),
+                height: (() => {
+                   if (mapDimensions.width === 0) return '100%';
+                   const containerW = mapDimensions.width;
+                   const containerH = mapDimensions.height;
+
+                   if (isMobilePortrait) {
+                     const scale = Math.min(containerW / IMG_H, containerH / IMG_W);
+                     return IMG_H * scale;
+                   } else {
+                     const scale = Math.min(containerW / IMG_W, containerH / IMG_H);
+                     return IMG_H * scale;
+                   }
+                })()
+              }
+            ]}
             onLayout={(e) => {
                 const { width, height } = e.nativeEvent.layout;
-                setMapDimensions({ width, height });
                 mapWidth.value = width;
                 mapHeight.value = height;
+
+                 if (Math.abs(baseScale.value - 1) > 0.01) {
+                  baseScale.value = 1;
+                  setBaseScaleValue(1);
+                 }
             }}
           >
             <Image
               source={MAP_IMAGE}
-              contentFit="contain"
-              style={[
-                  styles.mapImage,
-                  isMobilePortrait && { width: '150%', height: '150%' }
-              ]}
+              contentFit="fill"
+              style={{ width: '100%', height: '100%' }}
             />
           </Animated.View>
         </GestureDetector>
@@ -517,7 +569,6 @@ export default function SchoolMap() {
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
     container: {
-      paddingBottom: 75,
       flex: 1,
       backgroundColor: colors.background,
     },
@@ -602,7 +653,9 @@ const createStyles = (colors: typeof Colors.light) =>
       backgroundColor: colors.surfaceAlt,
       justifyContent: 'center',
       alignItems: 'center',
-      margin: 16,
+      marginTop: 16,
+      marginHorizontal: 16,
+      marginBottom: 90, // Explicit space for absolute TabBar
       borderRadius: 16,
       borderWidth: 1,
       borderColor: colors.border,

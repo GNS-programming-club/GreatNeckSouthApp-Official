@@ -158,7 +158,7 @@ const SchedulePage = () => {
           ? Math.min(1, Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!)))
           : 0
       : 0;
-    
+
     return (
       <Animated.View
         key={period.id}
@@ -187,23 +187,23 @@ const SchedulePage = () => {
             </Text>
           </View>
         </View>
-        
+
         <View style={styles.timeContainer}>
           <View style={styles.timeColumn}>
             <Text style={styles.timeLabel}>Start</Text>
             <Text style={styles.timeValue}>{period.start}</Text>
           </View>
-          
+
           <View style={styles.arrowContainer}>
             <Text style={styles.arrow}>→</Text>
           </View>
-          
+
           <View style={styles.timeColumn}>
             <Text style={styles.timeLabel}>End</Text>
             <Text style={styles.timeValue}>{period.end}</Text>
           </View>
         </View>
-        
+
         <View style={styles.timelineContainer}>
           <View style={styles.timeline}>
             <View style={[styles.timelineFill, { width: `${Math.round(progress * 100)}%` }]} />
@@ -243,7 +243,7 @@ const SchedulePage = () => {
         <Text style={styles.title}>Daily Schedule</Text>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -268,11 +268,11 @@ const SchedulePage = () => {
 
         <View style={styles.timelineSection}>
           <Text style={styles.sectionTitle}>Daily Schedule</Text>
-          
+
           {periods.map((period, index) => (
             <View key={period.id}>
               {renderPeriodCard(period, index)}
-              
+
               {index < periods.length - 1 && (
                 <View style={styles.breakContainer}>
                   <View style={styles.breakLine} />
@@ -284,28 +284,6 @@ const SchedulePage = () => {
               )}
             </View>
           ))}
-        </View>
-
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Schedule Notes</Text>
-          <View style={styles.infoList}>
-            <View style={styles.infoItem}>
-              <View style={styles.bulletPoint} />
-              <Text style={styles.infoText}>Each period is approximately 40 minutes</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <View style={styles.bulletPoint} />
-              <Text style={styles.infoText}>4-minute passing time between classes</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <View style={styles.bulletPoint} />
-              <Text style={styles.infoText}>Schedule may vary on special days</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <View style={styles.bulletPoint} />
-              <Text style={styles.infoText}>Period 2 is slightly longer (43 minutes)</Text>
-            </View>
-          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -434,7 +412,6 @@ const createStyles = (colors: typeof Colors.light) =>
       color: colors.primary,
     },
     timeBadge: {
-      backgroundColor: colors.primary + '20',
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 12,
@@ -443,7 +420,7 @@ const createStyles = (colors: typeof Colors.light) =>
       backgroundColor: colors.primary,
     },
     durationText: {
-      fontSize: 12,
+      fontSize: 14,
       fontWeight: '600',
       color: colors.primary,
     },

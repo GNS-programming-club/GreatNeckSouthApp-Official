@@ -2,19 +2,19 @@ import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Animated,
-  ScrollView,
-  SectionList,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Animated,
+    ScrollView,
+    SectionList,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import busData from '../../../assets/data/bus.json';
 
@@ -169,8 +169,8 @@ const Bus: React.FC = () => {
   if (selectedRoute) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <View style={styles.header}>
+        <View style={[styles.container, { padding: 0 }]}>
+          <View style={[styles.header, { borderBottomWidth: 0, paddingBottom: 0 }]}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => setSelectedRoute(null)}
@@ -183,7 +183,16 @@ const Bus: React.FC = () => {
             <Text style={styles.title}>Route Details</Text>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.detailContent}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.detailContent, { paddingHorizontal: 16 }]}>
+            <View style={{ marginBottom: 20 }}>
+              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.primary }}>
+                {selectedRoute.title}
+              </Text>
+              <Text style={{ color: colors.mutedText, marginTop: 4 }}>
+                {selectedRoute.vehicle} • {selectedRoute.departureTime}
+              </Text>
+            </View>
+
             {selectedRoute.stops.map(stop => (
               <View key={stop.stop} style={styles.stopRow}>
                 <Text style={styles.stopTime}>{stop.time}</Text>
@@ -306,18 +315,16 @@ const createStyles = (colors: any) =>
       paddingVertical: 8,
       marginTop: 8,
       marginBottom: 6,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.primary,
-      backgroundColor: colors.surface,
     },
     sectionHeaderText: {
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: '700',
       color: colors.mutedText,
     },
     sectionHeaderTextActive: {
       color: colors.primary,
+      fontWeight: '800',
+      fontSize: 18,
     },
     routeCard: {
       backgroundColor: colors.surface,
@@ -357,7 +364,7 @@ const createStyles = (colors: any) =>
     stopRow: {
       flexDirection: 'row',
       gap: 12,
-      paddingVertical: 10,
+      paddingVertical: 15,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
     },

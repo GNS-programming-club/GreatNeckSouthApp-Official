@@ -1,15 +1,16 @@
+import Feather from "@expo/vector-icons/Feather";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
-  Animated,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
+    Animated,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Feather from "@expo/vector-icons/Feather";
 
 import { Colors } from "@/constants/theme";
 import { useTheme } from "@/contexts/theme-context";
@@ -19,6 +20,23 @@ export default function SettingsPage() {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const sectionAnims = useRef([new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)]).current;
+
+  const getThemeIndex = (mode: string) => {
+    switch(mode) {
+      case 'dark': return 1;
+      case 'light': return 2;
+      default: return 0; // auto
+    }
+  };
+
+  const selectionAnim = useRef(new Animated.Value(getThemeIndex(themeMode))).current;
+
+  useEffect(() => {
+    Animated.spring(selectionAnim, {
+      toValue: getThemeIndex(themeMode),
+      useNativeDriver: false, // backgroundColor requires false
+    }).start();
+  }, [themeMode]);
 
   useEffect(() => {
     sectionAnims.forEach((anim) => {
@@ -71,57 +89,65 @@ export default function SettingsPage() {
             <Text style={styles.sectionTitle}>App Theme</Text>
           </View>
 
-          <View style={styles.card}>
-            <View style={styles.row}>
+          <View style={[styles.card, { position: 'relative' }]}>
+            <Animated.View
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: 4,
+                height: 72,
+                backgroundColor: selectionAnim.interpolate({
+                  inputRange: [0, 1, 2],
+                  outputRange: [colors.primary, colors.tint, colors.primary],
+                }),
+                transform: [
+                  {
+                    translateY: selectionAnim.interpolate({
+                      inputRange: [0, 1, 2],
+                      outputRange: [0, 72, 144],
+                    }),
+
+                  },
+                ],
+                borderTopRightRadius: 4,
+                borderBottomRightRadius: 4,
+                zIndex: 10,
+              }}
+            />
+
+            <TouchableOpacity
+              style={[styles.row, { height: 72 }]}
+              onPress={() => setThemeMode("auto")}
+              activeOpacity={0.7}
+            >
               <View style={styles.rowLeft}>
                 <Text style={styles.rowTitle}>Auto</Text>
                 <Text style={styles.rowSubtitle}>Match your device setting</Text>
               </View>
-              <Switch
-                value={themeMode === "auto"}
-                onValueChange={(value) => {
-                  if (value) {
-                    setThemeMode("auto");
-                  }
-                }}
-                trackColor={{ false: colors.border, true: `${colors.primary}66` }}
-                thumbColor={themeMode === "auto" ? colors.primary : colors.mutedText}
-              />
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.row}>
+            <TouchableOpacity
+              style={[styles.row, { height: 72 }]}
+              onPress={() => setThemeMode("dark")}
+              activeOpacity={0.7}
+            >
               <View style={styles.rowLeft}>
                 <Text style={styles.rowTitle}>Dark Mode</Text>
                 <Text style={styles.rowSubtitle}>Always use dark theme</Text>
               </View>
-              <Switch
-                value={themeMode === "dark"}
-                onValueChange={(value) => {
-                  if (value) {
-                    setThemeMode("dark");
-                  }
-                }}
-                trackColor={{ false: colors.border, true: `${colors.primary}66` }}
-                thumbColor={themeMode === "dark" ? colors.primary : colors.mutedText}
-              />
-            </View>
+            </TouchableOpacity>
 
-            <View style={[styles.row, styles.rowLast]}>
+            <TouchableOpacity
+              style={[styles.row, styles.rowLast, { height: 72 }]}
+              onPress={() => setThemeMode("light")}
+              activeOpacity={0.7}
+            >
               <View style={styles.rowLeft}>
                 <Text style={styles.rowTitle}>Light Mode</Text>
                 <Text style={styles.rowSubtitle}>Always use light theme</Text>
               </View>
-              <Switch
-                value={themeMode === "light"}
-                onValueChange={(value) => {
-                  if (value) {
-                    setThemeMode("light");
-                  }
-                }}
-                trackColor={{ false: colors.border, true: `${colors.primary}66` }}
-                thumbColor={themeMode === "light" ? colors.primary : colors.mutedText}
-              />
-            </View>
+            </TouchableOpacity>
           </View>
         </Animated.View>
 

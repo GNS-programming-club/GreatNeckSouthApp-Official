@@ -132,6 +132,7 @@ export default function HomeScreen() {
 
       const isIn = nowMin >= start && nowMin < end;
       const isNext = nowMin < start;
+      
       if (!isIn && !isNext) continue;
 
       const courseId = todaySchedule?.[i] ?? null;
