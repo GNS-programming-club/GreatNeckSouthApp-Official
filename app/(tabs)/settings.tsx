@@ -1,31 +1,38 @@
-import Feather from "@expo/vector-icons/Feather";
-import React, { useEffect, useMemo, useRef } from "react";
+import Feather from '@expo/vector-icons/Feather';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
-    Animated,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+  Animated,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Colors } from "@/constants/theme";
-import { useTheme } from "@/contexts/theme-context";
+import { Colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/theme-context';
 
 export default function SettingsPage() {
   const { actualTheme, themeMode, setThemeMode } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const sectionAnims = useRef([new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)]).current;
+  const sectionAnims = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]).current;
 
   const getThemeIndex = (mode: string) => {
-    switch(mode) {
-      case 'dark': return 1;
-      case 'light': return 2;
-      default: return 0; // auto
+    switch (mode) {
+      case 'dark':
+        return 1;
+      case 'light':
+        return 2;
+      default:
+        return 0; // auto
     }
   };
 
@@ -34,9 +41,9 @@ export default function SettingsPage() {
   useEffect(() => {
     Animated.spring(selectionAnim, {
       toValue: getThemeIndex(themeMode),
-      useNativeDriver: false, // backgroundColor requires false
+      useNativeDriver: false,
     }).start();
-  }, [themeMode]);
+  }, [themeMode, selectionAnim]);
 
   useEffect(() => {
     sectionAnims.forEach((anim) => {
@@ -107,7 +114,6 @@ export default function SettingsPage() {
                       inputRange: [0, 1, 2],
                       outputRange: [0, 72, 144],
                     }),
-
                   },
                 ],
                 borderTopRightRadius: 4,
@@ -118,7 +124,7 @@ export default function SettingsPage() {
 
             <TouchableOpacity
               style={[styles.row, { height: 72 }]}
-              onPress={() => setThemeMode("auto")}
+              onPress={() => setThemeMode('auto')}
               activeOpacity={0.7}
             >
               <View style={styles.rowLeft}>
@@ -129,7 +135,7 @@ export default function SettingsPage() {
 
             <TouchableOpacity
               style={[styles.row, { height: 72 }]}
-              onPress={() => setThemeMode("dark")}
+              onPress={() => setThemeMode('dark')}
               activeOpacity={0.7}
             >
               <View style={styles.rowLeft}>
@@ -140,7 +146,7 @@ export default function SettingsPage() {
 
             <TouchableOpacity
               style={[styles.row, styles.rowLast, { height: 72 }]}
-              onPress={() => setThemeMode("light")}
+              onPress={() => setThemeMode('light')}
               activeOpacity={0.7}
             >
               <View style={styles.rowLeft}>
@@ -234,7 +240,9 @@ export default function SettingsPage() {
           <View style={styles.card}>
             <View style={styles.ackRow}>
               <Text style={styles.ackTitle}>Great Neck South Programming Club</Text>
-              <Text style={styles.ackSubtitle}>Built with care, coffee, and love. Have a great day!</Text>
+              <Text style={styles.ackSubtitle}>
+                Built with care, coffee, and love. Have a great day!
+              </Text>
             </View>
           </View>
         </Animated.View>
@@ -252,12 +260,12 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     header: {
       paddingHorizontal: 16,
-      paddingTop: Platform.OS === "ios" ? 50 : 30,
+      paddingTop: Platform.OS === 'ios' ? 50 : 30,
       paddingBottom: 12,
     },
     title: {
       fontSize: 28,
-      fontWeight: "800",
+      fontWeight: '800',
       color: colors.text,
       letterSpacing: 0.3,
     },
@@ -272,8 +280,8 @@ const createStyles = (colors: typeof Colors.light) =>
       marginBottom: 24,
     },
     sectionHeader: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 10,
       marginBottom: 10,
     },
@@ -281,8 +289,8 @@ const createStyles = (colors: typeof Colors.light) =>
       width: 34,
       height: 34,
       borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: colors.surfaceAlt,
       borderWidth: 1,
       borderColor: colors.border,
@@ -290,7 +298,7 @@ const createStyles = (colors: typeof Colors.light) =>
     sectionTitle: {
       color: colors.text,
       fontSize: 16,
-      fontWeight: "800",
+      fontWeight: '800',
       letterSpacing: 0.2,
     },
     card: {
@@ -298,12 +306,12 @@ const createStyles = (colors: typeof Colors.light) =>
       borderRadius: 16,
       borderWidth: 1,
       borderColor: colors.border,
-      overflow: "hidden",
+      overflow: 'hidden',
     },
     row: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       paddingHorizontal: 16,
       paddingVertical: 14,
       borderBottomWidth: 1,
@@ -319,7 +327,7 @@ const createStyles = (colors: typeof Colors.light) =>
     rowTitle: {
       color: colors.text,
       fontSize: 16,
-      fontWeight: "700",
+      fontWeight: '700',
     },
     rowSubtitle: {
       color: colors.mutedText,
@@ -341,7 +349,7 @@ const createStyles = (colors: typeof Colors.light) =>
     ackTitle: {
       color: colors.text,
       fontSize: 16,
-      fontWeight: "700",
+      fontWeight: '700',
     },
     ackSubtitle: {
       color: colors.mutedText,

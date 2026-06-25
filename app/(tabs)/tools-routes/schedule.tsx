@@ -29,9 +29,9 @@ function getEasternSeconds() {
     });
 
     const parts = formatter.formatToParts(new Date());
-    const hour = Number(parts.find(p => p.type === 'hour')?.value);
-    const minute = Number(parts.find(p => p.type === 'minute')?.value);
-    const second = Number(parts.find(p => p.type === 'second')?.value);
+    const hour = Number(parts.find((p) => p.type === 'hour')?.value);
+    const minute = Number(parts.find((p) => p.type === 'minute')?.value);
+    const second = Number(parts.find((p) => p.type === 'second')?.value);
     if (Number.isFinite(hour) && Number.isFinite(minute) && Number.isFinite(second)) {
       return hour * 3600 + minute * 60 + second;
     }
@@ -94,12 +94,15 @@ const SchedulePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getOrCreateAnim = useCallback((key: string) => {
-    if (!periodAnims.has(key)) {
-      periodAnims.set(key, new Animated.Value(0));
-    }
-    return periodAnims.get(key)!;
-  }, [periodAnims]);
+  const getOrCreateAnim = useCallback(
+    (key: string) => {
+      if (!periodAnims.has(key)) {
+        periodAnims.set(key, new Animated.Value(0));
+      }
+      return periodAnims.get(key)!;
+    },
+    [periodAnims]
+  );
 
   useEffect(() => {
     if (hasAnimatedOnce.current) return;
@@ -180,7 +183,9 @@ const SchedulePage = () => {
         ]}
       >
         <View style={styles.periodHeader}>
-          <Text style={[styles.periodTitle, isActive ? styles.periodTitleActive : undefined]}>{period.period}</Text>
+          <Text style={[styles.periodTitle, isActive ? styles.periodTitleActive : undefined]}>
+            {period.period}
+          </Text>
           <View style={[styles.timeBadge, isActive ? styles.timeBadgeActive : undefined]}>
             <Text style={[styles.durationText, isActive ? styles.durationTextActive : undefined]}>
               {period.duration}

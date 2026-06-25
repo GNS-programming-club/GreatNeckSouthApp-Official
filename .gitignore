@@ -1,5 +1,10 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
+# ai stuff
+.claude/
+CLAUDE.md
+docs/
+
 # dependencies
 node_modules/
 

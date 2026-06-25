@@ -1,6 +1,6 @@
-import Feather from "@expo/vector-icons/Feather";
-import { useRouter } from "expo-router";
-import React, { useEffect, useMemo, useRef } from "react";
+import Feather from '@expo/vector-icons/Feather';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   Platform,
@@ -9,11 +9,11 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Colors } from "@/constants/theme";
-import { useTheme } from "@/contexts/theme-context";
+import { Colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/theme-context';
 
 export default function ToolsPage() {
   const { actualTheme } = useTheme();
@@ -31,23 +31,23 @@ export default function ToolsPage() {
   const hasAnimatedOnce = useRef(false);
 
   const onSchedulePress = () => {
-    router.push("/tools-routes/schedule" as any);
+    router.push('/tools-routes/schedule' as any);
   };
 
   const onMapPress = () => {
-    router.push("/tools-routes/school-map" as any);
+    router.push('/tools-routes/school-map' as any);
   };
 
   const onBusPress = () => {
-    router.push("/tools-routes/bus" as any);
+    router.push('/tools-routes/bus' as any);
   };
 
   const onCoursesPress = () => {
-    router.push("/tools-routes/courses" as any);
+    router.push('/tools-routes/courses' as any);
   };
 
   const onClubPress = () => {
-    router.push("/tools-routes/clubs" as any);
+    router.push('/tools-routes/clubs' as any);
   };
 
   useEffect(() => {
@@ -74,12 +74,7 @@ export default function ToolsPage() {
     return () => sequence.stop();
   }, [itemAnims]);
 
-  const renderToolRow = (
-    index: number,
-    title: string,
-    subtitle: string,
-    onPress: () => void
-  ) => {
+  const renderToolRow = (index: number, title: string, subtitle: string, onPress: () => void) => {
     const anim = itemAnims[index];
 
     if (!anim) {
@@ -126,15 +121,25 @@ export default function ToolsPage() {
       </View>
 
       <ScrollView style={styles.content}>
-        {renderToolRow(0, "Daily Schedule", "View period times and daily timeline", onSchedulePress)}
-        {renderToolRow(1, "School Map", "Find rooms and key locations", onMapPress)}
-        {renderToolRow(2, "Bus Schedule", "View bus routes and times", onBusPress)}
-        {renderToolRow(3, "Offered Courses", "View all courses and their information", onCoursesPress)}
-        {renderToolRow(4, "School Clubs", "View all clubs and their information", onClubPress)}
+        {renderToolRow(
+          0,
+          'Daily Schedule',
+          'View period times and daily timeline',
+          onSchedulePress
+        )}
+        {renderToolRow(1, 'School Map', 'Find rooms and key locations', onMapPress)}
+        {renderToolRow(2, 'Bus Schedule', 'View bus routes and times', onBusPress)}
+        {renderToolRow(
+          3,
+          'Offered Courses',
+          'View all courses and their information',
+          onCoursesPress
+        )}
+        {renderToolRow(4, 'School Clubs', 'View all clubs and their information', onClubPress)}
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
@@ -144,12 +149,12 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     header: {
       paddingHorizontal: 16,
-      paddingTop: Platform.OS === "ios" ? 50 : 30,
+      paddingTop: Platform.OS === 'ios' ? 50 : 30,
       paddingBottom: 12,
     },
     title: {
       fontSize: 28,
-      fontWeight: "800",
+      fontWeight: '800',
       color: colors.text,
       letterSpacing: 0.3,
     },
@@ -161,9 +166,9 @@ const createStyles = (colors: typeof Colors.light) =>
       backgroundColor: colors.surface,
       padding: 20,
       borderRadius: 16,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginTop: 20,
       borderWidth: 1,
       borderColor: colors.border,
@@ -179,7 +184,7 @@ const createStyles = (colors: typeof Colors.light) =>
     navBarTitle: {
       color: colors.text,
       fontSize: 18,
-      fontWeight: "700",
+      fontWeight: '700',
     },
     navBarSub: {
       color: colors.mutedText,
@@ -189,6 +194,6 @@ const createStyles = (colors: typeof Colors.light) =>
     arrow: {
       color: colors.mutedText,
       fontSize: 20,
-      fontWeight: "bold",
+      fontWeight: 'bold',
     },
   });

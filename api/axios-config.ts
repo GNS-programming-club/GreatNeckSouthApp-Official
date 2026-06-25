@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
 });
 
 axiosInstance.interceptors.request.use(
@@ -26,7 +26,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response) {
       console.error('Response error:', error.response.status);
-      
+
       switch (error.response.status) {
         case 401:
           console.log('Unauthorized - please log in');
@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
     } else {
       console.error('Error:', error.message);
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -53,12 +53,9 @@ axiosInstance.interceptors.response.use(
 export default axiosInstance;
 
 export const api = {
-  getToday: (date: string) => 
-    axiosInstance.get(`/api/today/${date}`),
-  
-  getClubEvents: (date: string) => 
-    axiosInstance.get(`/api/club-events/${date}`),
-  
-  submitClubEvent: (data: any) => 
-    axiosInstance.post('/api/club-events', data),
+  getToday: (date: string) => axiosInstance.get(`/api/today/${date}`),
+
+  getClubEvents: (date: string) => axiosInstance.get(`/api/club-events/${date}`),
+
+  submitClubEvent: (data: any) => axiosInstance.post('/api/club-events', data),
 };

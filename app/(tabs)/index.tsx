@@ -18,7 +18,12 @@ function formatMinutes(totalMinutes: number) {
   return `${hh}:${m.toString().padStart(2, '0')}`;
 }
 
-function computePeriodTimes(count: number, startMinutes = 7 * 60 + 59, lessonLen = 40, breakLen = 4) {
+function computePeriodTimes(
+  count: number,
+  startMinutes = 7 * 60 + 59,
+  lessonLen = 40,
+  breakLen = 4
+) {
   const times: { start: string; end: string }[] = [];
   for (let i = 0; i < count; i++) {
     const start = startMinutes + i * (lessonLen + breakLen);
@@ -47,7 +52,11 @@ export default function HomeScreen() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const sectionAnims = useRef([new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)]).current;
+  const sectionAnims = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]).current;
   const router = useRouter();
   const [todaySchedule, setTodaySchedule] = useState<(string | null)[] | null>(null);
 
@@ -77,9 +86,7 @@ export default function HomeScreen() {
 
   const bulletinItems = useMemo(() => {
     const weekday = today.getDay(); // 0=sunday
-    const base = [
-      'Check the Tools tab for schedules and maps.',
-    ];
+    const base = ['Check the Tools tab for schedules and maps.'];
 
     const byDay: Record<number, string[]> = {
       1: ['Monday reset: plan your week and check deadlines.', ...base],
@@ -115,7 +122,8 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
-    const tick = () => setNowLabel(new Date().toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }));
+    const tick = () =>
+      setNowLabel(new Date().toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }));
     const interval = setInterval(tick, 30_000);
     return () => clearInterval(interval);
   }, []);
@@ -132,7 +140,7 @@ export default function HomeScreen() {
 
       const isIn = nowMin >= start && nowMin < end;
       const isNext = nowMin < start;
-      
+
       if (!isIn && !isNext) continue;
 
       const courseId = todaySchedule?.[i] ?? null;
@@ -219,7 +227,9 @@ export default function HomeScreen() {
                 <Text style={styles.todayValue}>{nowLabel}</Text>
               </View>
               <View style={styles.todayItem}>
-                <Text style={styles.todayLabel}>{nextUp?.kind === 'current' ? 'Current' : 'Next up'}</Text>
+                <Text style={styles.todayLabel}>
+                  {nextUp?.kind === 'current' ? 'Current' : 'Next up'}
+                </Text>
                 <Text style={styles.todayValue}>
                   {nextUp
                     ? `Period ${nextUp.periodIndex + 1} · ${nextUp.start}–${nextUp.end}`
@@ -253,12 +263,18 @@ export default function HomeScreen() {
           }}
         >
           <View style={styles.quickActions}>
-            <TouchableOpacity style={styles.quickAction} onPress={() => router.push('/tools' as any)} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={styles.quickAction}
+              onPress={() => router.push('/tools' as any)}
+              activeOpacity={0.8}
+            >
               <View style={styles.quickArrow}>
                 <Feather name="arrow-right" size={22} color={colors.mutedText} />
               </View>
               <Text style={styles.quickTitle}>Tools Page</Text>
-              <Text style={styles.quickSub} numberOfLines={1}>Schedule, busses, maps, and more</Text>
+              <Text style={styles.quickSub} numberOfLines={1}>
+                Schedule, busses, maps, and more
+              </Text>
             </TouchableOpacity>
           </View>
 

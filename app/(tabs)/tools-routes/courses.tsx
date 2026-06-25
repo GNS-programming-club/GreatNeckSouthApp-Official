@@ -3,14 +3,14 @@ import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
-    Animated,
-    FlatList,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Animated,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { Colors } from '@/constants/theme';
@@ -52,34 +52,42 @@ interface FilterOptions {
 
 const courses: Course[] = (coursesData as unknown as Course[]).map((course) => ({
   ...course,
-  source_page: typeof course.source_page === "number" ? course.source_page : -1,
+  source_page: typeof course.source_page === 'number' ? course.source_page : -1,
 }));
 
 const filterCourses = (courses: Course[], filters: FilterOptions): Course[] => {
-  let filtered = courses.filter(course => {
-    const searchMatch = !filters.searchTerm ||
+  let filtered = courses.filter((course) => {
+    const searchMatch =
+      !filters.searchTerm ||
       course.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       course.code.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       course.dept.toLowerCase().includes(filters.searchTerm.toLowerCase());
 
-    const deptMatch = filters.departments.length === 0 ||
-      filters.departments.includes(course.dept);
+    const deptMatch = filters.departments.length === 0 || filters.departments.includes(course.dept);
 
-    const creditMatch = filters.credits.length === 0 ||
-      filters.credits.includes(course.credits);
+    const creditMatch = filters.credits.length === 0 || filters.credits.includes(course.credits);
 
-    const gradeMatch = filters.gradeLevels.length === 0 ||
-      course.grade_levels.some(grade => filters.gradeLevels.includes(grade));
+    const gradeMatch =
+      filters.gradeLevels.length === 0 ||
+      course.grade_levels.some((grade) => filters.gradeLevels.includes(grade));
 
-    const levelMatch = filters.levels.length === 0 ||
-      (course.level && filters.levels.includes(course.level));
+    const levelMatch =
+      filters.levels.length === 0 || (course.level && filters.levels.includes(course.level));
 
     const apMatch = !filters.apOnly || course.ap_flag;
 
     const repeatableMatch = !filters.repeatableOnly || course.repeatable;
 
-    return searchMatch && deptMatch && creditMatch && gradeMatch && levelMatch && apMatch && repeatableMatch;
+    return (
+      searchMatch &&
+      deptMatch &&
+      creditMatch &&
+      gradeMatch &&
+      levelMatch &&
+      apMatch &&
+      repeatableMatch
+    );
   });
 
   filtered.sort((a, b) => {
@@ -128,18 +136,10 @@ const FilterChip: React.FC<{
   colors: ThemeColors;
 }> = ({ label, selected, onPress, styles, colors }) => (
   <TouchableOpacity
-    style={[
-      styles.filterChip,
-      selected && styles.filterChipSelected
-    ]}
+    style={[styles.filterChip, selected && styles.filterChipSelected]}
     onPress={onPress}
   >
-    <Text style={[
-      styles.filterChipText,
-      selected && styles.filterChipTextSelected
-    ]}>
-      {label}
-    </Text>
+    <Text style={[styles.filterChipText, selected && styles.filterChipTextSelected]}>{label}</Text>
   </TouchableOpacity>
 );
 
@@ -154,14 +154,27 @@ const CourseList: React.FC<{
   colors: ThemeColors;
   showBackButton?: boolean;
   onBack?: () => void;
-}> = ({ courses, onCourseSelect, filters, onFiltersChange, showAdvancedFilters, onToggleAdvancedFilters, styles, colors, showBackButton, onBack }) => {
-  const departments = Array.from(new Set(courses.map(c => c.dept))).sort();
-  const creditOptions = Array.from(new Set(courses.map(c => c.credits))).sort((a, b) => a - b);
-  const levelOptions = Array.from(new Set(courses.map(c => c.level).filter(Boolean) as string[])).sort();
+}> = ({
+  courses,
+  onCourseSelect,
+  filters,
+  onFiltersChange,
+  showAdvancedFilters,
+  onToggleAdvancedFilters,
+  styles,
+  colors,
+  showBackButton,
+  onBack,
+}) => {
+  const departments = Array.from(new Set(courses.map((c) => c.dept))).sort();
+  const creditOptions = Array.from(new Set(courses.map((c) => c.credits))).sort((a, b) => a - b);
+  const levelOptions = Array.from(
+    new Set(courses.map((c) => c.level).filter(Boolean) as string[])
+  ).sort();
 
   const allGradeLevels: string[] = [];
-  courses.forEach(course => {
-    course.grade_levels.forEach(grade => {
+  courses.forEach((course) => {
+    course.grade_levels.forEach((grade) => {
       if (!allGradeLevels.includes(grade)) {
         allGradeLevels.push(grade);
       }
@@ -182,7 +195,7 @@ const CourseList: React.FC<{
       apOnly: false,
       repeatableOnly: false,
       sortBy: 'code',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     });
   };
 
@@ -233,7 +246,9 @@ const CourseList: React.FC<{
               {course.level && course.level !== 'Regular' && !course.ap_flag && (
                 <Text style={[styles.badge, styles.levelBadge]}>{course.level}</Text>
               )}
-              {course.repeatable && <Text style={[styles.badge, styles.repeatableBadge]}>Repeatable</Text>}
+              {course.repeatable && (
+                <Text style={[styles.badge, styles.repeatableBadge]}>Repeatable</Text>
+              )}
             </View>
           </View>
           <Text style={styles.courseTitle}>{course.title}</Text>
@@ -242,7 +257,9 @@ const CourseList: React.FC<{
             {course.description}
           </Text>
           <View style={styles.courseMeta}>
-            <Text style={styles.metaItem}>{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
+            <Text
+              style={styles.metaItem}
+            >{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
             {course.grade_levels.length > 0 && (
               <Text style={styles.metaItem}>{`Grades: ${course.grade_levels.join(', ')}`}</Text>
             )}
@@ -263,7 +280,7 @@ const CourseList: React.FC<{
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.replace("/tools")}
+          onPress={() => router.replace('/tools')}
           activeOpacity={0.8}
           accessibilityRole="button"
           accessibilityLabel="Back"
@@ -291,7 +308,9 @@ const CourseList: React.FC<{
 
       <View style={styles.filterToggleRow}>
         <TouchableOpacity style={styles.filterToggleButton} onPress={onToggleAdvancedFilters}>
-          <Text style={styles.filterToggleText}>{showAdvancedFilters ? 'Hide Filters' : 'Filters'}</Text>
+          <Text style={styles.filterToggleText}>
+            {showAdvancedFilters ? 'Hide Filters' : 'Filters'}
+          </Text>
           {activeFilterCount > 0 && (
             <View style={styles.filterCountBadge}>
               <Text style={styles.filterCountText}>{activeFilterCount}</Text>
@@ -311,7 +330,7 @@ const CourseList: React.FC<{
             <Text style={styles.filterSectionTitle}>Sort By</Text>
             <View style={styles.sortRow}>
               <View style={styles.chipContainer}>
-                {sortOptions.map(option => (
+                {sortOptions.map((option) => (
                   <FilterChip
                     key={option.value}
                     label={option.label}
@@ -324,10 +343,12 @@ const CourseList: React.FC<{
               </View>
               <TouchableOpacity
                 style={styles.sortOrderButton}
-                onPress={() => onFiltersChange({
-                  ...filters,
-                  sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc'
-                })}
+                onPress={() =>
+                  onFiltersChange({
+                    ...filters,
+                    sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc',
+                  })
+                }
               >
                 <Text style={styles.sortOrderText}>
                   {filters.sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
@@ -349,7 +370,9 @@ const CourseList: React.FC<{
               <FilterChip
                 label="Repeatable"
                 selected={filters.repeatableOnly}
-                onPress={() => onFiltersChange({ ...filters, repeatableOnly: !filters.repeatableOnly })}
+                onPress={() =>
+                  onFiltersChange({ ...filters, repeatableOnly: !filters.repeatableOnly })
+                }
                 styles={styles}
                 colors={colors}
               />
@@ -359,14 +382,14 @@ const CourseList: React.FC<{
           <View style={styles.filterSection}>
             <Text style={styles.filterSectionTitle}>Grade Levels</Text>
             <View style={styles.chipContainer}>
-              {gradeLevels.map(grade => (
+              {gradeLevels.map((grade) => (
                 <FilterChip
                   key={grade}
                   label={`Grade ${grade}`}
                   selected={filters.gradeLevels.includes(grade)}
                   onPress={() => {
                     const newGradeLevels = filters.gradeLevels.includes(grade)
-                      ? filters.gradeLevels.filter(g => g !== grade)
+                      ? filters.gradeLevels.filter((g) => g !== grade)
                       : [...filters.gradeLevels, grade];
                     onFiltersChange({ ...filters, gradeLevels: newGradeLevels });
                   }}
@@ -380,14 +403,14 @@ const CourseList: React.FC<{
           <View style={styles.filterSection}>
             <Text style={styles.filterSectionTitle}>Credits</Text>
             <View style={styles.chipContainer}>
-              {creditOptions.map(credit => (
+              {creditOptions.map((credit) => (
                 <FilterChip
                   key={credit}
                   label={`${credit} credit`}
                   selected={filters.credits.includes(credit)}
                   onPress={() => {
                     const newCredits = filters.credits.includes(credit)
-                      ? filters.credits.filter(c => c !== credit)
+                      ? filters.credits.filter((c) => c !== credit)
                       : [...filters.credits, credit];
                     onFiltersChange({ ...filters, credits: newCredits });
                   }}
@@ -402,14 +425,14 @@ const CourseList: React.FC<{
             <View style={styles.filterSection}>
               <Text style={styles.filterSectionTitle}>Course Level</Text>
               <View style={styles.chipContainer}>
-                {levelOptions.map(level => (
+                {levelOptions.map((level) => (
                   <FilterChip
                     key={level}
                     label={level}
                     selected={filters.levels.includes(level)}
                     onPress={() => {
                       const newLevels = filters.levels.includes(level)
-                        ? filters.levels.filter(l => l !== level)
+                        ? filters.levels.filter((l) => l !== level)
                         : [...filters.levels, level];
                       onFiltersChange({ ...filters, levels: newLevels });
                     }}
@@ -424,14 +447,14 @@ const CourseList: React.FC<{
           <View style={styles.filterSection}>
             <Text style={styles.filterSectionTitle}>Departments</Text>
             <View style={styles.chipContainer}>
-              {departments.map(dept => (
+              {departments.map((dept) => (
                 <FilterChip
                   key={dept}
                   label={dept}
                   selected={filters.departments.includes(dept)}
                   onPress={() => {
                     const newDepartments = filters.departments.includes(dept)
-                      ? filters.departments.filter(d => d !== dept)
+                      ? filters.departments.filter((d) => d !== dept)
                       : [...filters.departments, dept];
                     onFiltersChange({ ...filters, departments: newDepartments });
                   }}
@@ -490,7 +513,9 @@ const CourseDetail: React.FC<{
           <Text style={styles.courseCode}>{course.code}</Text>
           <View style={styles.courseMeta}>
             <Text style={styles.metaItem}>{course.dept}</Text>
-            <Text style={styles.metaItem}>{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
+            <Text
+              style={styles.metaItem}
+            >{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
             {course.ap_flag && <Text style={[styles.metaItem, styles.apFlag]}>AP Course</Text>}
           </View>
         </View>
@@ -540,7 +565,7 @@ const Courses: React.FC = () => {
     apOnly: false,
     repeatableOnly: false,
     sortBy: 'code',
-    sortOrder: 'asc'
+    sortOrder: 'asc',
   });
 
   const handleCourseSelect = (course: Course) => {
@@ -598,24 +623,21 @@ const Courses: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.appContainer} edges={['top', 'left', 'right']}>
-      <View style={styles.appMain}>
-        {renderCurrentView()}
-      </View>
+      <View style={styles.appMain}>{renderCurrentView()}</View>
     </SafeAreaView>
   );
 };
-
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     appContainer: {
       flex: 1,
       backgroundColor: colors.background,
-      paddingBottom: 75
+      paddingBottom: 75,
     },
     header: {
-      justifyContent: "center",
-      alignContent: "center",
+      justifyContent: 'center',
+      alignContent: 'center',
       paddingHorizontal: 16,
       paddingTop: 25,
       paddingBottom: 16,
@@ -625,16 +647,16 @@ const createStyles = (colors: ThemeColors) =>
       backgroundColor: colors.background,
     },
     backButton: {
-      alignSelf: "flex-start",
+      alignSelf: 'flex-start',
       height: 36,
       width: 36,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     title: {
       marginTop: 10,
       fontSize: 24,
-      fontWeight: "800",
+      fontWeight: '800',
       color: colors.text,
     },
     appHeader: {

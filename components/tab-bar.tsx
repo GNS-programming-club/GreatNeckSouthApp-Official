@@ -5,10 +5,26 @@ import Feather from '@expo/vector-icons/Feather';
 import { PlatformPressable } from '@react-navigation/elements';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { Easing, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function TabBar({ state, descriptors, navigation }: { state: any; descriptors: any; navigation: any }) {
+export default function TabBar({
+  state,
+  descriptors,
+  navigation,
+}: {
+  state: any;
+  descriptors: any;
+  navigation: any;
+}) {
   const insets = useSafeAreaInsets();
   const { isTabBarVisible } = useTabBar();
   const { actualTheme } = useTheme();
@@ -22,43 +38,52 @@ export default function TabBar({ state, descriptors, navigation }: { state: any;
   }
 
   return (
-    <View style = {[styles.bar, { 
-      bottom: Math.max(insets.bottom + 8, 16),
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      marginBottom: insets.bottom ? 8 : 12,
-    }]}>
-      {state.routes.map((route: { key: string | number; name: string; params: object | undefined }, index: any) => {
-        const { options } = descriptors[route.key];
+    <View
+      style={[
+        styles.bar,
+        {
+          bottom: Math.max(insets.bottom + 8, 16),
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          marginBottom: insets.bottom ? 8 : 12,
+        },
+      ]}
+    >
+      {state.routes.map(
+        (route: { key: string | number; name: string; params: object | undefined }, index: any) => {
+          const { options } = descriptors[route.key];
 
-        if (options?.href === null || !visibleTabs.has(route.name)) {
-          return null;
+          if (options?.href === null || !visibleTabs.has(route.name)) {
+            return null;
+          }
+
+          let label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+                ? options.title
+                : route.name;
+
+          if (route.name === 'index') label = 'Home';
+          if (route.name === 'calendar') label = 'Calendar';
+          if (route.name === 'tools') label = 'Tools';
+          if (route.name === 'settings') label = 'Settings';
+
+          const isFocused = state.index === index;
+
+          return (
+            <TabBarButton
+              key={route.key}
+              route={route}
+              label={label}
+              isFocused={isFocused}
+              options={options}
+              navigation={navigation}
+              buildHref={buildHref}
+            />
+          );
         }
-
-        let label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
-
-        if (route.name === "index") label = "Home";
-        if (route.name === "calendar") label = "Calendar";
-        if (route.name === "tools") label = "Tools";
-        if (route.name === "settings") label = "Settings";
-
-        const isFocused = state.index === index;
-        
-        return <TabBarButton 
-          key={route.key}
-          route={route}
-          label={label}
-          isFocused={isFocused}
-          options={options}
-          navigation={navigation}
-          buildHref={buildHref}
-        />;
-      })}
+      )}
     </View>
   );
 }
@@ -68,7 +93,7 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
   const colors = Colors[actualTheme];
   const scale = useSharedValue(isFocused ? 1 : 0.95);
   const opacity = useSharedValue(isFocused ? 1 : 0);
-  
+
   useEffect(() => {
     scale.value = withSpring(isFocused ? 1 : 0.95, {
       damping: 15,
@@ -83,11 +108,7 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
 
   const animatedButtonStyle = useAnimatedStyle(() => {
     return {
-      backgroundColor: interpolateColor(
-        opacity.value,
-        [0, 1],
-        ['transparent', colors.primary]
-      ),
+      backgroundColor: interpolateColor(opacity.value, [0, 1], ['transparent', colors.primary]),
       transform: [{ scale: scale.value }],
     };
   });
@@ -95,24 +116,16 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
   const animatedIconStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { 
-          scale: interpolate(
-            opacity.value,
-            [0, 1],
-            [1, 1.05]
-          ) 
-        }
+        {
+          scale: interpolate(opacity.value, [0, 1], [1, 1.05]),
+        },
       ],
     };
   });
 
   const animatedTextStyle = useAnimatedStyle(() => {
     return {
-      opacity: interpolate(
-        opacity.value,
-        [0, 0.5, 1],
-        [0.6, 0.8, 1]
-      ),
+      opacity: interpolate(opacity.value, [0, 0.5, 1], [0.6, 0.8, 1]),
     };
   });
 
@@ -149,9 +162,7 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
       onLongPress={onLongPress}
     >
       <Animated.View style={[styles.tabButton, animatedButtonStyle]}>
-        <Animated.View style={animatedIconStyle}>
-          {getIcon(route.name, iconColor)}
-        </Animated.View>
+        <Animated.View style={animatedIconStyle}>{getIcon(route.name, iconColor)}</Animated.View>
         <Animated.Text style={[styles.barItemFocused, { color: textColor }, animatedTextStyle]}>
           {label}
         </Animated.Text>
@@ -161,15 +172,15 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
 }
 
 function getIcon(routeName: string, color: string) {
-  switch(routeName) {
-    case "index":
-      return <Feather name="home" size={20} color={color}/>
-    case "calendar":
-      return <Feather name="calendar" size={20} color={color}/>
-    case "tools":
-      return <Feather name="tool" size={20} color={color}/>
-    case "settings":
-      return <Feather name="settings" size={20} color={color}/>
+  switch (routeName) {
+    case 'index':
+      return <Feather name="home" size={20} color={color} />;
+    case 'calendar':
+      return <Feather name="calendar" size={20} color={color} />;
+    case 'tools':
+      return <Feather name="tool" size={20} color={color} />;
+    case 'settings':
+      return <Feather name="settings" size={20} color={color} />;
   }
 }
 const styles = StyleSheet.create({
@@ -230,5 +241,5 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 9,
     minHeight: 42,
-  }
+  },
 });

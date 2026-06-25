@@ -2,14 +2,14 @@ import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-    Animated,
-    ScrollView,
-    SectionList,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Animated,
+  ScrollView,
+  SectionList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { Colors } from '@/constants/theme';
@@ -66,10 +66,11 @@ const filterRoutes = (routes: BusRoute[], filters: FilterOptions) => {
 
   const term = filters.searchTerm.toLowerCase();
 
-  return routes.filter(route =>
-    route.vehicle.toLowerCase().includes(term) ||
-    route.title.toLowerCase().includes(term) ||
-    route.stops.some(stop => stop.location.toLowerCase().includes(term))
+  return routes.filter(
+    (route) =>
+      route.vehicle.toLowerCase().includes(term) ||
+      route.title.toLowerCase().includes(term) ||
+      route.stops.some((stop) => stop.location.toLowerCase().includes(term))
   );
 };
 
@@ -115,7 +116,7 @@ const Bus: React.FC = () => {
 
   const groupedRoutes = useMemo<RouteSection[]>(() => {
     const byTime = new Map<string, BusRoute[]>();
-    filteredRoutes.forEach(route => {
+    filteredRoutes.forEach((route) => {
       const key = route.departureTime || 'Unknown';
       if (!byTime.has(key)) byTime.set(key, []);
       byTime.get(key)!.push(route);
@@ -136,9 +137,9 @@ const Bus: React.FC = () => {
     const nowMinutes = now.getHours() * 60 + now.getMinutes();
     const active = new Set<string>();
 
-    groupedRoutes.forEach(section => {
-      const hasUpcomingStop = section.data.some(route =>
-        route.stops.some(stop => {
+    groupedRoutes.forEach((section) => {
+      const hasUpcomingStop = section.data.some((route) =>
+        route.stops.some((stop) => {
           const minutes = parseStopTimeToMinutes(stop.time, route.departureTime);
           return minutes !== null && minutes >= nowMinutes;
         })
@@ -152,10 +153,7 @@ const Bus: React.FC = () => {
   const RouteCard = ({ route }: { route: BusRoute }) => {
     const { busLabel, separator, rest } = parseRouteTitle(route.title);
     return (
-      <TouchableOpacity
-        style={styles.routeCard}
-        onPress={() => setSelectedRoute(route)}
-      >
+      <TouchableOpacity style={styles.routeCard} onPress={() => setSelectedRoute(route)}>
         <Text style={styles.routeTitle}>
           {busLabel ? <Text style={styles.busHighlight}>{busLabel}</Text> : null}
           {busLabel ? separator : ''}
@@ -183,7 +181,10 @@ const Bus: React.FC = () => {
             <Text style={styles.title}>Route Details</Text>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.detailContent, { paddingHorizontal: 16 }]}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={[styles.detailContent, { paddingHorizontal: 16 }]}
+          >
             <View style={{ marginBottom: 20 }}>
               <Text style={{ fontSize: 18, fontWeight: '700', color: colors.primary }}>
                 {selectedRoute.title}
@@ -193,7 +194,7 @@ const Bus: React.FC = () => {
               </Text>
             </View>
 
-            {selectedRoute.stops.map(stop => (
+            {selectedRoute.stops.map((stop) => (
               <View key={stop.stop} style={styles.stopRow}>
                 <Text style={styles.stopTime}>{stop.time}</Text>
                 <Text style={styles.stopLocation}>{stop.location}</Text>
@@ -227,7 +228,7 @@ const Bus: React.FC = () => {
             placeholder="Search bus, route, or stop…"
             placeholderTextColor={colors.mutedText}
             value={filters.searchTerm}
-            onChangeText={text => setFilters({ searchTerm: text })}
+            onChangeText={(text) => setFilters({ searchTerm: text })}
           />
         </View>
 
@@ -239,7 +240,9 @@ const Bus: React.FC = () => {
             const isActive = highlightedDepartureTimes.has(section.title);
             return (
               <View style={[styles.sectionHeader, isActive && styles.sectionHeaderActive]}>
-                <Text style={[styles.sectionHeaderText, isActive && styles.sectionHeaderTextActive]}>
+                <Text
+                  style={[styles.sectionHeaderText, isActive && styles.sectionHeaderTextActive]}
+                >
                   {section.title}
                 </Text>
               </View>

@@ -56,7 +56,6 @@ const CalendarScreen = () => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() + 1 };
   });
-  const [isLoadingMenu, setIsLoadingMenu] = useState(false);
   const menuItemAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
   const holidayAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
   const eventAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
@@ -85,9 +84,9 @@ const CalendarScreen = () => {
   }, []);
 
   useEffect(() => {
-    menuItemAnims.forEach(anim => anim.setValue(0));
-    holidayAnims.forEach(anim => anim.setValue(0));
-    eventAnims.forEach(anim => anim.setValue(0));
+    menuItemAnims.forEach((anim) => anim.setValue(0));
+    holidayAnims.forEach((anim) => anim.setValue(0));
+    eventAnims.forEach((anim) => anim.setValue(0));
 
     const animations: Animated.CompositeAnimation[] = [];
 
@@ -111,7 +110,7 @@ const CalendarScreen = () => {
         Animated.timing(anim, {
           toValue: 1,
           duration: 400,
-          delay: (todayInfo.lunchMenu.length * 50) + (index * 50),
+          delay: todayInfo.lunchMenu.length * 50 + index * 50,
           useNativeDriver: true,
         })
       );
@@ -133,7 +132,15 @@ const CalendarScreen = () => {
     if (animations.length > 0) {
       Animated.parallel(animations).start();
     }
-  }, [todayInfo.lunchMenu, todayInfo.holidays, todayInfo.clubEvents, menuItemAnims, holidayAnims, eventAnims, getOrCreateAnim]);
+  }, [
+    todayInfo.lunchMenu,
+    todayInfo.holidays,
+    todayInfo.clubEvents,
+    menuItemAnims,
+    holidayAnims,
+    eventAnims,
+    getOrCreateAnim,
+  ]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -176,14 +183,13 @@ const CalendarScreen = () => {
     let cancelled = false;
 
     const loadMenuData = async () => {
-
-      if (menuData &&
+      if (
+        menuData &&
         menuData.year === currentViewMonth.year &&
-        menuData.month === currentViewMonth.month) {
+        menuData.month === currentViewMonth.month
+      ) {
         return;
       }
-
-      setIsLoadingMenu(true);
 
       try {
         const parsedMenu = await getParsedMenuForMonth(
@@ -194,12 +200,8 @@ const CalendarScreen = () => {
         setMenuData(parsedMenu);
       } catch (error) {
         if (cancelled || !isMountedRef.current) return;
-        console.error("Failed to load menu data:", error);
+        console.error('Failed to load menu data:', error);
         setMenuData(null);
-      } finally {
-        if (!cancelled && isMountedRef.current) {
-          setIsLoadingMenu(false);
-        }
       }
     };
 
@@ -208,7 +210,7 @@ const CalendarScreen = () => {
     return () => {
       cancelled = true;
     };
-  }, [currentViewMonth.year, currentViewMonth.month]);
+  }, [currentViewMonth.year, currentViewMonth.month, menuData]);
 
   useEffect(() => {
     let cancelled = false;
@@ -227,16 +229,14 @@ const CalendarScreen = () => {
 
         let lunchMenuItems: string[] = [];
 
-        if (menuData &&
-          menuData.month === selectedMonth &&
-          menuData.year === selectedYear) {
+        if (menuData && menuData.month === selectedMonth && menuData.year === selectedYear) {
           lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
         }
 
         setTodayInfo({
           date: dateObj.toLocaleDateString(),
           dayLetter: getDayLetter(dateObj),
-          lunchMenu: lunchMenuItems.length > 0 ? lunchMenuItems : (response.data?.lunchMenu || []),
+          lunchMenu: lunchMenuItems.length > 0 ? lunchMenuItems : response.data?.lunchMenu || [],
           holidays: response.data?.holidays || [],
           clubEvents: response.data?.clubEvents || [],
         });
@@ -253,9 +253,7 @@ const CalendarScreen = () => {
 
         let lunchMenuItems: string[] = [];
 
-        if (menuData &&
-          menuData.month === selectedMonth &&
-          menuData.year === selectedYear) {
+        if (menuData && menuData.month === selectedMonth && menuData.year === selectedYear) {
           lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
         }
 
@@ -284,7 +282,7 @@ const CalendarScreen = () => {
         selectedTextColor: colors.primaryText,
       },
     }),
-    [colors.primary, colors.primaryText, selectedDate],
+    [colors.primary, colors.primaryText, selectedDate]
   );
 
   const calendarTheme = useMemo(
@@ -311,7 +309,7 @@ const CalendarScreen = () => {
       textDayFontSize: 16,
       textMonthFontSize: 16,
     }),
-    [colors],
+    [colors]
   );
 
   const handleDayPress = useCallback((day: { dateString: string }) => {
@@ -323,11 +321,11 @@ const CalendarScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
-      <Animated.ScrollView
-        contentContainerStyle={styles.scrollContent}
-        style={{ opacity: fadeIn }}
-      >
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      edges={['top', 'left', 'right']}
+    >
+      <Animated.ScrollView contentContainerStyle={styles.scrollContent} style={{ opacity: fadeIn }}>
         <Animated.View
           style={[
             styles.heroCard,
@@ -342,7 +340,8 @@ const CalendarScreen = () => {
                 },
               ],
             },
-          ]}>
+          ]}
+        >
           <View style={styles.heroHeader}>
             <View style={styles.heroBadge}>
               <Text style={styles.heroBadgeText}>Today</Text>
@@ -379,7 +378,8 @@ const CalendarScreen = () => {
                 },
               ],
             },
-          ]}>
+          ]}
+        >
           <Text style={styles.sectionTitle}>Calendar</Text>
           <View style={[styles.calendarWrapper, { backgroundColor: colors.surface }]}>
             <Calendar
@@ -408,7 +408,8 @@ const CalendarScreen = () => {
                 },
               ],
             },
-          ]}>
+          ]}
+        >
           <Text style={styles.sectionTitle}>Today&apos;s Information</Text>
 
           {todayInfo.lunchMenu && todayInfo.lunchMenu.length > 0 ? (
@@ -432,7 +433,8 @@ const CalendarScreen = () => {
                           },
                         ],
                       },
-                    ]}>
+                    ]}
+                  >
                     <View style={styles.menuDot} />
                     <Text style={styles.menuItemText}>{item}</Text>
                   </Animated.View>
@@ -464,7 +466,8 @@ const CalendarScreen = () => {
                           },
                         ],
                       },
-                    ]}>
+                    ]}
+                  >
                     <View style={styles.menuDot} />
                     <Text style={styles.menuItemText}>{holiday}</Text>
                   </Animated.View>
@@ -494,7 +497,8 @@ const CalendarScreen = () => {
                           },
                         ],
                       },
-                    ]}>
+                    ]}
+                  >
                     <View style={styles.eventDot} />
                     <View style={styles.eventText}>
                       <Text style={styles.eventName}>{event.name}</Text>
@@ -508,7 +512,6 @@ const CalendarScreen = () => {
             )}
           </View>
         </Animated.View>
-
       </Animated.ScrollView>
     </SafeAreaView>
   );
@@ -672,8 +675,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     holidaySection: {
       marginTop: 12,
     },
-
   });
 
 export default CalendarScreen;
-

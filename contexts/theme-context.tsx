@@ -19,11 +19,9 @@ let baseTextDefaultStyle: unknown = undefined;
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const deviceColorScheme = useDeviceColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
-  
-  const actualTheme: 'light' | 'dark' = 
-    themeMode === 'auto' 
-      ? (deviceColorScheme ?? 'light')
-      : themeMode;
+
+  const actualTheme: 'light' | 'dark' =
+    themeMode === 'auto' ? (deviceColorScheme ?? 'light') : themeMode;
 
   useEffect(() => {
     loadThemePreference();
@@ -44,7 +42,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const loadThemePreference = async () => {
     try {
       const savedTheme = await AsyncStorage.getItem('themeMode');
-      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto')) {
+      if (
+        savedTheme &&
+        (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto')
+      ) {
         setThemeModeState(savedTheme as ThemeMode);
       }
     } catch (error) {

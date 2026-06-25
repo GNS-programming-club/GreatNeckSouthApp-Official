@@ -1,8 +1,8 @@
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { Feather } from '@expo/vector-icons';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   FlatList,
@@ -16,10 +16,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import courses from "../assets/data/coursesHomepage.json";
-
+import courses from '../assets/data/coursesHomepage.json';
 
 interface Course {
   id: string;
@@ -28,18 +27,21 @@ interface Course {
   title: string;
 }
 
-const STORAGE_KEY = "userSchedule_v1";
-
-
+const STORAGE_KEY = 'userSchedule_v1';
 
 function formatMinutes(totalMinutes: number) {
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
   const hh = h % 24;
-  return `${hh}:${m.toString().padStart(2, "0")}`;
-} 
+  return `${hh}:${m.toString().padStart(2, '0')}`;
+}
 
-function computePeriodTimes(count: number, startMinutes = 7 * 60 + 59, lessonLen = 40, breakLen = 4) {
+function computePeriodTimes(
+  count: number,
+  startMinutes = 7 * 60 + 59,
+  lessonLen = 40,
+  breakLen = 4
+) {
   const times: { start: string; end: string }[] = [];
   for (let i = 0; i < count; i++) {
     const start = startMinutes + i * (lessonLen + breakLen);
@@ -65,22 +67,30 @@ function nowMinutesLocal() {
 }
 
 function getDayLetter(date: Date): string {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    const targetDate = new Date(date);
-    targetDate.setHours(0, 0, 0, 0);
+  const targetDate = new Date(date);
+  targetDate.setHours(0, 0, 0, 0);
 
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const daysDifference = Math.round((targetDate.getTime() - today.getTime()) / msPerDay);
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysDifference = Math.round((targetDate.getTime() - today.getTime()) / msPerDay);
 
-    const dayCycle = ['B', 'A'];
-    const dayIndex = ((daysDifference % dayCycle.length) + dayCycle.length) % dayCycle.length;
+  const dayCycle = ['B', 'A'];
+  const dayIndex = ((daysDifference % dayCycle.length) + dayCycle.length) % dayCycle.length;
 
-    return dayCycle[dayIndex];
-} 
+  return dayCycle[dayIndex];
+}
 
-export default function ScheduleCard({ periods = 9, day, style }: { periods?: number; day?: 'A' | 'B'; style?: any }) {
+export default function ScheduleCard({
+  periods = 9,
+  day,
+  style,
+}: {
+  periods?: number;
+  day?: 'A' | 'B';
+  style?: any;
+}) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -90,12 +100,14 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
   const [isHydrated, setIsHydrated] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [nowMinutes, setNowMinutes] = useState(() => nowMinutesLocal());
   const listItemAnims = useRef(Array.from({ length: 14 }, () => new Animated.Value(0))).current;
   const hasAnimatedOnce = useRef(false);
-  const rowAnims = useRef<Animated.Value[]>(Array.from({ length: periods }, () => new Animated.Value(0))).current;
+  const rowAnims = useRef<Animated.Value[]>(
+    Array.from({ length: periods }, () => new Animated.Value(0))
+  ).current;
   const hasRowAnimatedOnce = useRef(false);
 
   useEffect(() => {
@@ -107,7 +119,12 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
           const parsed = JSON.parse(raw) as (string | null)[];
           if (Array.isArray(parsed)) {
             if (parsed.length === periods) setSchedule(parsed);
-            else setSchedule([...parsed].slice(0, periods).concat(Array(Math.max(0, periods - parsed.length)).fill(null)));
+            else
+              setSchedule(
+                [...parsed]
+                  .slice(0, periods)
+                  .concat(Array(Math.max(0, periods - parsed.length)).fill(null))
+              );
           }
         } else {
           setSchedule(Array(periods).fill(null));
@@ -218,14 +235,14 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
 
   function openPickerFor(index: number) {
     setSelectedPeriod(index);
-    setSearchQuery("");
+    setSearchQuery('');
     setModalVisible(true);
   }
 
   function closePicker() {
     setModalVisible(false);
     setSelectedPeriod(null);
-    setSearchQuery("");
+    setSearchQuery('');
   }
 
   function assignCourseToPeriod(courseId: string) {
@@ -271,7 +288,12 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
           <View style={styles.timelineAbsolute} pointerEvents="none">
             <View style={styles.timelineTrack} />
             <View style={[styles.timelineFill, { height: `${Math.round(dayProgress * 100)}%` }]} />
-            <View style={[styles.timelineTopDot, hasDayStarted ? styles.timelineTopDotActive : undefined]} />
+            <View
+              style={[
+                styles.timelineTopDot,
+                hasDayStarted ? styles.timelineTopDotActive : undefined,
+              ]}
+            />
             <View style={[styles.timelineDot, { top: `${Math.round(dayProgress * 100)}%` }]} />
           </View>
 
@@ -301,12 +323,21 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
                   style={styles.row}
                 >
                   <View style={styles.left}>
-                    <View style={[styles.periodBadge, isActive ? styles.periodBadgeActive : undefined]}>
-                      <Text style={[styles.periodNumber, isActive ? styles.periodNumberActive : undefined]}>
+                    <View
+                      style={[styles.periodBadge, isActive ? styles.periodBadgeActive : undefined]}
+                    >
+                      <Text
+                        style={[
+                          styles.periodNumber,
+                          isActive ? styles.periodNumberActive : undefined,
+                        ]}
+                      >
                         {idx + 1}
                       </Text>
                     </View>
-                    <Text style={styles.time}>{t.start} — {t.end}</Text>
+                    <Text style={styles.time}>
+                      {t.start} — {t.end}
+                    </Text>
                   </View>
 
                   <View style={styles.timelineSpacer} />
@@ -315,7 +346,9 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
                     {course ? (
                       <View style={styles.courseContainer}>
                         <Text style={styles.courseTitle}>{course.title}</Text>
-                        <Text style={styles.courseMeta}>{course.dept} · {course.code}</Text>
+                        <Text style={styles.courseMeta}>
+                          {course.dept} · {course.code}
+                        </Text>
                       </View>
                     ) : (
                       <View
@@ -335,7 +368,9 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
       </ScrollView>
 
       <View style={styles.footer}>
-        <Text style={styles.savedText}>Saved {savedAt ? new Date(savedAt).toLocaleTimeString() : "—"}</Text>
+        <Text style={styles.savedText}>
+          Saved {savedAt ? new Date(savedAt).toLocaleTimeString() : '—'}
+        </Text>
         <TouchableOpacity style={styles.clearAllBtn} onPress={clearAll}>
           <Text style={styles.clearAllText}>Clear All</Text>
         </TouchableOpacity>
@@ -345,26 +380,29 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
         <View style={styles.pickerContainer}>
           <SafeAreaView style={styles.pickerSafeTop} edges={['top', 'left', 'right']}>
             <View style={styles.pickerHeader}>
-            <View style={styles.pickerHeaderRow}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={closePicker}
-                activeOpacity={0.8}
-                accessibilityRole="button"
-                accessibilityLabel="Back"
-              >
-                <Feather name="arrow-left" size={25} color={colors.text} />
-              </TouchableOpacity>
-            </View>
+              <View style={styles.pickerHeaderRow}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={closePicker}
+                  activeOpacity={0.8}
+                  accessibilityRole="button"
+                  accessibilityLabel="Back"
+                >
+                  <Feather name="arrow-left" size={25} color={colors.text} />
+                </TouchableOpacity>
+              </View>
 
-            <Text style={styles.pickerTitle}>Pick a course</Text>
-            <Text style={styles.pickerSubtitle}>
-              {selectedPeriod != null ? `Period ${selectedPeriod + 1}` : 'Select a period'}
-            </Text>
+              <Text style={styles.pickerTitle}>Pick a course</Text>
+              <Text style={styles.pickerSubtitle}>
+                {selectedPeriod != null ? `Period ${selectedPeriod + 1}` : 'Select a period'}
+              </Text>
             </View>
           </SafeAreaView>
 
-          <KeyboardAvoidingView style={styles.pickerBody} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <KeyboardAvoidingView
+            style={styles.pickerBody}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
             <View style={styles.modalSearch}>
               <TextInput
                 placeholder="Search courses..."
@@ -389,9 +427,7 @@ export default function ScheduleCard({ periods = 9, day, style }: { periods?: nu
                   <Pressable style={styles.courseRow} onPress={() => assignCourseToPeriod(item.id)}>
                     <View style={styles.courseRowInner}>
                       <View style={styles.courseRowText}>
-                        <Text style={styles.courseTitleRow}>
-                          {item.title}
-                        </Text>
+                        <Text style={styles.courseTitleRow}>{item.title}</Text>
                         <Text style={styles.courseMetaRow}>
                           {item.dept} · {item.code}
                         </Text>
@@ -458,7 +494,7 @@ function createStyles(colors: typeof Colors.light) {
     },
     cardTitle: {
       fontSize: 18,
-      fontWeight: "700",
+      fontWeight: '700',
       marginBottom: 10,
       color: colors.text,
     },
@@ -470,9 +506,9 @@ function createStyles(colors: typeof Colors.light) {
       gap: 10,
     },
     row: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "flex-start",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
       paddingVertical: 14,
       paddingHorizontal: 14,
       borderRadius: 16,
@@ -486,8 +522,8 @@ function createStyles(colors: typeof Colors.light) {
     },
     left: {
       width: 84,
-      flexDirection: "column",
-      alignItems: "center",
+      flexDirection: 'column',
+      alignItems: 'center',
       justifyContent: 'center',
       flexShrink: 0,
     },
@@ -498,8 +534,8 @@ function createStyles(colors: typeof Colors.light) {
       backgroundColor: colors.surfaceAlt,
       borderWidth: 1,
       borderColor: colors.border,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     periodBadgeActive: {
       backgroundColor: colors.primary,
@@ -507,7 +543,7 @@ function createStyles(colors: typeof Colors.light) {
     },
     periodNumber: {
       color: colors.text,
-      fontWeight: "800",
+      fontWeight: '800',
     },
     periodNumberActive: {
       color: colors.primaryText,
@@ -570,7 +606,7 @@ function createStyles(colors: typeof Colors.light) {
       color: colors.mutedText,
       fontSize: 12,
       marginTop: 8,
-      textAlign: 'center', 
+      textAlign: 'center',
     },
     addIconWrap: {
       alignItems: 'flex-end',
@@ -581,7 +617,7 @@ function createStyles(colors: typeof Colors.light) {
       alignItems: 'flex-end',
     },
     courseTitle: {
-      fontWeight: "700",
+      fontWeight: '700',
       color: colors.text,
       fontSize: 15,
       lineHeight: 20,
@@ -598,9 +634,9 @@ function createStyles(colors: typeof Colors.light) {
       flexShrink: 1,
     },
     footer: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       paddingTop: 10,
       paddingHorizontal: 6,
     },
@@ -616,7 +652,7 @@ function createStyles(colors: typeof Colors.light) {
     },
     clearAllText: {
       color: colors.accent,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     pickerContainer: {
       flex: 1,
@@ -704,7 +740,7 @@ function createStyles(colors: typeof Colors.light) {
       minWidth: 0,
     },
     courseTitleRow: {
-      fontWeight: "700",
+      fontWeight: '700',
       color: colors.text,
       fontSize: 15,
       flexShrink: 1,
@@ -725,7 +761,7 @@ function createStyles(colors: typeof Colors.light) {
     },
     clearBtn: {
       padding: 12,
-      alignItems: "center",
+      alignItems: 'center',
       borderRadius: 14,
       backgroundColor: colors.surfaceAlt,
       borderWidth: 1,
@@ -733,7 +769,7 @@ function createStyles(colors: typeof Colors.light) {
     },
     clearText: {
       color: colors.accent,
-      fontWeight: "600",
+      fontWeight: '600',
     },
   });
 }

@@ -1,15 +1,9 @@
-const API_URL = "https://api.schoolnutritionandfitness.com/graphql";
+const API_URL = 'https://api.schoolnutritionandfitness.com/graphql';
 
-const DISTRICT_ORG_ID = "1593474504123";
-const HIGH_SCHOOL_LUNCH_NAME = "High School Lunch";
+const DISTRICT_ORG_ID = '1593474504123';
+const HIGH_SCHOOL_LUNCH_NAME = 'High School Lunch';
 
-const FILLER_WORDS = new Set([
-  "or",
-  "choice of:",
-  "choice of",
-  "days of menu:",
-  "days of menu",
-]);
+const FILLER_WORDS = new Set(['or', 'choice of:', 'choice of', 'days of menu:', 'days of menu']);
 
 function isFillerText(text: string): boolean {
   const normalized = text.toLowerCase().trim();
@@ -57,7 +51,6 @@ interface MenuTypeInfo {
 }
 
 async function fetchMenuIdForMonth(year: number, month: number): Promise<string | null> {
-
   const apiMonth = month - 1;
 
   const query = `
@@ -82,23 +75,21 @@ async function fetchMenuIdForMonth(year: number, month: number): Promise<string 
 
   try {
     const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables }),
     });
 
     const result = await response.json();
 
     if (result.errors) {
-      console.error("GraphQL Errors (menuTypes):", result.errors);
+      console.error('GraphQL Errors (menuTypes):', result.errors);
       return null;
     }
 
     const menuTypes: MenuTypeInfo[] = result.data?.menuTypes || [];
 
-    const highSchoolLunch = menuTypes.find(
-      (mt) => mt.name === HIGH_SCHOOL_LUNCH_NAME
-    );
+    const highSchoolLunch = menuTypes.find((mt) => mt.name === HIGH_SCHOOL_LUNCH_NAME);
 
     if (highSchoolLunch?.menu?.id) {
       return highSchoolLunch.menu.id;
@@ -107,7 +98,7 @@ async function fetchMenuIdForMonth(year: number, month: number): Promise<string 
     console.warn(`No "${HIGH_SCHOOL_LUNCH_NAME}" menu found for ${month}/${year}`);
     return null;
   } catch (error) {
-    console.error("Failed to fetch menu types:", error);
+    console.error('Failed to fetch menu types:', error);
     return null;
   }
 }
@@ -143,16 +134,16 @@ async function fetchMenuById(menuId: string) {
   };
 
   const response = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query, variables }),
   });
 
   const result = await response.json();
 
   if (result.errors) {
-    console.error("GraphQL Errors:", result.errors);
-    throw new Error("GraphQL query failed");
+    console.error('GraphQL Errors:', result.errors);
+    throw new Error('GraphQL query failed');
   }
 
   return result.data.menu;
@@ -197,12 +188,14 @@ export function parseMenuData(rawMenu: any): ParsedMenu {
       name: name,
       meal: product.meal,
       food_group: product.food_group,
-      nutrients: item.nutrients ? {
-        calories: item.nutrients.calories,
-        total_fat: item.nutrients.total_fat,
-        protein: item.nutrients.protein,
-        carbs: item.nutrients.carbs,
-      } : undefined,
+      nutrients: item.nutrients
+        ? {
+            calories: item.nutrients.calories,
+            total_fat: item.nutrients.total_fat,
+            protein: item.nutrients.protein,
+            carbs: item.nutrients.carbs,
+          }
+        : undefined,
     };
 
     dayMap.get(day)!.push(menuItem);
@@ -225,7 +218,10 @@ export function parseMenuData(rawMenu: any): ParsedMenu {
   };
 }
 
-export async function getParsedMenuForMonth(year: number, month: number): Promise<ParsedMenu | null> {
+export async function getParsedMenuForMonth(
+  year: number,
+  month: number
+): Promise<ParsedMenu | null> {
   const rawMenu = await fetchMenuForMonth(year, month);
 
   if (!rawMenu) {
@@ -243,7 +239,6 @@ export async function getParsedMenu(): Promise<ParsedMenu> {
   const menu = await getParsedMenuForMonth(currentYear, currentMonth);
 
   if (!menu) {
-
     return {
       menuId: '',
       month: currentMonth,
@@ -256,7 +251,6 @@ export async function getParsedMenu(): Promise<ParsedMenu> {
 }
 
 export function getMenuItemsForDay(parsedMenu: ParsedMenu, day: number): string[] {
-  const dayMenu = parsedMenu.days.find(d => d.day === day);
-  return dayMenu ? dayMenu.items.map(item => item.name) : [];
+  const dayMenu = parsedMenu.days.find((d) => d.day === day);
+  return dayMenu ? dayMenu.items.map((item) => item.name) : [];
 }
-

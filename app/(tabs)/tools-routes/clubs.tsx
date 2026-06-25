@@ -2,14 +2,14 @@ import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
-    Animated,
-    FlatList,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Animated,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { Colors } from '@/constants/theme';
@@ -37,7 +37,7 @@ const filterClubs = (clubs: Club[], searchTerm: string): Club[] => {
 
   const term = searchTerm.toLowerCase().trim();
 
-  return clubs.filter(club => {
+  return clubs.filter((club) => {
     return (
       club.title.toLowerCase().includes(term) ||
       club.advisors.toLowerCase().includes(term) ||
@@ -93,7 +93,9 @@ const ClubCard: React.FC<{
         <View style={styles.cardMeta}>
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Advisor(s):</Text>
-            <Text style={styles.metaValue} numberOfLines={1} ellipsizeMode="tail">{club.advisors}</Text>
+            <Text style={styles.metaValue} numberOfLines={1} ellipsizeMode="tail">
+              {club.advisors}
+            </Text>
           </View>
 
           {club.googleclasscode && (
@@ -108,11 +110,11 @@ const ClubCard: React.FC<{
           {club.description}
         </Text>
 
-        {club.meetinginfo !== "Unknown" && (
-            <View style={styles.meetingInfo}>
+        {club.meetinginfo !== 'Unknown' && (
+          <View style={styles.meetingInfo}>
             <Text style={styles.meetingLabel}>Meeting Info:</Text>
             <Text style={styles.meetingValue}>{club.meetinginfo}</Text>
-            </View>
+          </View>
         )}
       </TouchableOpacity>
     </Animated.View>
@@ -154,7 +156,9 @@ const ClubDetail: React.FC<{
               <View style={styles.detailItemVertical}>
                 <Text style={styles.detailLabel}>Google Classroom Code:</Text>
                 <View style={styles.codeContainer}>
-                    <Text style={[styles.detailValue, styles.highlightCode]}>{club.googleclasscode}</Text>
+                  <Text style={[styles.detailValue, styles.highlightCode]}>
+                    {club.googleclasscode}
+                  </Text>
                 </View>
               </View>
             )}
@@ -165,14 +169,14 @@ const ClubDetail: React.FC<{
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.descriptionText}>{club.description}</Text>
 
-          {club.meetinginfo !== "Unknown" && (
+          {club.meetinginfo !== 'Unknown' && (
             <>
               <Text style={styles.sectionTitle}>Meeting Information</Text>
               <Text style={styles.descriptionText}>{club.meetinginfo}</Text>
             </>
           )}
         </View>
-        <View style={{height: 40}} />
+        <View style={{ height: 40 }} />
       </ScrollView>
     </View>
   );
@@ -198,7 +202,7 @@ const ClubList: React.FC<{
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.replace("/tools")}
+          onPress={() => router.replace('/tools')}
           activeOpacity={0.8}
           accessibilityRole="button"
           accessibilityLabel="Back"
@@ -300,9 +304,7 @@ const Clubs: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.appContainer} edges={['top', 'left', 'right']}>
-      <View style={styles.appMain}>
-        {renderCurrentView()}
-      </View>
+      <View style={styles.appMain}>{renderCurrentView()}</View>
     </SafeAreaView>
   );
 };
@@ -312,7 +314,7 @@ const createStyles = (colors: ThemeColors) =>
     appContainer: {
       flex: 1,
       backgroundColor: colors.background,
-      paddingBottom: 75
+      paddingBottom: 75,
     },
     appMain: {
       flex: 1,
@@ -324,8 +326,8 @@ const createStyles = (colors: ThemeColors) =>
       paddingBottom: 46,
     },
     header: {
-      justifyContent: "center",
-      alignContent: "center",
+      justifyContent: 'center',
+      alignContent: 'center',
       paddingHorizontal: 16,
       paddingTop: 25,
       paddingBottom: 16,
@@ -335,16 +337,16 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: 16,
     },
     backButton: {
-      alignSelf: "flex-start",
+      alignSelf: 'flex-start',
       height: 36,
       width: 36,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     title: {
       marginTop: 10,
       fontSize: 24,
-      fontWeight: "800",
+      fontWeight: '800',
       color: colors.text,
     },
     searchRow: {
@@ -401,7 +403,7 @@ const createStyles = (colors: ThemeColors) =>
       gap: 6,
     },
     cardHeader: {
-        marginBottom: 4,
+      marginBottom: 4,
     },
     cardTitle: {
       fontSize: 20,
@@ -445,23 +447,23 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: 8,
     },
     meetingInfo: {
-        backgroundColor: colors.surfaceAlt,
-        padding: 12,
-        borderColor: colors.border,
-        borderWidth: 1,
-        borderRadius: 12,
-        marginTop: 4,
+      backgroundColor: colors.surfaceAlt,
+      padding: 12,
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderRadius: 12,
+      marginTop: 4,
     },
     meetingLabel: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: colors.text,
-        marginBottom: 4,
+      fontSize: 13,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 4,
     },
     meetingValue: {
-        fontSize: 14,
-        color: colors.mutedText,
-        lineHeight: 20,
+      fontSize: 14,
+      color: colors.mutedText,
+      lineHeight: 20,
     },
     detailBackButton: {
       backgroundColor: colors.surface,
@@ -481,13 +483,13 @@ const createStyles = (colors: ThemeColors) =>
       gap: 8,
     },
     detailTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: colors.text,
-        marginBottom: 8,
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 8,
     },
     detailMeta: {
-       gap: 12,
+      gap: 12,
     },
     detailContent: {
       gap: 24,
@@ -503,10 +505,10 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: 8,
     },
     detailLabel: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: colors.mutedText,
-        marginRight: 8,
+      fontSize: 14,
+      fontWeight: '700',
+      color: colors.mutedText,
+      marginRight: 8,
     },
     detailValue: {
       flex: 1,
@@ -515,9 +517,9 @@ const createStyles = (colors: ThemeColors) =>
       lineHeight: 24,
     },
     descriptionText: {
-        fontSize: 16,
-        color: colors.mutedText,
-        lineHeight: 24,
+      fontSize: 16,
+      color: colors.mutedText,
+      lineHeight: 24,
     },
     resultsRow: {
       marginBottom: 12,
@@ -531,14 +533,14 @@ const createStyles = (colors: ThemeColors) =>
       flex: 1,
     },
     codeContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: 'center',
-        textAlign: 'center',
-        textAlignVertical: 'center',
-        alignSelf: 'flex-start',
-        height: 35,
-    }
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignContent: 'center',
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      alignSelf: 'flex-start',
+      height: 35,
+    },
   });
 
 export default Clubs;

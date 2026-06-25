@@ -2,7 +2,7 @@
 import { PropsWithChildren, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from '@react-navigation/elements';
-import { ThemeProvider } from '@/contexts/theme-context'
+import { ThemeProvider } from '@/contexts/theme-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
@@ -16,7 +16,8 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
       <TouchableOpacity
         style={styles.heading}
         onPress={() => setIsOpen((value) => !value)}
-        activeOpacity={0.8}>
+        activeOpacity={0.8}
+      >
         <IconSymbol
           name="chevron.right"
           size={18}
@@ -47,6 +48,6 @@ const styles = StyleSheet.create({
     marginLeft: 24,
   },
   text: {
-    fontWeight: "600"
-  }
+    fontWeight: '600',
+  },
 });
