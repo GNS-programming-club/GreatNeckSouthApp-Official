@@ -8,18 +8,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  useAnimatedReaction,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { scheduleOnRN } from 'react-native-worklets';
 
 import { Colors, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
@@ -27,6 +20,16 @@ import { useTheme } from '@/contexts/theme-context';
 const MAP_IMAGE = require('../../../assets/images/school-map.png');
 
 const { width: IMG_W, height: IMG_H } = RNImage.resolveAssetSource(MAP_IMAGE);
+
+const MIN_SCALE = 1;
+const MAX_SCALE = 5;
+const ZOOM_SCALE = 2.5;
+
+const clamp = (value: number, min: number, max: number) => {
+  'worklet';
+
+  return Math.min(Math.max(value, min), max);
+};
 
 type MapLocation = {
   id: string;
@@ -57,7 +60,6 @@ const makeLocation = (
 });
 
 const LOCATIONS: MapLocation[] = [
-  // Areas and named spaces
   makeLocation('Main Entrance', 'main-entrance', ['entrance', 'front', 'main'], 0.33, 0.15),
   makeLocation(
     'Main Office Complex',
@@ -141,11 +143,9 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('Upper Level', 'upper-level', ['upper', 'level'], 0.33, 0.15),
   makeLocation('Mezzanine Level', 'mezzanine-level', ['mezzanine', 'level'], 0.33, 0.15),
   makeLocation('Bottom Level', 'bottom-level', ['bottom', 'level'], 0.33, 0.15),
-  // Elevators
   makeLocation('Elevator', 'elevator-1'),
   makeLocation('Elevator', 'elevator-2'),
   makeLocation('Elevator', 'elevator-3'),
-  // Bathrooms
   makeLocation('Boys Bathroom', 'boys-bathroom-1'),
   makeLocation('Boys Bathroom', 'boys-bathroom-2'),
   makeLocation('Boys Bathroom', 'boys-bathroom-3'),
@@ -163,12 +163,10 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('Girls Bathroom', 'girls-bathroom-1'),
   makeLocation('Girls Bathroom', 'girls-bathroom-2'),
   makeLocation('Girls Bathroom', 'girls-bathroom-3'),
-  // 100s
   makeLocation('104F', '104f', ['104f']),
   makeLocation('105', '105', ['105']),
   makeLocation('199', '199', ['199']),
   makeLocation('199A', '199a', ['199a']),
-  // 200s
   makeLocation('206', '206', ['206']),
   makeLocation('207', '207', ['207']),
   makeLocation('211', '211', ['211']),
@@ -176,7 +174,6 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('213', '213', ['213']),
   makeLocation('213A', '213a', ['213a']),
   makeLocation('214', '214', ['214']),
-  // 300s
   makeLocation('313', '313', ['313']),
   makeLocation('314', '314', ['314']),
   makeLocation('315', '315', ['315']),
@@ -191,7 +188,6 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('319I', '319i', ['319i']),
   makeLocation('319J', '319j', ['319j']),
   makeLocation('319K', '319k', ['319k']),
-  // 400s
   makeLocation('401', '401', ['401']),
   makeLocation('402', '402', ['402']),
   makeLocation('403', '403', ['403']),
@@ -226,7 +222,6 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('450', '450', ['450']),
   makeLocation('451', '451', ['451']),
   makeLocation('452', '452', ['452']),
-  // 500s
   makeLocation('501', '501', ['501']),
   makeLocation('502A', '502a', ['502a']),
   makeLocation('502B', '502b', ['502b']),
@@ -240,7 +235,6 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('506', '506', ['506']),
   makeLocation('507', '507', ['507']),
   makeLocation('508', '508', ['508']),
-  // 600s
   makeLocation('600', '600', ['600']),
   makeLocation('601', '601', ['601']),
   makeLocation('602', '602', ['602']),
@@ -261,7 +255,6 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('617', '617', ['617']),
   makeLocation('620', '620', ['620']),
   makeLocation('641', '641', ['641']),
-  // 700s
   makeLocation('700', '700', ['700']),
   makeLocation('701', '701', ['701']),
   makeLocation('702', '702', ['702']),
@@ -272,7 +265,6 @@ const LOCATIONS: MapLocation[] = [
   makeLocation('707B', '707b', ['707b']),
   makeLocation('729', '729', ['729']),
   makeLocation('731', '731', ['731']),
-  // 800s
   makeLocation('800', '800', ['800']),
 ];
 
@@ -289,133 +281,40 @@ export default function SchoolMap() {
       ? []
       : LOCATIONS.filter((loc) => {
           if (loc.label.toLowerCase().includes(normalizedQuery)) return true;
+
           return loc.keywords.some((k) => k.includes(normalizedQuery));
         }).slice(0, 8);
 
-  const { width, height } = useWindowDimensions();
-  const isMobilePortrait = width < 768 && width < height;
+  const [mapDimensions, setMapDimensions] = useState({ width: 0, height: 0 });
 
-  const baseScale = useSharedValue(1);
-  const [baseScaleValue, setBaseScaleValue] = useState(1);
+  const fitted = useMemo(() => {
+    if (!mapDimensions.width || !mapDimensions.height) return null;
 
-  const scale = useSharedValue(1);
-  const savedScale = useSharedValue(1);
+    const scale = Math.min(mapDimensions.width / IMG_W, mapDimensions.height / IMG_H);
+
+    return { width: IMG_W * scale, height: IMG_H * scale };
+  }, [mapDimensions]);
+
+  const scale = useSharedValue(MIN_SCALE);
+  const savedScale = useSharedValue(MIN_SCALE);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const savedTranslateX = useSharedValue(0);
   const savedTranslateY = useSharedValue(0);
-  const mapWidth = useSharedValue(0);
-  const mapHeight = useSharedValue(0);
-  const portraitFlag = useSharedValue(0);
-  const lastCoordX = useSharedValue(0.5);
-  const lastCoordY = useSharedValue(0.5);
-  const lastCoordScale = useSharedValue(1);
-
-  const [mapDimensions, setMapDimensions] = useState({ width: 0, height: 0 });
-  const [centerCoord, setCenterCoord] = useState({ x: 0.5, y: 0.5, scale: 1 });
-
-  React.useEffect(() => {
-    scale.value = withTiming(baseScaleValue);
-    savedScale.value = baseScaleValue;
-    translateX.value = withTiming(0);
-    translateY.value = withTiming(0);
-    savedTranslateX.value = 0;
-    savedTranslateY.value = 0;
-  }, [
-    width,
-    height,
-    baseScaleValue,
-    scale,
-    savedScale,
-    translateX,
-    translateY,
-    savedTranslateX,
-    savedTranslateY,
-  ]);
-
-  React.useEffect(() => {
-    portraitFlag.value = isMobilePortrait ? 1 : 0;
-  }, [isMobilePortrait, portraitFlag]);
-
-  const updateCenterCoord = (x: number, y: number, s: number) => {
-    setCenterCoord({ x, y, scale: s });
-  };
-
-  useAnimatedReaction(
-    () => ({
-      tx: translateX.value,
-      ty: translateY.value,
-      s: scale.value,
-      w: mapWidth.value,
-      h: mapHeight.value,
-      portrait: portraitFlag.value,
-    }),
-    (curr) => {
-      if (!curr.w || !curr.h || !curr.s) return;
-
-      const dxPrime = -curr.tx / curr.s;
-      const dyPrime = -curr.ty / curr.s;
-
-      let viewX = 0.5 + dxPrime / curr.w;
-      let viewY = 0.5 + dyPrime / curr.h;
-
-      let imageX: number;
-      let imageY: number;
-
-      if (curr.portrait === 1) {
-        imageX = 1 - viewY;
-        imageY = viewX;
-      } else {
-        imageX = viewX;
-        imageY = viewY;
-      }
-
-      imageX = Math.max(0, Math.min(1, imageX));
-      imageY = Math.max(0, Math.min(1, imageY));
-
-      if (
-        Math.abs(imageX - lastCoordX.value) < 0.001 &&
-        Math.abs(imageY - lastCoordY.value) < 0.001 &&
-        Math.abs(curr.s - lastCoordScale.value) < 0.01
-      ) {
-        return;
-      }
-
-      lastCoordX.value = imageX;
-      lastCoordY.value = imageY;
-      lastCoordScale.value = curr.s;
-
-      scheduleOnRN(() => updateCenterCoord(imageX, imageY, curr.s));
-    }
-  );
+  const contentWidth = useSharedValue(0);
+  const contentHeight = useSharedValue(0);
 
   const zoomToLocation = (loc: MapLocation) => {
     setQuery('');
 
-    const targetScale = Math.max(baseScale.value * 2.5, baseScale.value + 1);
+    const dx = (loc.x - 0.5) * contentWidth.value;
+    const dy = (loc.y - 0.5) * contentHeight.value;
 
-    const w = mapWidth.value;
-    const h = mapHeight.value;
+    const targetTranslateX = -dx * ZOOM_SCALE;
+    const targetTranslateY = -dy * ZOOM_SCALE;
 
-    let viewX: number;
-    let viewY: number;
-
-    if (isMobilePortrait) {
-      viewX = loc.y;
-      viewY = 1 - loc.x;
-    } else {
-      viewX = loc.x;
-      viewY = loc.y;
-    }
-
-    const dx = (viewX - 0.5) * w;
-    const dy = (viewY - 0.5) * h;
-
-    const targetTranslateX = -dx * targetScale;
-    const targetTranslateY = -dy * targetScale;
-
-    scale.value = withTiming(targetScale);
-    savedScale.value = targetScale;
+    scale.value = withTiming(ZOOM_SCALE);
+    savedScale.value = ZOOM_SCALE;
     translateX.value = withTiming(targetTranslateX);
     translateY.value = withTiming(targetTranslateY);
     savedTranslateX.value = targetTranslateX;
@@ -424,27 +323,27 @@ export default function SchoolMap() {
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
-      scale.value = savedScale.value * e.scale;
+      scale.value = clamp(savedScale.value * e.scale, MIN_SCALE, MAX_SCALE);
     })
     .onEnd(() => {
-      if (scale.value < baseScale.value) {
-        scale.value = withTiming(baseScale.value);
-        savedScale.value = baseScale.value;
+      savedScale.value = scale.value;
+
+      if (scale.value <= MIN_SCALE) {
+        scale.value = withTiming(MIN_SCALE);
+        savedScale.value = MIN_SCALE;
         translateX.value = withTiming(0);
         translateY.value = withTiming(0);
         savedTranslateX.value = 0;
         savedTranslateY.value = 0;
-      } else {
-        savedScale.value = scale.value;
       }
     });
 
   const panGesture = Gesture.Pan()
     .onUpdate((e) => {
-      if (scale.value > baseScale.value) {
-        translateX.value = savedTranslateX.value + e.translationX;
-        translateY.value = savedTranslateY.value + e.translationY;
-      }
+      if (scale.value <= MIN_SCALE) return;
+
+      translateX.value = savedTranslateX.value + e.translationX;
+      translateY.value = savedTranslateY.value + e.translationY;
     })
     .onEnd(() => {
       savedTranslateX.value = translateX.value;
@@ -453,36 +352,36 @@ export default function SchoolMap() {
 
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
+    .maxDuration(250)
     .onEnd(() => {
-      if (scale.value !== baseScale.value) {
-        scale.value = withTiming(baseScale.value);
-        savedScale.value = baseScale.value;
+      if (scale.value > MIN_SCALE) {
+        scale.value = withTiming(MIN_SCALE);
+        savedScale.value = MIN_SCALE;
         translateX.value = withTiming(0);
         translateY.value = withTiming(0);
         savedTranslateX.value = 0;
         savedTranslateY.value = 0;
       } else {
-        const zoomScale = Math.max(baseScale.value * 2.5, baseScale.value + 1);
-        scale.value = withTiming(zoomScale);
-        savedScale.value = zoomScale;
+        scale.value = withTiming(ZOOM_SCALE);
+        savedScale.value = ZOOM_SCALE;
       }
     });
 
-  const composedGesture = Gesture.Simultaneous(pinchGesture, panGesture, doubleTapGesture);
-
-  const baseRotation = isMobilePortrait ? '90deg' : '0deg';
+  const composedGesture = Gesture.Race(
+    doubleTapGesture,
+    Gesture.Simultaneous(panGesture, pinchGesture)
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: translateX.value },
       { translateY: translateY.value },
       { scale: scale.value },
-      { rotate: baseRotation as '0deg' | '90deg' | '180deg' | '270deg' },
     ],
   }));
 
   const hintStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(scale.value === 1 ? 1 : 0),
+    opacity: withTiming(scale.value > MIN_SCALE ? 0 : 1),
   }));
 
   return (
@@ -550,60 +449,19 @@ export default function SchoolMap() {
             style={[
               styles.mapContent,
               animatedStyle,
-              {
-                width: (() => {
-                  if (mapDimensions.width === 0) return '100%';
-                  const containerW = mapDimensions.width;
-                  const containerH = mapDimensions.height;
-
-                  if (isMobilePortrait) {
-                    const scale = Math.min(containerW / IMG_H, containerH / IMG_W);
-
-                    return IMG_W * scale;
-                  } else {
-                    const scale = Math.min(containerW / IMG_W, containerH / IMG_H);
-
-                    return IMG_W * scale;
-                  }
-                })(),
-                height: (() => {
-                  if (mapDimensions.width === 0) return '100%';
-                  const containerW = mapDimensions.width;
-                  const containerH = mapDimensions.height;
-
-                  if (isMobilePortrait) {
-                    const scale = Math.min(containerW / IMG_H, containerH / IMG_W);
-                    return IMG_H * scale;
-                  } else {
-                    const scale = Math.min(containerW / IMG_W, containerH / IMG_H);
-                    return IMG_H * scale;
-                  }
-                })(),
-              },
+              fitted ? { width: fitted.width, height: fitted.height } : null,
             ]}
             onLayout={(e) => {
               const { width, height } = e.nativeEvent.layout;
-              mapWidth.value = width;
-              mapHeight.value = height;
-
-              if (Math.abs(baseScale.value - 1) > 0.01) {
-                baseScale.value = 1;
-                setBaseScaleValue(1);
-              }
+              contentWidth.value = width;
+              contentHeight.value = height;
             }}
           >
-            <Image source={MAP_IMAGE} contentFit="fill" style={{ width: '100%', height: '100%' }} />
+            <Image source={MAP_IMAGE} contentFit="fill" style={styles.mapImage} />
           </Animated.View>
         </GestureDetector>
-        <View style={styles.centerMarker} pointerEvents="none" />
-        <View style={styles.coordOverlay} pointerEvents="none">
-          <Text style={styles.coordText}>
-            x: {centerCoord.x.toFixed(3)} y: {centerCoord.y.toFixed(3)} z:{' '}
-            {centerCoord.scale.toFixed(2)}
-          </Text>
-          <Text style={styles.coordHint}>Center of view</Text>
-        </View>
-        <Animated.View style={[styles.overlayHint, hintStyle]}>
+
+        <Animated.View style={[styles.overlayHint, hintStyle]} pointerEvents="none">
           <Text style={styles.mapHint}>Double tap or pinch to zoom</Text>
         </Animated.View>
       </View>
@@ -706,8 +564,6 @@ const createStyles = (colors: typeof Colors.light) =>
       borderColor: colors.border,
     },
     mapContent: {
-      width: '100%',
-      height: '100%',
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -722,44 +578,10 @@ const createStyles = (colors: typeof Colors.light) =>
       paddingHorizontal: Spacing.md,
       paddingVertical: Spacing.xs + 2,
       borderRadius: Radius.pill,
-      pointerEvents: 'none',
     },
     mapHint: {
       color: colors.primaryText,
       ...Type.caption,
       fontWeight: '600',
-    },
-    coordOverlay: {
-      position: 'absolute',
-      top: Spacing.md,
-      left: Spacing.md,
-      backgroundColor: colors.shadow,
-      paddingHorizontal: Spacing.sm + 2,
-      paddingVertical: Spacing.xs + 2,
-      borderRadius: Radius.sm,
-    },
-    coordText: {
-      color: colors.primaryText,
-      ...Type.caption,
-      fontWeight: '700',
-    },
-    coordHint: {
-      marginTop: 2,
-      fontSize: 10,
-      fontWeight: '500',
-      color: colors.primaryText,
-    },
-    centerMarker: {
-      position: 'absolute',
-      left: '50%',
-      top: '50%',
-      width: 8,
-      height: 8,
-      marginLeft: -4,
-      marginTop: -4,
-      borderRadius: Radius.pill,
-      backgroundColor: colors.primary,
-      borderWidth: 1,
-      borderColor: colors.primaryText,
     },
   });

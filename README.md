@@ -1,50 +1,45 @@
-# Welcome to your Expo app 👋
+<div align="center">
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 🔵 South App
 
-## Get started
+**Great Neck South High School, in your pocket.**
 
-1. Install dependencies
+Schedule · Calendar · Lunch · Clubs · Buses · A map that actually finds room 417.
 
-   ```bash
-   npm install
-   ```
+`#0A0B0D` &nbsp;·&nbsp; `#2563EB` &nbsp;·&nbsp; `#FFFFFF`
+<br><sub>black · blue · white — one accent, zero noise</sub>
 
-2. Start the app
+</div>
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## ⚡ Run it
 
 ```bash
-npm run reset-project
+npm install     # grab the goods
+npm start       # Expo dev server — press i (iOS) · a (Android) · w (web)
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+> Already know the drill? `npm run ios` / `npm run android` / `npm run web`.
 
-## Learn more
+## 🧭 What's inside
 
-To learn more about developing your project with Expo, look at the following resources:
+- **Home** — your live period, counting down to the bell.
+- **Calendar** — A/B days, school events, today's lunch.
+- **Tools** — schedule, clubs, buses, and the school map.
+- **Settings** — light, dark, or follow your phone.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 🛠 Keep it clean
 
-## Join the community
+```bash
+npm run lint      # find the smells
+npm run format    # Prettier + spacing, the house style
+```
 
-Join our community of developers creating universal apps.
+> **House rules:** no comments, tokens over magic numbers, one blue accent. The vibe is in [`CLAUDE.md`](./CLAUDE.md).
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+<div align="center">
+<sub>Built with care, coffee, and love by the <b>Great Neck South Programming Club</b> 💙</sub>
+</div>
