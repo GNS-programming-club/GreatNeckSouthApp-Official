@@ -1,15 +1,10 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import {
-  PERIOD_COUNT,
-  computePeriodTimes,
-  nowMinutesLocal,
-  parse24hToMinutes,
-} from '@/constants/schedule';
 import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { useLivePeriod } from '@/hooks/use-live-period';
 
 type LiveNowCardProps = {
   todaySchedule: (string | null)[] | null;
@@ -27,48 +22,12 @@ export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardP
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
 
-  const [tick, setTick] = useState(() => nowMinutesLocal());
-
-  useEffect(() => {
-    const interval = setInterval(() => setTick(nowMinutesLocal()), 30_000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const live = useMemo(() => {
-    const times = computePeriodTimes(PERIOD_COUNT);
-    const nowMin = tick;
-
-    for (let i = 0; i < times.length; i++) {
-      const start = parse24hToMinutes(times[i].start);
-      const end = parse24hToMinutes(times[i].end);
-
-      if (start == null || end == null) continue;
-
-      const isIn = nowMin >= start && nowMin < end;
-      const isNext = nowMin < start;
-
-      if (!isIn && !isNext) continue;
-
-      const elapsed = isIn ? (nowMin - start) / (end - start) : 0;
-
-      return {
-        kind: isIn ? ('current' as const) : ('next' as const),
-        periodIndex: i,
-        start: times[i].start,
-        end: times[i].end,
-        minutesToBell: isIn ? end - nowMin : start - nowMin,
-        elapsedFraction: Math.min(1, Math.max(0, elapsed)),
-        courseId: todaySchedule?.[i] ?? null,
-      };
-    }
-
-    return null;
-  }, [tick, todaySchedule]);
+  const { live } = useLivePeriod();
+  const courseId = live ? (todaySchedule?.[live.index] ?? null) : null;
 
   const isCurrent = live?.kind === 'current';
   const pillLead = live ? (isCurrent ? 'NOW' : 'NEXT') : `Day ${todayLetter}`;
-  const pillTrail = live ? `Period ${live.periodIndex + 1}` : 'Done';
+  const pillTrail = live ? `Period ${live.index + 1}` : 'Done';
 
   return (
     <TouchableOpacity
@@ -89,17 +48,17 @@ export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardP
             <Text style={styles.numeralLabel}>min to {isCurrent ? 'bell' : 'start'}</Text>
           </View>
 
-          {live.courseId ? (
+          {courseId ? (
             <View style={styles.rangeRow}>
-              <Text style={styles.rangeCourse}>{live.courseId}</Text>
+              <Text style={styles.rangeCourse}>{courseId}</Text>
               <View style={styles.rangeDivider} />
               <Text style={styles.range}>
-                {live.start} – {live.end}
+                {live.period.start} – {live.period.end}
               </Text>
             </View>
           ) : (
             <Text style={styles.range}>
-              {live.start} – {live.end}
+              {live.period.start} – {live.period.end}
             </Text>
           )}
 

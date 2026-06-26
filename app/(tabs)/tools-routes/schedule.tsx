@@ -1,12 +1,13 @@
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { parseClockToSeconds, useNowSeconds } from '@/hooks/use-live-period';
 
 const scheduleData = require('../../../assets/data/schedule.json');
 
@@ -15,31 +16,6 @@ const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
 const PILL_BG = 'rgba(255,255,255,0.18)';
 const TRACK = 'rgba(255,255,255,0.28)';
 const HAIRLINE = 'rgba(255,255,255,0.35)';
-
-function getEasternSeconds() {
-  try {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/New_York',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    });
-
-    const parts = formatter.formatToParts(new Date());
-    const hour = Number(parts.find((p) => p.type === 'hour')?.value);
-    const minute = Number(parts.find((p) => p.type === 'minute')?.value);
-    const second = Number(parts.find((p) => p.type === 'second')?.value);
-
-    if (Number.isFinite(hour) && Number.isFinite(minute) && Number.isFinite(second)) {
-      return hour * 3600 + minute * 60 + second;
-    }
-  } catch {}
-
-  const now = new Date();
-
-  return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-}
 
 interface Period {
   id: string;
@@ -62,39 +38,10 @@ const SchedulePage = () => {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
-  const [nowSecondsET, setNowSecondsET] = useState<number>(() => getEasternSeconds());
+  const nowSecondsET = useNowSeconds();
 
   const schedule = scheduleData as ScheduleData;
   const periods: Period[] = schedule.periods;
-
-  const parseTimeToSeconds = useCallback((timeString: string) => {
-    const match = timeString.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-
-    if (!match) return null;
-
-    const [, hourRaw, minuteRaw, ampmRaw] = match;
-    let hour = Number(hourRaw);
-    const minute = Number(minuteRaw);
-    const ampm = ampmRaw.toUpperCase();
-
-    if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null;
-
-    if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
-
-    if (ampm === 'AM') {
-      if (hour === 12) hour = 0;
-    } else {
-      if (hour !== 12) hour += 12;
-    }
-
-    return hour * 3600 + minute * 60;
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => setNowSecondsET(getEasternSeconds()), 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const header = (
     <View style={styles.header}>
@@ -132,8 +79,8 @@ const SchedulePage = () => {
 
       <Stagger delay={60} duration={360} translateY={10}>
         {periods.map((period, index) => {
-          const startSeconds = parseTimeToSeconds(period.start);
-          const endSeconds = parseTimeToSeconds(period.end);
+          const startSeconds = parseClockToSeconds(period.start);
+          const endSeconds = parseClockToSeconds(period.end);
           const isValidRange =
             startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
           const isActive =
