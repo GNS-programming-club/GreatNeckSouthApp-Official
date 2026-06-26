@@ -1,42 +1,39 @@
 <div align="center">
 
-# 🔵 South App
+# Great Neck South App
 
 **Great Neck South High School, in your pocket.**
 
-Schedule · Calendar · Lunch · Clubs · Buses · A map that actually finds room 417.
-
-`#0A0B0D` &nbsp;·&nbsp; `#2563EB` &nbsp;·&nbsp; `#FFFFFF`
-<br><sub>black · blue · white — one accent, zero noise</sub>
+Schedule · Calendar · Lunch · Clubs · Buses · Map
 
 </div>
 
 ---
 
-## ⚡ Run it
+## Run it
 
 ```bash
 npm install     # grab the goods
 npm start       # Expo dev server — press i (iOS) · a (Android) · w (web)
 ```
 
-> Already know the drill? `npm run ios` / `npm run android` / `npm run web`.
+> To run it: `npm run ios` / `npm run android` / `npm run web`.
 
-## 🧭 What's inside
+## What's inside
 
-- **Home** — your live period, counting down to the bell.
+- **Home** — your live period with a time display.
 - **Calendar** — A/B days, school events, today's lunch.
 - **Tools** — schedule, clubs, buses, and the school map.
-- **Settings** — light, dark, or follow your phone.
+- **Settings** — light, dark, or match your phone's theme.
 
-## 🛠 Keep it clean
+## Keep it clean
 
 ```bash
 npm run lint      # find the smells
 npm run format    # Prettier + spacing, the house style
 ```
 
-> **House rules:** no comments, tokens over magic numbers, one blue accent. The vibe is in [`CLAUDE.md`](./CLAUDE.md).
+> **Code rules:** no comments, tokens over magic numbers, one blue accent.
 
 ---
 
