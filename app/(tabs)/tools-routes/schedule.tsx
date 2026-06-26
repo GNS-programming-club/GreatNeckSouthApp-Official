@@ -1,22 +1,20 @@
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
-import { Colors } from '@/constants/theme';
+
+import Card from '@/components/ui/card';
+import Screen from '@/components/ui/screen';
+import Stagger from '@/components/ui/stagger';
+import { Colors, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 const scheduleData = require('../../../assets/data/schedule.json');
 
-const { width } = Dimensions.get('window');
+const ON_HERO = '#FFFFFF';
+const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
+const PILL_BG = 'rgba(255,255,255,0.18)';
+const TRACK = 'rgba(255,255,255,0.28)';
 
 function getEasternSeconds() {
   try {
@@ -35,9 +33,7 @@ function getEasternSeconds() {
     if (Number.isFinite(hour) && Number.isFinite(minute) && Number.isFinite(second)) {
       return hour * 3600 + minute * 60 + second;
     }
-  } catch {
-    // TODO: fallback to local timezone (if anything)
-  }
+  } catch {}
 
   const now = new Date();
   return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -62,8 +58,6 @@ const SchedulePage = () => {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
-  const periodAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
-  const hasAnimatedOnce = useRef(false);
   const [nowSecondsET, setNowSecondsET] = useState<number>(() => getEasternSeconds());
 
   const schedule = scheduleData as ScheduleData;
@@ -94,131 +88,6 @@ const SchedulePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getOrCreateAnim = useCallback(
-    (key: string) => {
-      if (!periodAnims.has(key)) {
-        periodAnims.set(key, new Animated.Value(0));
-      }
-      return periodAnims.get(key)!;
-    },
-    [periodAnims]
-  );
-
-  useEffect(() => {
-    if (hasAnimatedOnce.current) return;
-    hasAnimatedOnce.current = true;
-
-    const animations: Animated.CompositeAnimation[] = [];
-
-    periods.forEach((period) => {
-      const anim = getOrCreateAnim(period.id);
-      anim.stopAnimation();
-      anim.setValue(0);
-      animations.push(
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 380,
-          useNativeDriver: true,
-        })
-      );
-    });
-
-    const sequence = Animated.stagger(70, animations);
-    sequence.start();
-    return () => sequence.stop();
-  }, [getOrCreateAnim, periods]);
-
-  /*
-  useEffect(() => {
-    periodAnims.forEach(anim => anim.setValue(0));
-
-    Animated.stagger(
-      70,
-      periods.map((period) =>
-        Animated.timing(getOrCreateAnim(period.id), {
-          toValue: 1,
-          duration: 380,
-          useNativeDriver: true,
-        })
-      )
-    ).start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [periods.length]);
-  */
-
-  const renderPeriodCard = (period: Period, index: number) => {
-    const isEven = index % 2 === 0;
-    const anim = getOrCreateAnim(period.id);
-    const startSeconds = parseTimeToSeconds(period.start);
-    const endSeconds = parseTimeToSeconds(period.end);
-    const isValidRange = startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
-    const isActive = isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
-    const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
-    const progress = isValidRange
-      ? isCompleted
-        ? 1
-        : isActive
-          ? Math.min(1, Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!)))
-          : 0
-      : 0;
-
-    return (
-      <Animated.View
-        key={period.id}
-        style={[
-          styles.periodCard,
-          isEven ? styles.periodCardEven : styles.periodCardOdd,
-          isActive ? styles.periodCardActive : undefined,
-          {
-            opacity: anim,
-            transform: [
-              {
-                translateY: anim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [10, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        <View style={styles.periodHeader}>
-          <Text style={[styles.periodTitle, isActive ? styles.periodTitleActive : undefined]}>
-            {period.period}
-          </Text>
-          <View style={[styles.timeBadge, isActive ? styles.timeBadgeActive : undefined]}>
-            <Text style={[styles.durationText, isActive ? styles.durationTextActive : undefined]}>
-              {period.duration}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.timeContainer}>
-          <View style={styles.timeColumn}>
-            <Text style={styles.timeLabel}>Start</Text>
-            <Text style={styles.timeValue}>{period.start}</Text>
-          </View>
-
-          <View style={styles.arrowContainer}>
-            <Text style={styles.arrow}>→</Text>
-          </View>
-
-          <View style={styles.timeColumn}>
-            <Text style={styles.timeLabel}>End</Text>
-            <Text style={styles.timeValue}>{period.end}</Text>
-          </View>
-        </View>
-
-        <View style={styles.timelineContainer}>
-          <View style={styles.timeline}>
-            <View style={[styles.timelineFill, { width: `${Math.round(progress * 100)}%` }]} />
-          </View>
-          <Text style={styles.periodNumber}>{period.id}</Text>
-        </View>
-      </Animated.View>
-    );
-  };
-
   const calculateTimeBetween = (currentEnd: string, nextStart: string) => {
     const endSeconds = parseTimeToSeconds(currentEnd);
     const startSeconds = parseTimeToSeconds(nextStart);
@@ -233,304 +102,296 @@ const SchedulePage = () => {
     return `${minutes} min`;
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.replace('/tools')}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-        >
-          <Feather name="arrow-left" size={25} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Daily Schedule</Text>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+  const header = (
+    <View style={styles.header}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => router.back()}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="Back"
       >
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>School Day Overview</Text>
-          <View style={styles.summaryGrid}>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Total Periods</Text>
-              <Text style={styles.summaryValue}>{periods.length}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>School Day</Text>
-              <Text style={styles.summaryValue}>{schedule.totalSchoolDay}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Total Duration</Text>
-              <Text style={styles.summaryValue}>{schedule.totalDuration}</Text>
-            </View>
+        <Feather name="chevron-left" size={26} color={colors.text} />
+      </TouchableOpacity>
+      <Text style={styles.title}>Schedule</Text>
+    </View>
+  );
+
+  return (
+    <Screen scroll header={header}>
+      <Card>
+        <Text style={styles.summaryLabel}>School Day Overview</Text>
+        <View style={styles.summaryRow}>
+          <View style={styles.summaryCol}>
+            <Text style={styles.statValue}>{periods.length}</Text>
+            <Text style={styles.statLabel}>Periods</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          <View style={styles.summaryCol}>
+            <Text style={styles.statValue}>{schedule.totalSchoolDay}</Text>
+            <Text style={styles.statLabel}>School Day</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          <View style={styles.summaryCol}>
+            <Text style={styles.statValue}>{schedule.totalDuration}</Text>
+            <Text style={styles.statLabel}>Duration</Text>
           </View>
         </View>
+      </Card>
 
-        <View style={styles.timelineSection}>
-          <Text style={styles.sectionTitle}>Daily Schedule</Text>
+      <Stagger delay={70} duration={380} translateY={10}>
+        {periods.map((period, index) => {
+          const startSeconds = parseTimeToSeconds(period.start);
+          const endSeconds = parseTimeToSeconds(period.end);
+          const isValidRange =
+            startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
+          const isActive =
+            isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
+          const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
+          const progress = isValidRange
+            ? isCompleted
+              ? 1
+              : isActive
+                ? Math.min(
+                    1,
+                    Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!))
+                  )
+                : 0
+            : 0;
 
-          {periods.map((period, index) => (
+          return (
             <View key={period.id}>
-              {renderPeriodCard(period, index)}
+              {isActive ? (
+                <View style={styles.activeCard}>
+                  <View style={styles.activePill}>
+                    <Text style={styles.activePillText}>NOW · {period.period.toUpperCase()}</Text>
+                  </View>
+
+                  <View style={styles.activeTimeRow}>
+                    <Text style={styles.activeTimeValue}>{period.start}</Text>
+                    <Text style={styles.activeArrow}>→</Text>
+                    <Text style={styles.activeTimeValue}>{period.end}</Text>
+                  </View>
+
+                  <Text style={styles.activeDuration}>{period.duration}</Text>
+
+                  <View style={styles.track}>
+                    <View style={[styles.fill, { width: `${Math.round(progress * 100)}%` }]} />
+                  </View>
+                </View>
+              ) : (
+                <Card style={styles.periodCardOverride}>
+                  <View style={styles.periodRow}>
+                    <Text style={[styles.periodName, isCompleted && styles.periodNameDone]}>
+                      {period.period}
+                    </Text>
+                    <Text style={styles.periodDuration}>{period.duration}</Text>
+                  </View>
+
+                  <View style={styles.timeRow}>
+                    <Text style={[styles.timeVal, isCompleted && styles.timeValDone]}>
+                      {period.start}
+                    </Text>
+                    <Text style={styles.timeArrow}>→</Text>
+                    <Text style={[styles.timeVal, isCompleted && styles.timeValDone]}>
+                      {period.end}
+                    </Text>
+                  </View>
+
+                  {isCompleted && (
+                    <View style={styles.progressTrack}>
+                      <View style={styles.progressFill} />
+                    </View>
+                  )}
+                </Card>
+              )}
 
               {index < periods.length - 1 && (
-                <View style={styles.breakContainer}>
+                <View style={styles.breakRow}>
                   <View style={styles.breakLine} />
-                  <Text style={styles.breakText}>
-                    {calculateTimeBetween(period.end, periods[index + 1].start)} transition
+                  <Text style={styles.breakLabel}>
+                    {calculateTimeBetween(period.end, periods[index + 1].start)} passing
                   </Text>
                   <View style={styles.breakLine} />
                 </View>
               )}
             </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          );
+        })}
+      </Stagger>
+    </Screen>
   );
 };
 
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
-    container: {
-      paddingBottom: 75,
-      flex: 1,
-      backgroundColor: colors.background,
-    },
     header: {
-      justifyContent: 'center',
-      alignContent: 'center',
-      paddingHorizontal: 16,
-      paddingTop: 25,
-      paddingBottom: 16,
+      paddingHorizontal: Spacing.lg,
+      paddingTop: Spacing.lg,
+      paddingBottom: Spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
       backgroundColor: colors.background,
     },
     backButton: {
       alignSelf: 'flex-start',
-      height: 36,
       width: 36,
+      height: 36,
       alignItems: 'center',
       justifyContent: 'center',
+      marginBottom: Spacing.sm,
     },
     title: {
-      marginTop: 10,
-      fontSize: 24,
-      fontWeight: '800',
+      ...Type.display,
       color: colors.text,
-    },
-    scrollView: {
-      flex: 1,
-    },
-    scrollContent: {
-      padding: 16,
-      paddingBottom: 32,
-    },
-    summaryCard: {
-      backgroundColor: colors.surface,
-      borderRadius: 16,
-      padding: 20,
-      marginBottom: 20,
-      borderWidth: 1,
-      borderColor: colors.border,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 4,
-    },
-    summaryTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 16,
-    },
-    summaryGrid: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      flexWrap: 'wrap',
-    },
-    summaryItem: {
-      width: (width - 32 - 40) / 3,
-      alignItems: 'center',
-      marginBottom: 8,
     },
     summaryLabel: {
-      fontSize: 12,
+      ...Type.label,
       color: colors.mutedText,
-      marginBottom: 4,
-      textAlign: 'center',
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+      marginBottom: Spacing.sm,
     },
-    summaryValue: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: colors.text,
-      textAlign: 'center',
-    },
-    timelineSection: {
-      marginBottom: 20,
-    },
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 16,
-    },
-    periodCard: {
-      backgroundColor: colors.surface,
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 8,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    periodCardEven: {
-      backgroundColor: colors.surface,
-    },
-    periodCardOdd: {
-      backgroundColor: colors.surface,
-    },
-    periodCardActive: {
-      borderColor: colors.primary,
-      shadowOpacity: 0.16,
-      shadowRadius: 10,
-      elevation: 6,
-    },
-    periodHeader: {
+    summaryRow: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 12,
     },
-    periodTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-    },
-    periodTitleActive: {
-      color: colors.primary,
-    },
-    timeBadge: {
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 12,
-    },
-    timeBadgeActive: {
-      backgroundColor: colors.primary,
-    },
-    durationText: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: colors.primary,
-    },
-    durationTextActive: {
-      color: colors.primaryText,
-    },
-    timeContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 12,
-    },
-    timeColumn: {
+    summaryCol: {
       flex: 1,
       alignItems: 'center',
     },
-    timeLabel: {
-      fontSize: 12,
-      color: colors.mutedText,
-      marginBottom: 4,
-    },
-    timeValue: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-    },
-    arrowContainer: {
-      paddingHorizontal: 20,
-    },
-    arrow: {
-      fontSize: 20,
-      color: colors.mutedText,
-      fontWeight: 'bold',
-    },
-    timelineContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    timeline: {
-      flex: 1,
-      height: 3,
+    summaryDivider: {
+      width: 1,
+      height: 32,
       backgroundColor: colors.border,
-      borderRadius: 1.5,
+    },
+    statValue: {
+      ...Type.heading,
+      color: colors.text,
+    },
+    statLabel: {
+      ...Type.caption,
+      color: colors.mutedText,
+      marginTop: Spacing.xs,
+    },
+    activeCard: {
+      backgroundColor: colors.primary,
+      borderRadius: Radius.lg,
+      borderCurve: 'continuous',
+      paddingVertical: Spacing.xl,
+      paddingHorizontal: Spacing.xl,
+      gap: Spacing.md,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.08,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
+    },
+    activePill: {
+      alignSelf: 'flex-start',
+      backgroundColor: PILL_BG,
+      borderRadius: Radius.pill,
+      paddingVertical: Spacing.xs,
+      paddingHorizontal: Spacing.md,
+    },
+    activePillText: {
+      color: ON_HERO,
+      ...Type.caption,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+    },
+    activeTimeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing.md,
+    },
+    activeTimeValue: {
+      color: ON_HERO,
+      ...Type.title,
+    },
+    activeArrow: {
+      color: ON_HERO_MUTED,
+      ...Type.body,
+    },
+    activeDuration: {
+      color: ON_HERO_MUTED,
+      ...Type.label,
+    },
+    track: {
+      height: 6,
+      borderRadius: Radius.pill,
+      backgroundColor: TRACK,
       overflow: 'hidden',
     },
-    timelineFill: {
-      height: '100%',
-      backgroundColor: colors.primary,
+    fill: {
+      height: 6,
+      borderRadius: Radius.pill,
+      backgroundColor: ON_HERO,
     },
-    periodNumber: {
-      fontSize: 12,
-      fontWeight: '700',
+    periodCardOverride: {
+      gap: Spacing.sm,
+    },
+    periodRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    periodName: {
+      ...Type.heading,
+      color: colors.text,
+    },
+    periodNameDone: {
       color: colors.mutedText,
-      marginLeft: 12,
     },
-    breakContainer: {
+    periodDuration: {
+      ...Type.label,
+      color: colors.primary,
+    },
+    timeRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginVertical: 8,
-      paddingHorizontal: 8,
+      gap: Spacing.sm,
+    },
+    timeVal: {
+      ...Type.body,
+      color: colors.text,
+      fontWeight: '700',
+    },
+    timeValDone: {
+      color: colors.mutedText,
+    },
+    timeArrow: {
+      ...Type.body,
+      color: colors.mutedText,
+    },
+    progressTrack: {
+      height: 3,
+      borderRadius: Radius.pill,
+      backgroundColor: colors.border,
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: 3,
+      width: '100%',
+      borderRadius: Radius.pill,
+      backgroundColor: colors.primary,
+      opacity: 0.35,
+    },
+    breakRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: Spacing.sm,
+      paddingHorizontal: Spacing.sm,
     },
     breakLine: {
       flex: 1,
       height: 1,
       backgroundColor: colors.border,
     },
-    breakText: {
-      fontSize: 11,
+    breakLabel: {
+      ...Type.caption,
       color: colors.mutedText,
-      paddingHorizontal: 12,
-      fontStyle: 'italic',
-    },
-    infoCard: {
-      backgroundColor: colors.surface,
-      borderRadius: 16,
-      padding: 20,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    infoTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 16,
-    },
-    infoList: {
-      gap: 12,
-    },
-    infoItem: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-    },
-    bulletPoint: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: colors.primary,
-      marginTop: 6,
-      marginRight: 12,
-    },
-    infoText: {
-      flex: 1,
-      fontSize: 14,
-      color: colors.text,
-      lineHeight: 20,
+      paddingHorizontal: Spacing.md,
     },
   });
 

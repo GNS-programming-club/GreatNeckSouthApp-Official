@@ -1,23 +1,17 @@
 import Feather from '@expo/vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import {
-  Animated,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-
-import { Colors } from '@/constants/theme';
-import { useTheme } from '@/contexts/theme-context';
-
+import React, { useMemo, useRef, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import coursesData from '../../../assets/data/courses.json';
+
+import Card from '@/components/ui/card';
+import Pill from '@/components/ui/pill';
+import Section from '@/components/ui/section';
+import DetailSheet, { DetailSheetHandle } from '@/components/tools/detail-sheet';
+import DirectoryList from '@/components/tools/directory-list';
+import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { useTheme } from '@/contexts/theme-context';
+import coursesData from '@/assets/data/courses.json';
 
 interface Course {
   id: string;
@@ -35,11 +29,7 @@ interface Course {
   source_page: number;
 }
 
-type ThemeColors = (typeof Colors)['light'];
-type ThemedStyles = ReturnType<typeof createStyles>;
-
 interface FilterOptions {
-  searchTerm: string;
   departments: string[];
   credits: number[];
   gradeLevels: string[];
@@ -50,154 +40,288 @@ interface FilterOptions {
   sortOrder: 'asc' | 'desc';
 }
 
-const courses: Course[] = (coursesData as unknown as Course[]).map((course) => ({
-  ...course,
-  source_page: typeof course.source_page === 'number' ? course.source_page : -1,
+const DEFAULT_FILTERS: FilterOptions = {
+  departments: [],
+  credits: [],
+  gradeLevels: [],
+  levels: [],
+  apOnly: false,
+  repeatableOnly: false,
+  sortBy: 'code',
+  sortOrder: 'asc',
+};
+
+const allCourses: Course[] = (coursesData as unknown as Course[]).map((c) => ({
+  ...c,
+  source_page: typeof c.source_page === 'number' ? c.source_page : -1,
 }));
 
-const filterCourses = (courses: Course[], filters: FilterOptions): Course[] => {
-  let filtered = courses.filter((course) => {
-    const searchMatch =
-      !filters.searchTerm ||
-      course.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      course.code.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      course.description.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      course.dept.toLowerCase().includes(filters.searchTerm.toLowerCase());
-
-    const deptMatch = filters.departments.length === 0 || filters.departments.includes(course.dept);
-
-    const creditMatch = filters.credits.length === 0 || filters.credits.includes(course.credits);
-
+function applyFilters(data: Course[], f: FilterOptions): Course[] {
+  const filtered = data.filter((c) => {
+    const deptMatch = f.departments.length === 0 || f.departments.includes(c.dept);
+    const creditMatch = f.credits.length === 0 || f.credits.includes(c.credits);
     const gradeMatch =
-      filters.gradeLevels.length === 0 ||
-      course.grade_levels.some((grade) => filters.gradeLevels.includes(grade));
-
-    const levelMatch =
-      filters.levels.length === 0 || (course.level && filters.levels.includes(course.level));
-
-    const apMatch = !filters.apOnly || course.ap_flag;
-
-    const repeatableMatch = !filters.repeatableOnly || course.repeatable;
-
-    return (
-      searchMatch &&
-      deptMatch &&
-      creditMatch &&
-      gradeMatch &&
-      levelMatch &&
-      apMatch &&
-      repeatableMatch
-    );
+      f.gradeLevels.length === 0 || c.grade_levels.some((g) => f.gradeLevels.includes(g));
+    const levelMatch = f.levels.length === 0 || (!!c.level && f.levels.includes(c.level));
+    const apMatch = !f.apOnly || c.ap_flag;
+    const repeatableMatch = !f.repeatableOnly || c.repeatable;
+    return deptMatch && creditMatch && gradeMatch && levelMatch && apMatch && repeatableMatch;
   });
 
   filtered.sort((a, b) => {
-    let comparison = 0;
-
-    switch (filters.sortBy) {
+    let cmp = 0;
+    switch (f.sortBy) {
       case 'code':
-        comparison = a.code.toLowerCase().localeCompare(b.code.toLowerCase());
+        cmp = a.code.toLowerCase().localeCompare(b.code.toLowerCase());
         break;
       case 'title':
-        comparison = a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+        cmp = a.title.toLowerCase().localeCompare(b.title.toLowerCase());
         break;
       case 'dept':
-        comparison = a.dept.toLowerCase().localeCompare(b.dept.toLowerCase());
+        cmp = a.dept.toLowerCase().localeCompare(b.dept.toLowerCase());
         break;
       case 'credits':
-        comparison = a.credits - b.credits;
+        cmp = a.credits - b.credits;
         break;
-      default:
-        comparison = a.code.toLowerCase().localeCompare(b.code.toLowerCase());
     }
-
-    return filters.sortOrder === 'asc' ? comparison : -comparison;
+    return f.sortOrder === 'asc' ? cmp : -cmp;
   });
 
   return filtered;
-};
+}
 
-const getActiveFilterCount = (filters: FilterOptions): number => {
-  let count = 0;
-  if (filters.departments.length > 0) count++;
-  if (filters.credits.length > 0) count++;
-  if (filters.gradeLevels.length > 0) count++;
-  if (filters.levels.length > 0) count++;
-  if (filters.apOnly) count++;
-  if (filters.repeatableOnly) count++;
-  if (filters.sortBy !== 'code' || filters.sortOrder !== 'asc') count++;
-  return count;
-};
+function countActiveFilters(f: FilterOptions): number {
+  let n = 0;
+  if (f.departments.length > 0) n++;
+  if (f.credits.length > 0) n++;
+  if (f.gradeLevels.length > 0) n++;
+  if (f.levels.length > 0) n++;
+  if (f.apOnly) n++;
+  if (f.repeatableOnly) n++;
+  if (f.sortBy !== 'code' || f.sortOrder !== 'asc') n++;
+  return n;
+}
 
-const FilterChip: React.FC<{
+type ThemeColors = (typeof Colors)['light'];
+
+function FilterChip({
+  label,
+  selected,
+  onPress,
+  colors,
+}: {
   label: string;
   selected: boolean;
   onPress: () => void;
-  styles: ThemedStyles;
   colors: ThemeColors;
-}> = ({ label, selected, onPress, styles, colors }) => (
-  <TouchableOpacity
-    style={[styles.filterChip, selected && styles.filterChipSelected]}
-    onPress={onPress}
-  >
-    <Text style={[styles.filterChipText, selected && styles.filterChipTextSelected]}>{label}</Text>
-  </TouchableOpacity>
-);
+}) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        chipStyles.chip,
+        {
+          backgroundColor: selected ? colors.primary : colors.surfaceAlt,
+          borderColor: selected ? colors.primary : colors.border,
+        },
+      ]}
+    >
+      <Text style={[chipStyles.chipText, { color: selected ? colors.primaryText : colors.text }]}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+}
 
-const CourseList: React.FC<{
-  courses: Course[];
-  onCourseSelect: (course: Course) => void;
-  filters: FilterOptions;
-  onFiltersChange: (filters: FilterOptions) => void;
-  showAdvancedFilters: boolean;
-  onToggleAdvancedFilters: () => void;
-  styles: ThemedStyles;
-  colors: ThemeColors;
-  showBackButton?: boolean;
-  onBack?: () => void;
-}> = ({
-  courses,
-  onCourseSelect,
-  filters,
-  onFiltersChange,
-  showAdvancedFilters,
-  onToggleAdvancedFilters,
-  styles,
+const chipStyles = StyleSheet.create({
+  chip: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.pill,
+    borderWidth: 1,
+  },
+  chipText: {
+    fontSize: Type.label.fontSize,
+    fontWeight: Type.label.fontWeight,
+  },
+});
+
+function CourseRow({ course, colors }: { course: Course; colors: ThemeColors }) {
+  return (
+    <Card elevation="raised">
+      <Text style={{ fontSize: Type.label.fontSize, fontWeight: '800', color: colors.primary }}>
+        {course.code}
+      </Text>
+      <Text
+        style={{
+          fontSize: Type.heading.fontSize,
+          fontWeight: Type.heading.fontWeight,
+          color: colors.text,
+        }}
+      >
+        {course.title}
+      </Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
+        <Pill label={`${course.credits} cr`} />
+        {course.grade_levels.length > 0 && <Pill label={`Gr ${course.grade_levels[0]}`} />}
+        {course.ap_flag && <Pill label="AP" tone="success" />}
+      </View>
+    </Card>
+  );
+}
+
+function CourseDetailBody({ course, colors }: { course: Course; colors: ThemeColors }) {
+  return (
+    <View style={{ gap: Spacing.xl }}>
+      <View style={{ gap: Spacing.sm }}>
+        <Text
+          style={{
+            fontSize: Type.title.fontSize,
+            fontWeight: Type.title.fontWeight,
+            color: colors.text,
+          }}
+        >
+          {course.title}
+        </Text>
+        <Text style={{ fontSize: Type.label.fontSize, fontWeight: '800', color: colors.primary }}>
+          {course.code}
+        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: Spacing.sm,
+            paddingTop: Spacing.xs,
+          }}
+        >
+          <Pill label={`${course.credits} credit${course.credits === 1 ? '' : 's'}`} />
+          {course.grade_levels.length > 0 && (
+            <Pill label={`Grades ${course.grade_levels.join(', ')}`} />
+          )}
+          {course.level ? <Pill label={course.level} /> : null}
+          {course.ap_flag && <Pill label="AP Course" tone="success" />}
+          {course.repeatable && <Pill label="Repeatable" />}
+        </View>
+      </View>
+
+      <Section title="Description">
+        <Text
+          style={{
+            fontSize: Type.body.fontSize,
+            fontWeight: Type.body.fontWeight,
+            color: colors.mutedText,
+            lineHeight: 22,
+          }}
+        >
+          {course.description}
+        </Text>
+      </Section>
+
+      {!!course.prerequisite && course.prerequisite.trim().length > 0 && (
+        <Section title="Prerequisite">
+          <Text
+            style={{
+              fontSize: Type.body.fontSize,
+              fontWeight: Type.body.fontWeight,
+              color: colors.mutedText,
+              lineHeight: 22,
+            }}
+          >
+            {course.prerequisite}
+          </Text>
+        </Section>
+      )}
+
+      {!!course.additional_notes && course.additional_notes.trim().length > 0 && (
+        <Section title="Notes">
+          <Text
+            style={{
+              fontSize: Type.body.fontSize,
+              fontWeight: Type.body.fontWeight,
+              color: colors.mutedText,
+              lineHeight: 22,
+            }}
+          >
+            {course.additional_notes}
+          </Text>
+        </Section>
+      )}
+    </View>
+  );
+}
+
+function FilterBar({
+  activeCount,
+  onOpen,
   colors,
-  showBackButton,
-  onBack,
-}) => {
-  const departments = Array.from(new Set(courses.map((c) => c.dept))).sort();
-  const creditOptions = Array.from(new Set(courses.map((c) => c.credits))).sort((a, b) => a - b);
-  const levelOptions = Array.from(
-    new Set(courses.map((c) => c.level).filter(Boolean) as string[])
-  ).sort();
+}: {
+  activeCount: number;
+  onOpen: () => void;
+  colors: ThemeColors;
+}) {
+  return (
+    <TouchableOpacity
+      onPress={onOpen}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+        alignSelf: 'flex-start',
+        backgroundColor: activeCount > 0 ? colors.primary : colors.surfaceAlt,
+        borderRadius: Radius.pill,
+        borderWidth: 1,
+        borderColor: activeCount > 0 ? colors.primary : colors.border,
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.sm,
+      }}
+    >
+      <Feather
+        name="sliders"
+        size={14}
+        color={activeCount > 0 ? colors.primaryText : colors.icon}
+      />
+      <Text
+        style={{
+          fontSize: Type.label.fontSize,
+          fontWeight: Type.label.fontWeight,
+          color: activeCount > 0 ? colors.primaryText : colors.text,
+        }}
+      >
+        {activeCount > 0 ? `Filters (${activeCount})` : 'Filters'}
+      </Text>
+    </TouchableOpacity>
+  );
+}
 
-  const allGradeLevels: string[] = [];
-  courses.forEach((course) => {
-    course.grade_levels.forEach((grade) => {
-      if (!allGradeLevels.includes(grade)) {
-        allGradeLevels.push(grade);
-      }
-    });
-  });
-  const gradeLevels = allGradeLevels.sort((a, b) => Number(a) - Number(b));
-
-  const filteredCourses = filterCourses(courses, filters);
-  const activeFilterCount = getActiveFilterCount(filters);
-
-  const clearAllFilters = () => {
-    onFiltersChange({
-      searchTerm: '',
-      departments: [],
-      credits: [],
-      gradeLevels: [],
-      levels: [],
-      apOnly: false,
-      repeatableOnly: false,
-      sortBy: 'code',
-      sortOrder: 'asc',
-    });
-  };
+function FilterControls({
+  filters,
+  onChange,
+  onDone,
+  colors,
+}: {
+  filters: FilterOptions;
+  onChange: (f: FilterOptions) => void;
+  onDone: () => void;
+  colors: ThemeColors;
+}) {
+  const departments = useMemo(() => Array.from(new Set(allCourses.map((c) => c.dept))).sort(), []);
+  const creditOptions = useMemo(
+    () => Array.from(new Set(allCourses.map((c) => c.credits))).sort((a, b) => a - b),
+    []
+  );
+  const levelOptions = useMemo(
+    () => Array.from(new Set(allCourses.map((c) => c.level).filter(Boolean) as string[])).sort(),
+    []
+  );
+  const gradeLevels = useMemo(() => {
+    const set: string[] = [];
+    allCourses.forEach((c) =>
+      c.grade_levels.forEach((g) => {
+        if (!set.includes(g)) set.push(g);
+      })
+    );
+    return set.sort((a, b) => Number(a) - Number(b));
+  }, []);
 
   const sortOptions: { value: FilterOptions['sortBy']; label: string }[] = [
     { value: 'code', label: 'Code' },
@@ -206,785 +330,276 @@ const CourseList: React.FC<{
     { value: 'credits', label: 'Credits' },
   ];
 
-  const CourseCard = ({ course, index }: { course: Course; index: number }) => {
-    const animation = React.useRef(new Animated.Value(0)).current;
-
-    React.useEffect(() => {
-      animation.setValue(0);
-      const delay = Math.min(index, 12) * 60;
-      const timer = setTimeout(() => {
-        Animated.spring(animation, {
-          toValue: 1,
-          friction: 10,
-          tension: 70,
-          useNativeDriver: true,
-        }).start();
-      }, delay);
-
-      return () => clearTimeout(timer);
-    }, [animation, index]);
-
-    const animatedStyle = {
-      opacity: animation,
-      transform: [
-        {
-          translateY: animation.interpolate({
-            inputRange: [0, 1],
-            outputRange: [12, 0],
-          }),
-        },
-      ],
-    };
-
-    return (
-      <Animated.View style={[styles.courseCardWrapper, animatedStyle]}>
-        <TouchableOpacity style={styles.courseCard} onPress={() => onCourseSelect(course)}>
-          <View style={styles.courseCardHeader}>
-            <Text style={styles.courseCode}>{course.code}</Text>
-            <View style={styles.badgeRow}>
-              {course.ap_flag && <Text style={[styles.badge, styles.apBadge]}>AP</Text>}
-              {course.level && course.level !== 'Regular' && !course.ap_flag && (
-                <Text style={[styles.badge, styles.levelBadge]}>{course.level}</Text>
-              )}
-              {course.repeatable && (
-                <Text style={[styles.badge, styles.repeatableBadge]}>Repeatable</Text>
-              )}
-            </View>
-          </View>
-          <Text style={styles.courseTitle}>{course.title}</Text>
-          <Text style={styles.courseDept}>{course.dept}</Text>
-          <Text style={styles.courseDescription} numberOfLines={2}>
-            {course.description}
-          </Text>
-          <View style={styles.courseMeta}>
-            <Text
-              style={styles.metaItem}
-            >{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
-            {course.grade_levels.length > 0 && (
-              <Text style={styles.metaItem}>{`Grades: ${course.grade_levels.join(', ')}`}</Text>
-            )}
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
-    );
+  const sectionLabel = {
+    fontSize: Type.caption.fontSize,
+    fontWeight: '700' as const,
+    color: colors.mutedText,
+    textTransform: 'uppercase' as const,
+    letterSpacing: 0.6,
+    marginBottom: Spacing.sm,
   };
 
-  const renderCourseItem = ({ item, index }: { item: Course; index: number }) => (
-    <CourseCard course={item} index={index} />
-  );
+  const chipRow = { flexDirection: 'row' as const, flexWrap: 'wrap' as const, gap: Spacing.sm };
 
-  const router = useRouter();
+  function toggle<T>(arr: T[], val: T): T[] {
+    return arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val];
+  }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.replace('/tools')}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
+    <View style={{ gap: Spacing.xl }}>
+      <View>
+        <Text style={sectionLabel}>Sort By</Text>
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
         >
-          <Feather name="arrow-left" size={25} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Offered Courses</Text>
-      </View>
-      <View style={styles.searchRow}>
-        <View style={styles.searchInputWrapper}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search courses, codes, departments..."
-            placeholderTextColor={colors.mutedText}
-            value={filters.searchTerm}
-            onChangeText={(text) => onFiltersChange({ ...filters, searchTerm: text })}
-          />
-          {filters.searchTerm.length > 0 && (
-            <TouchableOpacity onPress={() => onFiltersChange({ ...filters, searchTerm: '' })}>
-              <Text style={styles.clearSearchIcon}>×</Text>
-            </TouchableOpacity>
-          )}
+          <View style={[chipRow, { flex: 1 }]}>
+            {sortOptions.map((o) => (
+              <FilterChip
+                key={o.value}
+                label={o.label}
+                selected={filters.sortBy === o.value}
+                onPress={() => onChange({ ...filters, sortBy: o.value })}
+                colors={colors}
+              />
+            ))}
+          </View>
+          <TouchableOpacity
+            onPress={() =>
+              onChange({ ...filters, sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc' })
+            }
+            style={{
+              backgroundColor: colors.surfaceAlt,
+              borderRadius: Radius.md,
+              borderWidth: 1,
+              borderColor: colors.border,
+              paddingHorizontal: Spacing.md,
+              paddingVertical: Spacing.sm,
+              marginLeft: Spacing.sm,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: Type.label.fontSize,
+                fontWeight: Type.label.fontWeight,
+                color: colors.text,
+              }}
+            >
+              {filters.sortOrder === 'asc' ? 'A→Z' : 'Z→A'}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
-      <View style={styles.filterToggleRow}>
-        <TouchableOpacity style={styles.filterToggleButton} onPress={onToggleAdvancedFilters}>
-          <Text style={styles.filterToggleText}>
-            {showAdvancedFilters ? 'Hide Filters' : 'Filters'}
-          </Text>
-          {activeFilterCount > 0 && (
-            <View style={styles.filterCountBadge}>
-              <Text style={styles.filterCountText}>{activeFilterCount}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-        {activeFilterCount > 0 && (
-          <TouchableOpacity style={styles.clearFiltersButton} onPress={clearAllFilters}>
-            <Text style={styles.clearFiltersText}>Clear All</Text>
-          </TouchableOpacity>
-        )}
+      <View>
+        <Text style={sectionLabel}>Quick Filters</Text>
+        <View style={chipRow}>
+          <FilterChip
+            label="AP Only"
+            selected={filters.apOnly}
+            onPress={() => onChange({ ...filters, apOnly: !filters.apOnly })}
+            colors={colors}
+          />
+          <FilterChip
+            label="Repeatable"
+            selected={filters.repeatableOnly}
+            onPress={() => onChange({ ...filters, repeatableOnly: !filters.repeatableOnly })}
+            colors={colors}
+          />
+        </View>
       </View>
 
-      {showAdvancedFilters && (
-        <ScrollView style={styles.advancedFilters} showsVerticalScrollIndicator={false}>
-          <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Sort By</Text>
-            <View style={styles.sortRow}>
-              <View style={styles.chipContainer}>
-                {sortOptions.map((option) => (
-                  <FilterChip
-                    key={option.value}
-                    label={option.label}
-                    selected={filters.sortBy === option.value}
-                    onPress={() => onFiltersChange({ ...filters, sortBy: option.value })}
-                    styles={styles}
-                    colors={colors}
-                  />
-                ))}
-              </View>
-              <TouchableOpacity
-                style={styles.sortOrderButton}
-                onPress={() =>
-                  onFiltersChange({
-                    ...filters,
-                    sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc',
-                  })
-                }
-              >
-                <Text style={styles.sortOrderText}>
-                  {filters.sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+      <View>
+        <Text style={sectionLabel}>Grade Levels</Text>
+        <View style={chipRow}>
+          {gradeLevels.map((g) => (
+            <FilterChip
+              key={g}
+              label={`Grade ${g}`}
+              selected={filters.gradeLevels.includes(g)}
+              onPress={() => onChange({ ...filters, gradeLevels: toggle(filters.gradeLevels, g) })}
+              colors={colors}
+            />
+          ))}
+        </View>
+      </View>
 
-          <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Quick Filters</Text>
-            <View style={styles.chipContainer}>
+      <View>
+        <Text style={sectionLabel}>Credits</Text>
+        <View style={chipRow}>
+          {creditOptions.map((c) => (
+            <FilterChip
+              key={c}
+              label={`${c} credit`}
+              selected={filters.credits.includes(c)}
+              onPress={() => onChange({ ...filters, credits: toggle(filters.credits, c) })}
+              colors={colors}
+            />
+          ))}
+        </View>
+      </View>
+
+      {levelOptions.length > 0 && (
+        <View>
+          <Text style={sectionLabel}>Course Level</Text>
+          <View style={chipRow}>
+            {levelOptions.map((l) => (
               <FilterChip
-                label="AP Only"
-                selected={filters.apOnly}
-                onPress={() => onFiltersChange({ ...filters, apOnly: !filters.apOnly })}
-                styles={styles}
+                key={l}
+                label={l}
+                selected={filters.levels.includes(l)}
+                onPress={() => onChange({ ...filters, levels: toggle(filters.levels, l) })}
                 colors={colors}
               />
-              <FilterChip
-                label="Repeatable"
-                selected={filters.repeatableOnly}
-                onPress={() =>
-                  onFiltersChange({ ...filters, repeatableOnly: !filters.repeatableOnly })
-                }
-                styles={styles}
-                colors={colors}
-              />
-            </View>
+            ))}
           </View>
-
-          <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Grade Levels</Text>
-            <View style={styles.chipContainer}>
-              {gradeLevels.map((grade) => (
-                <FilterChip
-                  key={grade}
-                  label={`Grade ${grade}`}
-                  selected={filters.gradeLevels.includes(grade)}
-                  onPress={() => {
-                    const newGradeLevels = filters.gradeLevels.includes(grade)
-                      ? filters.gradeLevels.filter((g) => g !== grade)
-                      : [...filters.gradeLevels, grade];
-                    onFiltersChange({ ...filters, gradeLevels: newGradeLevels });
-                  }}
-                  styles={styles}
-                  colors={colors}
-                />
-              ))}
-            </View>
-          </View>
-
-          <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Credits</Text>
-            <View style={styles.chipContainer}>
-              {creditOptions.map((credit) => (
-                <FilterChip
-                  key={credit}
-                  label={`${credit} credit`}
-                  selected={filters.credits.includes(credit)}
-                  onPress={() => {
-                    const newCredits = filters.credits.includes(credit)
-                      ? filters.credits.filter((c) => c !== credit)
-                      : [...filters.credits, credit];
-                    onFiltersChange({ ...filters, credits: newCredits });
-                  }}
-                  styles={styles}
-                  colors={colors}
-                />
-              ))}
-            </View>
-          </View>
-
-          {levelOptions.length > 0 && (
-            <View style={styles.filterSection}>
-              <Text style={styles.filterSectionTitle}>Course Level</Text>
-              <View style={styles.chipContainer}>
-                {levelOptions.map((level) => (
-                  <FilterChip
-                    key={level}
-                    label={level}
-                    selected={filters.levels.includes(level)}
-                    onPress={() => {
-                      const newLevels = filters.levels.includes(level)
-                        ? filters.levels.filter((l) => l !== level)
-                        : [...filters.levels, level];
-                      onFiltersChange({ ...filters, levels: newLevels });
-                    }}
-                    styles={styles}
-                    colors={colors}
-                  />
-                ))}
-              </View>
-            </View>
-          )}
-
-          <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Departments</Text>
-            <View style={styles.chipContainer}>
-              {departments.map((dept) => (
-                <FilterChip
-                  key={dept}
-                  label={dept}
-                  selected={filters.departments.includes(dept)}
-                  onPress={() => {
-                    const newDepartments = filters.departments.includes(dept)
-                      ? filters.departments.filter((d) => d !== dept)
-                      : [...filters.departments, dept];
-                    onFiltersChange({ ...filters, departments: newDepartments });
-                  }}
-                  styles={styles}
-                  colors={colors}
-                />
-              ))}
-            </View>
-          </View>
-        </ScrollView>
+        </View>
       )}
 
-      <View style={styles.resultsRow}>
-        <Text style={styles.resultsInfo}>
-          {filteredCourses.length === courses.length
-            ? `${courses.length} courses`
-            : `${filteredCourses.length} of ${courses.length} courses`}
+      <View>
+        <Text style={sectionLabel}>Departments</Text>
+        <View style={chipRow}>
+          {departments.map((d) => (
+            <FilterChip
+              key={d}
+              label={d}
+              selected={filters.departments.includes(d)}
+              onPress={() => onChange({ ...filters, departments: toggle(filters.departments, d) })}
+              colors={colors}
+            />
+          ))}
+        </View>
+      </View>
+
+      <View style={{ flexDirection: 'row', gap: Spacing.md, paddingTop: Spacing.sm }}>
+        <TouchableOpacity
+          onPress={() => onChange(DEFAULT_FILTERS)}
+          style={{
+            flex: 1,
+            paddingVertical: Spacing.md,
+            borderRadius: Radius.lg,
+            borderWidth: 1,
+            borderColor: colors.border,
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{ fontSize: Type.body.fontSize, fontWeight: '600', color: colors.mutedText }}
+          >
+            Reset
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={onDone}
+          style={{
+            flex: 2,
+            paddingVertical: Spacing.md,
+            borderRadius: Radius.lg,
+            backgroundColor: colors.primary,
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{ fontSize: Type.body.fontSize, fontWeight: '700', color: colors.primaryText }}
+          >
+            Done
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+export default function Courses() {
+  const { actualTheme } = useTheme();
+  const colors = Colors[actualTheme];
+  const router = useRouter();
+
+  const [filters, setFilters] = useState<FilterOptions>(DEFAULT_FILTERS);
+  const [selected, setSelected] = useState<Course | null>(null);
+
+  const detailRef = useRef<DetailSheetHandle>(null);
+  const filterRef = useRef<DetailSheetHandle>(null);
+
+  const visible = useMemo(() => applyFilters(allCourses, filters), [filters]);
+  const activeCount = useMemo(() => countActiveFilters(filters), [filters]);
+
+  return (
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background, paddingBottom: 75 }}
+      edges={['top', 'left', 'right']}
+    >
+      <View
+        style={{
+          paddingHorizontal: Spacing.lg,
+          paddingTop: Spacing.xl,
+          paddingBottom: Spacing.lg,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+          backgroundColor: colors.background,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          style={{
+            alignSelf: 'flex-start',
+            width: 36,
+            height: 36,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Feather name="chevron-left" size={25} color={colors.text} />
+        </TouchableOpacity>
+        <Text
+          style={{
+            marginTop: Spacing.sm,
+            fontSize: Type.display.fontSize,
+            fontWeight: Type.display.fontWeight,
+            letterSpacing: Type.display.letterSpacing,
+            color: colors.text,
+          }}
+        >
+          Courses
         </Text>
       </View>
 
-      <FlatList
-        data={filteredCourses}
-        renderItem={renderCourseItem}
-        keyExtractor={(item) => item.id}
-        style={styles.coursesList}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
-  );
-};
+      <View style={{ flex: 1 }}>
+        <DirectoryList<Course>
+          data={visible}
+          keyExtractor={(c) => c.id}
+          searchKeys={(c) => [c.code, c.title, c.dept, c.description]}
+          renderRow={(c) => <CourseRow course={c} colors={colors} />}
+          onItemPress={(c) => {
+            setSelected(c);
+            detailRef.current?.present();
+          }}
+          placeholder="Search courses, codes, departments…"
+          emptyLabel="No courses match"
+          header={
+            <FilterBar
+              activeCount={activeCount}
+              onOpen={() => filterRef.current?.present()}
+              colors={colors}
+            />
+          }
+        />
 
-const CourseDetail: React.FC<{
-  course: Course;
-  onBack: () => void;
-  styles: ThemedStyles;
-  colors: ThemeColors;
-}> = ({ course, onBack, styles, colors }) => {
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={onBack}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-        >
-          <Feather name="arrow-left" size={25} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Offered Courses</Text>
-      </View>
+        <DetailSheet ref={detailRef}>
+          {selected ? <CourseDetailBody course={selected} colors={colors} /> : null}
+        </DetailSheet>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.detailContent}>
-        <View style={styles.courseHeader}>
-          <Text style={styles.courseTitle}>{course.title}</Text>
-          <Text style={styles.courseCode}>{course.code}</Text>
-          <View style={styles.courseMeta}>
-            <Text style={styles.metaItem}>{course.dept}</Text>
-            <Text
-              style={styles.metaItem}
-            >{`${course.credits} credit${course.credits === 1 ? '' : 's'}`}</Text>
-            {course.ap_flag && <Text style={[styles.metaItem, styles.apFlag]}>AP Course</Text>}
-          </View>
-        </View>
-
-        <View style={styles.courseContent}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <Text style={styles.courseDescription}>{course.description}</Text>
-
-          <Text style={styles.sectionTitle}>Course Details</Text>
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Prerequisite:</Text>
-            <Text style={styles.detailValue}>{course.prerequisite || 'None'}</Text>
-          </View>
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Grade Levels:</Text>
-            <Text style={styles.detailValue}>{course.grade_levels.join(', ')}</Text>
-          </View>
-          {course.additional_notes && (
-            <View style={styles.detailItem}>
-              <Text style={styles.detailLabel}>Additional Notes:</Text>
-              <Text style={styles.detailValue}>{course.additional_notes}</Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-    </View>
-  );
-};
-
-// Main Courses component
-const Courses: React.FC = () => {
-  const { actualTheme } = useTheme();
-  const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
-  const navigation = useNavigation<any>(); // Use any to bypass TypeScript
-
-  const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-
-  const [filters, setFilters] = useState<FilterOptions>({
-    searchTerm: '',
-    departments: [],
-    credits: [],
-    gradeLevels: [],
-    levels: [],
-    apOnly: false,
-    repeatableOnly: false,
-    sortBy: 'code',
-    sortOrder: 'asc',
-  });
-
-  const handleCourseSelect = (course: Course) => {
-    setSelectedCourse(course);
-    setCurrentView('detail');
-  };
-
-  const handleBackToList = () => {
-    setCurrentView('list');
-    setSelectedCourse(null);
-  };
-
-  const handleBackToMore = () => {
-    navigation.goBack();
-  };
-
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case 'list':
-        return (
-          <CourseList
-            courses={courses}
-            onCourseSelect={handleCourseSelect}
+        <DetailSheet ref={filterRef}>
+          <FilterControls
             filters={filters}
-            onFiltersChange={setFilters}
-            showAdvancedFilters={showAdvancedFilters}
-            onToggleAdvancedFilters={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            styles={styles}
-            colors={colors}
-            showBackButton={true}
-            onBack={handleBackToMore}
-          />
-        );
-      case 'detail':
-        return selectedCourse ? (
-          <CourseDetail
-            course={selectedCourse}
-            onBack={handleBackToList}
-            styles={styles}
+            onChange={setFilters}
+            onDone={() => filterRef.current?.dismiss()}
             colors={colors}
           />
-        ) : (
-          <View style={styles.container}>
-            <Text>No course selected</Text>
-          </View>
-        );
-      default:
-        return (
-          <View style={styles.container}>
-            <Text>Invalid view</Text>
-          </View>
-        );
-    }
-  };
-
-  return (
-    <SafeAreaView style={styles.appContainer} edges={['top', 'left', 'right']}>
-      <View style={styles.appMain}>{renderCurrentView()}</View>
+        </DetailSheet>
+      </View>
     </SafeAreaView>
   );
-};
-
-const createStyles = (colors: ThemeColors) =>
-  StyleSheet.create({
-    appContainer: {
-      flex: 1,
-      backgroundColor: colors.background,
-      paddingBottom: 75,
-    },
-    header: {
-      justifyContent: 'center',
-      alignContent: 'center',
-      paddingHorizontal: 16,
-      paddingTop: 25,
-      paddingBottom: 16,
-      marginBottom: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      backgroundColor: colors.background,
-    },
-    backButton: {
-      alignSelf: 'flex-start',
-      height: 36,
-      width: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    title: {
-      marginTop: 10,
-      fontSize: 24,
-      fontWeight: '800',
-      color: colors.text,
-    },
-    appHeader: {
-      backgroundColor: colors.surface,
-      padding: 20,
-      paddingTop: 50,
-      alignItems: 'center',
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.12,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 8 },
-      elevation: 6,
-    },
-    appTitle: {
-      fontSize: 24,
-      fontWeight: '800',
-      color: colors.text,
-      letterSpacing: 0.4,
-    },
-    appMain: {
-      flex: 1,
-    },
-    container: {
-      flex: 1,
-      padding: 16,
-      paddingBottom: 46,
-      backgroundColor: colors.background,
-    },
-    detailContent: {
-      paddingBottom: 24,
-    },
-    basicFilters: {
-      flexDirection: 'row',
-      marginBottom: 16,
-      gap: 10,
-    },
-    searchInput: {
-      flex: 1,
-      paddingVertical: 14,
-      fontSize: 15,
-      color: colors.text,
-    },
-    filterButton: {
-      backgroundColor: colors.primary,
-      padding: 12,
-      borderRadius: 14,
-      justifyContent: 'center',
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.14,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 4,
-    },
-    filterButtonText: {
-      color: colors.primaryText,
-      fontWeight: '700',
-    },
-    advancedFilters: {
-      backgroundColor: colors.surface,
-      padding: 16,
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-      marginBottom: 16,
-      maxHeight: 320,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.1,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 4,
-      gap: 6,
-    },
-    filterGroupTitle: {
-      fontSize: 16,
-      fontWeight: '700',
-      marginBottom: 8,
-      color: colors.text,
-    },
-    filterItem: {
-      paddingVertical: 8,
-    },
-    checkbox: {
-      fontSize: 16,
-      color: colors.text,
-    },
-    resultsInfo: {
-      color: colors.mutedText,
-      fontStyle: 'italic',
-      marginBottom: 16,
-    },
-    coursesList: {
-      flex: 1,
-    },
-    courseCardWrapper: {
-      marginBottom: 12,
-    },
-    courseCard: {
-      backgroundColor: colors.surface,
-      padding: 16,
-      borderRadius: 18,
-      borderWidth: 1,
-      borderColor: colors.border,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.12,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 5,
-      gap: 6,
-    },
-    courseCardHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    courseCode: {
-      fontSize: 16,
-      fontWeight: '800',
-      color: colors.primary,
-    },
-    courseTitle: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: colors.text,
-      marginVertical: 2,
-    },
-    courseDept: {
-      fontSize: 14,
-      color: colors.mutedText,
-      fontStyle: 'italic',
-      marginBottom: 4,
-    },
-    courseDescription: {
-      fontSize: 14,
-      color: colors.mutedText,
-      marginBottom: 10,
-      lineHeight: 20,
-    },
-    courseMeta: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-    },
-    metaItem: {
-      backgroundColor: colors.surfaceAlt,
-      paddingHorizontal: 10,
-      paddingVertical: 6,
-      borderRadius: 12,
-      fontSize: 12,
-      color: colors.text,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    apFlag: {
-      backgroundColor: colors.accent,
-      color: colors.primaryText,
-      borderColor: colors.accent,
-    },
-    courseHeader: {
-      marginBottom: 24,
-      gap: 8,
-    },
-    courseContent: {
-      gap: 24,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 8,
-    },
-    detailItem: {
-      flexDirection: 'row',
-      marginBottom: 8,
-    },
-    detailLabel: {
-      fontWeight: '700',
-      marginRight: 8,
-      color: colors.text,
-    },
-    detailValue: {
-      flex: 1,
-      color: colors.mutedText,
-    },
-    searchRow: {
-      marginBottom: 12,
-    },
-    searchInputWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.surface,
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-      paddingHorizontal: 14,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
-      shadowOffset: { width: 0, height: 3 },
-      elevation: 3,
-    },
-    clearSearchIcon: {
-      fontSize: 18,
-      color: colors.mutedText,
-      padding: 8,
-      fontWeight: '300',
-    },
-    filterToggleRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 12,
-    },
-    filterToggleButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    filterToggleText: {
-      fontSize: 15,
-      fontWeight: '600',
-      color: colors.text,
-    },
-    filterCountBadge: {
-      backgroundColor: colors.primary,
-      borderRadius: 10,
-      paddingHorizontal: 8,
-      paddingVertical: 2,
-      marginLeft: 6,
-    },
-    filterCountText: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: colors.primaryText,
-    },
-    clearFiltersButton: {
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-    },
-    clearFiltersText: {
-      fontSize: 14,
-      color: colors.accent,
-      fontWeight: '600',
-    },
-    filterSection: {
-      marginBottom: 16,
-    },
-    filterSectionTitle: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: colors.mutedText,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-      marginBottom: 10,
-    },
-    sortRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    chipContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-    },
-    filterChip: {
-      backgroundColor: colors.surfaceAlt,
-      paddingHorizontal: 14,
-      paddingVertical: 8,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    filterChipSelected: {
-      backgroundColor: colors.primary,
-      borderColor: colors.primary,
-    },
-    filterChipText: {
-      fontSize: 13,
-      fontWeight: '500',
-      color: colors.text,
-    },
-    filterChipTextSelected: {
-      color: colors.primaryText,
-    },
-    sortOrderButton: {
-      backgroundColor: colors.surfaceAlt,
-      paddingHorizontal: 14,
-      paddingVertical: 8,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    sortOrderText: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: colors.text,
-    },
-    resultsRow: {
-      marginBottom: 12,
-    },
-    badgeRow: {
-      flexDirection: 'row',
-      gap: 6,
-    },
-    badge: {
-      paddingHorizontal: 8,
-      paddingVertical: 3,
-      borderRadius: 8,
-      fontSize: 11,
-      fontWeight: '700',
-      overflow: 'hidden',
-    },
-    apBadge: {
-      backgroundColor: colors.accent,
-      color: colors.primaryText,
-    },
-    levelBadge: {
-      backgroundColor: colors.primary,
-      color: colors.primaryText,
-    },
-    repeatableBadge: {
-      backgroundColor: colors.surfaceAlt,
-      color: colors.text,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-  });
-
-export default Courses;
+}

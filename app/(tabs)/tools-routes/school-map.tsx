@@ -21,8 +21,7 @@ import Animated, {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { Colors } from '@/constants/theme';
-
+import { Colors, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 const MAP_IMAGE = require('../../../assets/images/school-map.png');
@@ -491,12 +490,12 @@ export default function SchoolMap() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.replace('/tools')}
+          onPress={() => router.back()}
           activeOpacity={0.8}
           accessibilityRole="button"
           accessibilityLabel="Back"
         >
-          <Feather name="arrow-left" size={25} color={colors.text} />
+          <Feather name="chevron-left" size={24} color={colors.text} />
         </TouchableOpacity>
         <Text style={styles.title}>School Map</Text>
       </View>
@@ -621,9 +620,9 @@ const createStyles = (colors: typeof Colors.light) =>
     header: {
       justifyContent: 'center',
       alignContent: 'center',
-      paddingHorizontal: 16,
-      paddingTop: 25,
-      paddingBottom: 16,
+      paddingHorizontal: Spacing.lg,
+      paddingTop: Spacing.xl,
+      paddingBottom: Spacing.lg,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
       backgroundColor: colors.background,
@@ -636,35 +635,35 @@ const createStyles = (colors: typeof Colors.light) =>
       justifyContent: 'center',
     },
     title: {
-      marginTop: 10,
-      fontSize: 24,
-      fontWeight: '800',
+      marginTop: Spacing.sm,
+      ...Type.display,
       color: colors.text,
     },
     searchWrap: {
-      marginHorizontal: 16,
-      marginTop: 10,
-      marginBottom: 10,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      borderRadius: 14,
+      marginHorizontal: Spacing.lg,
+      marginTop: Spacing.sm,
+      marginBottom: Spacing.sm,
+      paddingHorizontal: Spacing.md,
+      paddingVertical: Spacing.sm + 2,
+      borderRadius: Radius.md,
       borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surface,
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 10,
+      gap: Spacing.sm,
       zIndex: 10,
     },
     searchInput: {
       flex: 1,
       color: colors.text,
-      fontSize: 14,
+      ...Type.label,
+      fontWeight: '400',
     },
     resultsCard: {
-      marginHorizontal: 16,
-      marginBottom: 10,
-      borderRadius: 14,
+      marginHorizontal: Spacing.lg,
+      marginBottom: Spacing.sm,
+      borderRadius: Radius.md,
       borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surface,
@@ -672,26 +671,26 @@ const createStyles = (colors: typeof Colors.light) =>
       zIndex: 20,
     },
     resultRow: {
-      paddingHorizontal: 12,
-      paddingVertical: 10,
+      paddingHorizontal: Spacing.md,
+      paddingVertical: Spacing.sm + 2,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: 12,
+      gap: Spacing.md,
     },
     resultRowLast: {
       borderBottomWidth: 0,
     },
     resultText: {
       color: colors.text,
-      fontSize: 14,
-      fontWeight: '700',
+      ...Type.label,
     },
     resultHint: {
       color: colors.mutedText,
-      fontSize: 12,
+      ...Type.caption,
+      fontWeight: '400',
     },
     mapContainer: {
       flex: 1,
@@ -699,10 +698,10 @@ const createStyles = (colors: typeof Colors.light) =>
       backgroundColor: colors.surfaceAlt,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 16,
-      marginHorizontal: 16,
-      marginBottom: 90, // Explicit space for absolute TabBar
-      borderRadius: 16,
+      marginTop: Spacing.lg,
+      marginHorizontal: Spacing.lg,
+      marginBottom: 90,
+      borderRadius: Radius.lg,
       borderWidth: 1,
       borderColor: colors.border,
     },
@@ -718,38 +717,37 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     overlayHint: {
       position: 'absolute',
-      bottom: 16,
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 20,
+      bottom: Spacing.lg,
+      backgroundColor: colors.shadow,
+      paddingHorizontal: Spacing.md,
+      paddingVertical: Spacing.xs + 2,
+      borderRadius: Radius.pill,
       pointerEvents: 'none',
     },
     mapHint: {
-      color: '#fff',
-      fontSize: 12,
-      borderRadius: 10,
-      padding: 4,
+      color: colors.primaryText,
+      ...Type.caption,
       fontWeight: '600',
     },
     coordOverlay: {
       position: 'absolute',
-      top: 12,
-      left: 12,
-      backgroundColor: 'rgba(0,0,0,0.65)',
-      paddingHorizontal: 10,
-      paddingVertical: 6,
-      borderRadius: 10,
+      top: Spacing.md,
+      left: Spacing.md,
+      backgroundColor: colors.shadow,
+      paddingHorizontal: Spacing.sm + 2,
+      paddingVertical: Spacing.xs + 2,
+      borderRadius: Radius.sm,
     },
     coordText: {
-      color: '#fff',
-      fontSize: 12,
+      color: colors.primaryText,
+      ...Type.caption,
       fontWeight: '700',
     },
     coordHint: {
       marginTop: 2,
       fontSize: 10,
-      color: '#ffffff',
+      fontWeight: '500',
+      color: colors.primaryText,
     },
     centerMarker: {
       position: 'absolute',
@@ -759,9 +757,9 @@ const createStyles = (colors: typeof Colors.light) =>
       height: 8,
       marginLeft: -4,
       marginTop: -4,
-      borderRadius: 4,
-      backgroundColor: 'var(--color-primary)',
+      borderRadius: Radius.pill,
+      backgroundColor: colors.primary,
       borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.8)',
+      borderColor: colors.primaryText,
     },
   });
