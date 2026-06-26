@@ -70,9 +70,11 @@ function StopsBody({ route }: { route: BusRoute }) {
   return (
     <View style={styles.sheetBody}>
       <Text style={styles.sheetTitle}>{route.title}</Text>
-      <Text style={styles.sheetMeta}>
-        {route.vehicle} · {route.departureTime}
-      </Text>
+      <View style={styles.sheetMetaRow}>
+        <Text style={styles.sheetMeta}>{route.vehicle}</Text>
+        <View style={styles.sheetMetaDivider} />
+        <Text style={styles.sheetMeta}>{route.departureTime}</Text>
+      </View>
       <Section title="Stops" style={styles.stopsSection}>
         {route.stops.map((stop) => (
           <View key={stop.stop} style={styles.stopRow}>
@@ -276,10 +278,20 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       fontWeight: '700',
       color: colors.text,
     },
+    sheetMetaRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing.sm,
+      marginBottom: Spacing.xs,
+    },
     sheetMeta: {
       fontSize: Type.body.fontSize,
       color: colors.mutedText,
-      marginBottom: Spacing.xs,
+    },
+    sheetMetaDivider: {
+      width: 1,
+      height: 13,
+      backgroundColor: colors.border,
     },
     stopsSection: {
       marginTop: Spacing.sm,

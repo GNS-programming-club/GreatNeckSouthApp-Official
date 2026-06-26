@@ -491,7 +491,7 @@ function FilterControls({
         <TouchableOpacity
           onPress={onDone}
           style={{
-            flex: 2,
+            flex: 1,
             paddingVertical: Spacing.md,
             borderRadius: Radius.lg,
             backgroundColor: colors.primary,

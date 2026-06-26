@@ -89,16 +89,16 @@ export default function HomeScreen() {
 
   return (
     <Screen>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>{greeting}</Text>
-        <Text style={styles.dateSubtitle}>{dateLabel}</Text>
-      </View>
-
-      <WeekStrip />
-
-      <LiveNowCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
-
       <Stagger>
+        <View style={styles.header}>
+          <Text style={styles.greeting}>{greeting}</Text>
+          <Text style={styles.dateSubtitle}>{dateLabel}</Text>
+        </View>
+
+        <WeekStrip />
+
+        <LiveNowCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
+
         <View style={styles.row}>
           <StatTile
             label="Today's lunch"

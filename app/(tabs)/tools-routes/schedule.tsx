@@ -1,9 +1,8 @@
+import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
 
-import Card from '@/components/ui/card';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Radius, Spacing, Type } from '@/constants/theme';
@@ -15,6 +14,7 @@ const ON_HERO = '#FFFFFF';
 const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
 const PILL_BG = 'rgba(255,255,255,0.18)';
 const TRACK = 'rgba(255,255,255,0.28)';
+const HAIRLINE = 'rgba(255,255,255,0.35)';
 
 function getEasternSeconds() {
   try {
@@ -30,12 +30,14 @@ function getEasternSeconds() {
     const hour = Number(parts.find((p) => p.type === 'hour')?.value);
     const minute = Number(parts.find((p) => p.type === 'minute')?.value);
     const second = Number(parts.find((p) => p.type === 'second')?.value);
+
     if (Number.isFinite(hour) && Number.isFinite(minute) && Number.isFinite(second)) {
       return hour * 3600 + minute * 60 + second;
     }
   } catch {}
 
   const now = new Date();
+
   return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 }
 
@@ -53,6 +55,8 @@ interface ScheduleData {
   totalDuration: string;
 }
 
+type PeriodState = 'done' | 'active' | 'upcoming';
+
 const SchedulePage = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
@@ -65,13 +69,16 @@ const SchedulePage = () => {
 
   const parseTimeToSeconds = useCallback((timeString: string) => {
     const match = timeString.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+
     if (!match) return null;
+
     const [, hourRaw, minuteRaw, ampmRaw] = match;
     let hour = Number(hourRaw);
     const minute = Number(minuteRaw);
     const ampm = ampmRaw.toUpperCase();
 
     if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null;
+
     if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
 
     if (ampm === 'AM') {
@@ -85,22 +92,9 @@ const SchedulePage = () => {
 
   useEffect(() => {
     const interval = setInterval(() => setNowSecondsET(getEasternSeconds()), 1000);
+
     return () => clearInterval(interval);
   }, []);
-
-  const calculateTimeBetween = (currentEnd: string, nextStart: string) => {
-    const endSeconds = parseTimeToSeconds(currentEnd);
-    const startSeconds = parseTimeToSeconds(nextStart);
-    if (endSeconds == null || startSeconds == null) return '—';
-
-    let deltaSeconds = startSeconds - endSeconds;
-    if (deltaSeconds < 0) {
-      deltaSeconds += 24 * 3600;
-    }
-
-    const minutes = Math.max(0, Math.round(deltaSeconds / 60));
-    return `${minutes} min`;
-  };
 
   const header = (
     <View style={styles.header}>
@@ -119,27 +113,24 @@ const SchedulePage = () => {
 
   return (
     <Screen scroll header={header}>
-      <Card>
-        <Text style={styles.summaryLabel}>School Day Overview</Text>
-        <View style={styles.summaryRow}>
-          <View style={styles.summaryCol}>
-            <Text style={styles.statValue}>{periods.length}</Text>
-            <Text style={styles.statLabel}>Periods</Text>
-          </View>
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryCol}>
-            <Text style={styles.statValue}>{schedule.totalSchoolDay}</Text>
-            <Text style={styles.statLabel}>School Day</Text>
-          </View>
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryCol}>
-            <Text style={styles.statValue}>{schedule.totalDuration}</Text>
-            <Text style={styles.statLabel}>Duration</Text>
-          </View>
+      <View style={styles.summaryRow}>
+        <View style={styles.summaryCol}>
+          <Text style={styles.statValue}>{periods.length}</Text>
+          <Text style={styles.statLabel}>Periods</Text>
         </View>
-      </Card>
+        <View style={styles.summaryDivider} />
+        <View style={styles.summaryCol}>
+          <Text style={styles.statValue}>{schedule.totalSchoolDay}</Text>
+          <Text style={styles.statLabel}>School day</Text>
+        </View>
+        <View style={styles.summaryDivider} />
+        <View style={styles.summaryCol}>
+          <Text style={styles.statValue}>{schedule.totalDuration}</Text>
+          <Text style={styles.statLabel}>In class</Text>
+        </View>
+      </View>
 
-      <Stagger delay={70} duration={380} translateY={10}>
+      <Stagger delay={60} duration={360} translateY={10}>
         {periods.map((period, index) => {
           const startSeconds = parseTimeToSeconds(period.start);
           const endSeconds = parseTimeToSeconds(period.end);
@@ -148,71 +139,77 @@ const SchedulePage = () => {
           const isActive =
             isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
           const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
-          const progress = isValidRange
-            ? isCompleted
-              ? 1
-              : isActive
-                ? Math.min(
-                    1,
-                    Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!))
-                  )
-                : 0
-            : 0;
+          const state: PeriodState = isActive ? 'active' : isCompleted ? 'done' : 'upcoming';
+          const progress =
+            isValidRange && isActive
+              ? Math.min(
+                  1,
+                  Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!))
+                )
+              : 0;
+          const minutesLeft =
+            isActive && endSeconds !== null
+              ? Math.max(1, Math.ceil((endSeconds - nowSecondsET) / 60))
+              : 0;
+
+          const isFirst = index === 0;
+          const isLast = index === periods.length - 1;
+          const segColor = state === 'done' ? styles.segDone : styles.segIdle;
 
           return (
-            <View key={period.id}>
+            <View key={period.id} style={styles.row}>
+              <View style={styles.rail}>
+                <View style={[styles.seg, isFirst ? styles.segHidden : segColor]} />
+                <View
+                  style={[
+                    styles.dot,
+                    state === 'done' && styles.dotDone,
+                    state === 'active' && styles.dotActive,
+                    state === 'upcoming' && styles.dotUpcoming,
+                  ]}
+                />
+                <View style={[styles.seg, isLast ? styles.segHidden : segColor]} />
+              </View>
+
               {isActive ? (
-                <View style={styles.activeCard}>
-                  <View style={styles.activePill}>
-                    <Text style={styles.activePillText}>NOW · {period.period.toUpperCase()}</Text>
-                  </View>
+                <View style={styles.content}>
+                  <View style={styles.activeCard}>
+                    <View style={styles.activePill}>
+                      <Text style={styles.activePillText}>NOW</Text>
+                    </View>
 
-                  <View style={styles.activeTimeRow}>
-                    <Text style={styles.activeTimeValue}>{period.start}</Text>
-                    <Text style={styles.activeArrow}>→</Text>
-                    <Text style={styles.activeTimeValue}>{period.end}</Text>
-                  </View>
+                    <View style={styles.numeralRow}>
+                      <Text style={styles.numeral}>{minutesLeft}</Text>
+                      <Text style={styles.numeralLabel}>min left</Text>
+                    </View>
 
-                  <Text style={styles.activeDuration}>{period.duration}</Text>
+                    <View style={styles.metaRow}>
+                      <Text style={styles.metaName}>{period.period}</Text>
+                      <View style={styles.metaDivider} />
+                      <Text style={styles.metaRange}>
+                        {period.start} → {period.end}
+                      </Text>
+                    </View>
 
-                  <View style={styles.track}>
-                    <View style={[styles.fill, { width: `${Math.round(progress * 100)}%` }]} />
+                    <View style={styles.track}>
+                      <View style={[styles.fill, { width: `${Math.round(progress * 100)}%` }]} />
+                    </View>
                   </View>
                 </View>
               ) : (
-                <Card style={styles.periodCardOverride}>
-                  <View style={styles.periodRow}>
-                    <Text style={[styles.periodName, isCompleted && styles.periodNameDone]}>
-                      {period.period}
-                    </Text>
-                    <Text style={styles.periodDuration}>{period.duration}</Text>
-                  </View>
-
-                  <View style={styles.timeRow}>
-                    <Text style={[styles.timeVal, isCompleted && styles.timeValDone]}>
+                <View style={styles.content}>
+                  <View style={styles.itemHead}>
+                    <Text
+                      style={[styles.itemTime, state === 'done' && styles.itemMuted]}
+                      numberOfLines={1}
+                    >
                       {period.start}
                     </Text>
-                    <Text style={styles.timeArrow}>→</Text>
-                    <Text style={[styles.timeVal, isCompleted && styles.timeValDone]}>
-                      {period.end}
+                    <Text style={[styles.itemName, state === 'done' && styles.itemMuted]}>
+                      {period.period}
                     </Text>
                   </View>
-
-                  {isCompleted && (
-                    <View style={styles.progressTrack}>
-                      <View style={styles.progressFill} />
-                    </View>
-                  )}
-                </Card>
-              )}
-
-              {index < periods.length - 1 && (
-                <View style={styles.breakRow}>
-                  <View style={styles.breakLine} />
-                  <Text style={styles.breakLabel}>
-                    {calculateTimeBetween(period.end, periods[index + 1].start)} passing
-                  </Text>
-                  <View style={styles.breakLine} />
+                  <Text style={styles.itemSub}>{state === 'done' ? 'Done' : period.duration}</Text>
                 </View>
               )}
             </View>
@@ -222,6 +219,10 @@ const SchedulePage = () => {
     </Screen>
   );
 };
+
+const NODE_SIZE = 14;
+const RAIL_WIDTH = 26;
+const TIME_WIDTH = 74;
 
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
@@ -245,16 +246,15 @@ const createStyles = (colors: typeof Colors.light) =>
       ...Type.display,
       color: colors.text,
     },
-    summaryLabel: {
-      ...Type.label,
-      color: colors.mutedText,
-      textTransform: 'uppercase',
-      letterSpacing: 0.6,
-      marginBottom: Spacing.sm,
-    },
     summaryRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: Radius.lg,
+      borderCurve: 'continuous',
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: Spacing.lg,
     },
     summaryCol: {
       flex: 1,
@@ -262,7 +262,7 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     summaryDivider: {
       width: 1,
-      height: 32,
+      height: 30,
       backgroundColor: colors.border,
     },
     statValue: {
@@ -274,12 +274,81 @@ const createStyles = (colors: typeof Colors.light) =>
       color: colors.mutedText,
       marginTop: Spacing.xs,
     },
+    row: {
+      flexDirection: 'row',
+      columnGap: Spacing.md,
+      alignItems: 'stretch',
+    },
+    rail: {
+      width: RAIL_WIDTH,
+      alignItems: 'center',
+    },
+    seg: {
+      width: 2,
+      flex: 1,
+    },
+    segHidden: {
+      backgroundColor: 'transparent',
+    },
+    segIdle: {
+      backgroundColor: colors.mutedText,
+      opacity: 0.28,
+    },
+    segDone: {
+      backgroundColor: colors.mutedText,
+      opacity: 0.45,
+    },
+    dot: {
+      width: NODE_SIZE,
+      height: NODE_SIZE,
+      borderRadius: NODE_SIZE / 2,
+      borderWidth: 2,
+    },
+    dotDone: {
+      backgroundColor: colors.mutedText,
+      borderColor: colors.mutedText,
+    },
+    dotActive: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    dotUpcoming: {
+      backgroundColor: colors.background,
+      borderColor: colors.mutedText,
+    },
+    content: {
+      flex: 1,
+      paddingVertical: Spacing.md,
+    },
+    itemHead: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      columnGap: Spacing.md,
+    },
+    itemTime: {
+      ...Type.label,
+      color: colors.text,
+      width: TIME_WIDTH,
+    },
+    itemName: {
+      ...Type.heading,
+      color: colors.text,
+    },
+    itemSub: {
+      ...Type.caption,
+      color: colors.mutedText,
+      marginTop: 2,
+      marginLeft: TIME_WIDTH + Spacing.md,
+    },
+    itemMuted: {
+      color: colors.mutedText,
+    },
     activeCard: {
       backgroundColor: colors.primary,
       borderRadius: Radius.lg,
       borderCurve: 'continuous',
-      paddingVertical: Spacing.xl,
-      paddingHorizontal: Spacing.xl,
+      paddingVertical: Spacing.lg,
+      paddingHorizontal: Spacing.lg,
       gap: Spacing.md,
       shadowColor: colors.shadow,
       shadowOpacity: 0.08,
@@ -300,22 +369,42 @@ const createStyles = (colors: typeof Colors.light) =>
       textTransform: 'uppercase',
       letterSpacing: 0.6,
     },
-    activeTimeRow: {
+    numeralRow: {
       flexDirection: 'row',
-      alignItems: 'center',
-      gap: Spacing.md,
+      alignItems: 'baseline',
+      gap: Spacing.sm,
     },
-    activeTimeValue: {
+    numeral: {
       color: ON_HERO,
-      ...Type.title,
+      fontSize: 52,
+      fontWeight: '800',
+      letterSpacing: -1.5,
     },
-    activeArrow: {
-      color: ON_HERO_MUTED,
-      ...Type.body,
-    },
-    activeDuration: {
+    numeralLabel: {
       color: ON_HERO_MUTED,
       ...Type.label,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+    },
+    metaRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing.sm,
+    },
+    metaName: {
+      color: ON_HERO,
+      ...Type.body,
+      fontWeight: '700',
+    },
+    metaDivider: {
+      width: 1,
+      height: 13,
+      backgroundColor: HAIRLINE,
+    },
+    metaRange: {
+      color: ON_HERO_MUTED,
+      ...Type.body,
+      fontWeight: '600',
     },
     track: {
       height: 6,
@@ -327,71 +416,6 @@ const createStyles = (colors: typeof Colors.light) =>
       height: 6,
       borderRadius: Radius.pill,
       backgroundColor: ON_HERO,
-    },
-    periodCardOverride: {
-      gap: Spacing.sm,
-    },
-    periodRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    periodName: {
-      ...Type.heading,
-      color: colors.text,
-    },
-    periodNameDone: {
-      color: colors.mutedText,
-    },
-    periodDuration: {
-      ...Type.label,
-      color: colors.primary,
-    },
-    timeRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: Spacing.sm,
-    },
-    timeVal: {
-      ...Type.body,
-      color: colors.text,
-      fontWeight: '700',
-    },
-    timeValDone: {
-      color: colors.mutedText,
-    },
-    timeArrow: {
-      ...Type.body,
-      color: colors.mutedText,
-    },
-    progressTrack: {
-      height: 3,
-      borderRadius: Radius.pill,
-      backgroundColor: colors.border,
-      overflow: 'hidden',
-    },
-    progressFill: {
-      height: 3,
-      width: '100%',
-      borderRadius: Radius.pill,
-      backgroundColor: colors.primary,
-      opacity: 0.35,
-    },
-    breakRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: Spacing.sm,
-      paddingHorizontal: Spacing.sm,
-    },
-    breakLine: {
-      flex: 1,
-      height: 1,
-      backgroundColor: colors.border,
-    },
-    breakLabel: {
-      ...Type.caption,
-      color: colors.mutedText,
-      paddingHorizontal: Spacing.md,
     },
   });
 
