@@ -1,9 +1,15 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import Card from '@/components/ui/card';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import {
+  PERIOD_COUNT,
+  computePeriodTimes,
+  nowMinutesLocal,
+  parse24hToMinutes,
+} from '@/constants/schedule';
+import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type LiveNowCardProps = {
@@ -11,57 +17,31 @@ type LiveNowCardProps = {
   todayLetter: string;
 };
 
-function formatMinutes(totalMinutes: number) {
-  const h = Math.floor(totalMinutes / 60);
-  const m = totalMinutes % 60;
-  const hh = h % 24;
-
-  return `${hh}:${m.toString().padStart(2, '0')}`;
-}
-
-function computePeriodTimes(
-  count: number,
-  startMinutes = 7 * 60 + 59,
-  lessonLen = 40,
-  breakLen = 4
-) {
-  const times: { start: string; end: string }[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const start = startMinutes + i * (lessonLen + breakLen);
-    const end = start + lessonLen;
-    times.push({ start: formatMinutes(start), end: formatMinutes(end) });
-  }
-
-  return times;
-}
-
-function parse24hToMinutes(time: string) {
-  const match = time.match(/^(\d{1,2}):(\d{2})$/);
-
-  if (!match) return null;
-
-  const h = Number(match[1]);
-  const m = Number(match[2]);
-
-  if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
-
-  if (h < 0 || h > 23 || m < 0 || m > 59) return null;
-
-  return h * 60 + m;
-}
-
-function nowMinutesLocal() {
-  const now = new Date();
-
-  return now.getHours() * 60 + now.getMinutes();
-}
+const ON_HERO = '#FFFFFF';
+const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
+const PILL_BG = 'rgba(255,255,255,0.18)';
+const TRACK = 'rgba(255,255,255,0.28)';
 
 export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
+
+  const tilt = useSharedValue(1);
+
+  useEffect(() => {
+    tilt.value = withSpring(0, { damping: 14, stiffness: 110, mass: 0.9 });
+  }, [tilt]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: 0.6 + (1 - tilt.value) * 0.4,
+    transform: [
+      { perspective: 800 },
+      { rotateZ: `${tilt.value * 4}deg` },
+      { translateY: tilt.value * 18 },
+    ],
+  }));
 
   const [tick, setTick] = useState(() => nowMinutesLocal());
 
@@ -72,7 +52,7 @@ export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardP
   }, []);
 
   const live = useMemo(() => {
-    const times = computePeriodTimes(9);
+    const times = computePeriodTimes(PERIOD_COUNT);
     const nowMin = tick;
 
     for (let i = 0; i < times.length; i++) {
@@ -86,12 +66,15 @@ export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardP
 
       if (!isIn && !isNext) continue;
 
+      const elapsed = isIn ? (nowMin - start) / (end - start) : 0;
+
       return {
         kind: isIn ? ('current' as const) : ('next' as const),
         periodIndex: i,
         start: times[i].start,
         end: times[i].end,
         minutesToBell: isIn ? end - nowMin : start - nowMin,
+        elapsedFraction: Math.min(1, Math.max(0, elapsed)),
         courseId: todaySchedule?.[i] ?? null,
       };
     }
@@ -99,69 +82,128 @@ export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardP
     return null;
   }, [tick, todaySchedule]);
 
-  const bellColor = live?.kind === 'current' ? colors.successText : colors.warnText;
-  const bellLabel = live
-    ? live.kind === 'current'
-      ? `ends in ${live.minutesToBell} min`
-      : `starts in ${live.minutesToBell} min`
-    : 'No more periods today';
+  const isCurrent = live?.kind === 'current';
+  const pillText = live
+    ? `${isCurrent ? 'NOW' : 'NEXT'} · Period ${live.periodIndex + 1}`
+    : `DAY ${todayLetter} · DONE`;
 
   return (
-    <Card elevation="floating" onPress={() => router.push('/tools-routes/schedule')}>
-      <View style={styles.headerRow}>
-        <Text style={styles.eyebrow}>{live?.kind === 'current' ? 'In class' : 'Up next'}</Text>
-        <Text style={styles.dayLabel}>Day {todayLetter}</Text>
-      </View>
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => router.push('/tools-routes/schedule')}
+        style={styles.field}
+      >
+        <View style={styles.pill}>
+          <Text style={styles.pillText}>{pillText}</Text>
+        </View>
 
-      {live ? (
-        <>
-          <Text style={styles.period}>Period {live.periodIndex + 1}</Text>
-          <Text style={styles.range}>
-            {live.start} – {live.end}
-          </Text>
-          <Text style={[styles.bell, { color: bellColor }]}>{bellLabel}</Text>
-        </>
-      ) : (
-        <Text style={styles.bell}>{bellLabel}</Text>
-      )}
-    </Card>
+        {live ? (
+          <>
+            <View style={styles.numeralRow}>
+              <Text style={styles.numeral}>{live.minutesToBell}</Text>
+              <Text style={styles.numeralLabel}>
+                min to{'\n'}
+                {isCurrent ? 'bell' : 'start'}
+              </Text>
+            </View>
+
+            <Text style={styles.range}>
+              {live.courseId ? `${live.courseId} · ` : ''}
+              {live.start} – {live.end}
+            </Text>
+
+            {isCurrent ? (
+              <View style={styles.track}>
+                <View style={[styles.fill, { width: `${live.elapsedFraction * 100}%` }]} />
+              </View>
+            ) : (
+              <Text style={styles.between}>Starts in {live.minutesToBell} min</Text>
+            )}
+          </>
+        ) : (
+          <>
+            <Text style={styles.doneText}>No more periods</Text>
+            <Text style={styles.range}>See you tomorrow</Text>
+          </>
+        )}
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
 const createStyles = (colors: (typeof Colors)['light']) =>
   StyleSheet.create({
-    headerRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+    field: {
+      ...Elevation.raised,
+      shadowColor: colors.shadow,
+      backgroundColor: colors.primary,
+      borderRadius: Radius.lg,
+      borderCurve: 'continuous',
+      paddingVertical: Spacing.xl,
+      paddingHorizontal: Spacing.xl,
+      gap: Spacing.md,
+      overflow: 'hidden',
     },
-    eyebrow: {
-      color: colors.mutedText,
-      fontSize: Type.label.fontSize,
-      fontWeight: Type.label.fontWeight,
+    pill: {
+      alignSelf: 'flex-start',
+      backgroundColor: PILL_BG,
+      borderRadius: Radius.pill,
+      paddingVertical: Spacing.xs + 1,
+      paddingHorizontal: Spacing.md,
+    },
+    pillText: {
+      color: ON_HERO,
+      fontSize: Type.caption.fontSize,
+      fontWeight: '700',
       textTransform: 'uppercase',
       letterSpacing: 0.6,
     },
-    dayLabel: {
-      color: colors.text,
-      fontSize: Type.label.fontSize,
+    numeralRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      gap: Spacing.md,
+    },
+    numeral: {
+      color: ON_HERO,
+      fontSize: 64,
       fontWeight: '800',
+      letterSpacing: -1.5,
+      lineHeight: 64,
     },
-    period: {
-      color: colors.text,
-      fontSize: Type.title.fontSize,
-      fontWeight: Type.title.fontWeight,
-      letterSpacing: Type.title.letterSpacing,
-    },
-    range: {
-      color: colors.mutedText,
-      fontSize: Type.body.fontSize,
-      fontWeight: Type.body.fontWeight,
-    },
-    bell: {
-      marginTop: Spacing.xs,
-      color: colors.mutedText,
+    numeralLabel: {
+      color: ON_HERO_MUTED,
       fontSize: Type.label.fontSize,
       fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+      paddingBottom: Spacing.sm,
+    },
+    range: {
+      color: ON_HERO_MUTED,
+      fontSize: Type.body.fontSize,
+      fontWeight: '600',
+    },
+    track: {
+      height: 6,
+      borderRadius: Radius.pill,
+      backgroundColor: TRACK,
+      overflow: 'hidden',
+    },
+    fill: {
+      height: 6,
+      borderRadius: Radius.pill,
+      backgroundColor: ON_HERO,
+    },
+    between: {
+      color: ON_HERO_MUTED,
+      fontSize: Type.label.fontSize,
+      fontWeight: '700',
+    },
+    doneText: {
+      color: ON_HERO,
+      fontSize: Type.title.fontSize,
+      fontWeight: '800',
+      letterSpacing: -0.5,
     },
   });

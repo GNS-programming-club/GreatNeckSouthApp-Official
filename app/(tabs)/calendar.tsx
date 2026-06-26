@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
@@ -14,12 +13,6 @@ interface TodayInfo {
   lunchMenu: string[];
   holidays: string[];
   clubEvents: { name: string; time: string }[];
-}
-
-interface TodayResponse {
-  lunchMenu?: string[];
-  holidays?: string[];
-  clubEvents?: { name: string; time: string }[];
 }
 
 const CalendarScreen = () => {
@@ -215,56 +208,28 @@ const CalendarScreen = () => {
   useEffect(() => {
     let cancelled = false;
 
-    const loadTodayInfo = async () => {
-      try {
-        const response = await axios.get<TodayResponse>(`/api/today/${selectedDate}`);
+    const loadTodayInfo = () => {
+      if (cancelled || !isMountedRef.current) return;
 
-        if (cancelled || !isMountedRef.current) return;
+      const dateObj = parseLocalDate(selectedDate);
+      const dayOfMonth = dateObj.getDate();
+      const selectedMonth = dateObj.getMonth() + 1;
 
-        const dateObj = parseLocalDate(selectedDate);
-        const dayOfMonth = dateObj.getDate();
-        const selectedMonth = dateObj.getMonth() + 1;
+      const selectedYear = dateObj.getFullYear();
 
-        const selectedYear = dateObj.getFullYear();
+      let lunchMenuItems: string[] = [];
 
-        let lunchMenuItems: string[] = [];
-
-        if (menuData && menuData.month === selectedMonth && menuData.year === selectedYear) {
-          lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
-        }
-
-        setTodayInfo({
-          date: dateObj.toLocaleDateString(),
-          dayLetter: getDayLetter(dateObj),
-          lunchMenu: lunchMenuItems.length > 0 ? lunchMenuItems : response.data?.lunchMenu || [],
-          holidays: response.data?.holidays || [],
-          clubEvents: response.data?.clubEvents || [],
-        });
-      } catch (error) {
-        if (cancelled || !isMountedRef.current) return;
-
-        console.error("Failed to load today's info:", error);
-
-        const dateObj = parseLocalDate(selectedDate);
-        const dayOfMonth = dateObj.getDate();
-        const selectedMonth = dateObj.getMonth() + 1;
-
-        const selectedYear = dateObj.getFullYear();
-
-        let lunchMenuItems: string[] = [];
-
-        if (menuData && menuData.month === selectedMonth && menuData.year === selectedYear) {
-          lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
-        }
-
-        setTodayInfo({
-          date: dateObj.toLocaleDateString(),
-          dayLetter: getDayLetter(dateObj),
-          lunchMenu: lunchMenuItems,
-          holidays: [],
-          clubEvents: [],
-        });
+      if (menuData && menuData.month === selectedMonth && menuData.year === selectedYear) {
+        lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
       }
+
+      setTodayInfo({
+        date: dateObj.toLocaleDateString(),
+        dayLetter: getDayLetter(dateObj),
+        lunchMenu: lunchMenuItems,
+        holidays: [],
+        clubEvents: [],
+      });
     };
 
     loadTodayInfo();

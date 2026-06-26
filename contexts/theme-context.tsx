@@ -28,15 +28,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const themedText = Text as typeof Text & { defaultProps?: { style?: unknown } };
+
     if (baseTextDefaultStyle === undefined) {
-      baseTextDefaultStyle = Text.defaultProps?.style;
+      baseTextDefaultStyle = themedText.defaultProps?.style;
     }
 
     const base = baseTextDefaultStyle;
     const baseArray = Array.isArray(base) ? base : base ? [base] : [];
 
-    Text.defaultProps = Text.defaultProps ?? {};
-    Text.defaultProps.style = [{ color: Colors[actualTheme].text }, ...baseArray];
+    themedText.defaultProps = themedText.defaultProps ?? {};
+    themedText.defaultProps.style = [{ color: Colors[actualTheme].text }, ...baseArray];
   }, [actualTheme]);
 
   const loadThemePreference = async () => {

@@ -41,6 +41,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     card: {
       backgroundColor: colors.surface,
       borderRadius: Radius.lg,
+      borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,
       padding: Spacing.lg,

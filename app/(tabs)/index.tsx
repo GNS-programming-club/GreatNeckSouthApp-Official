@@ -1,13 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import LiveNowCard from '@/components/home/live-now-card';
-import TodayLunchCard from '@/components/home/today-lunch-card';
+import { QuickActions } from '@/components/home/quick-actions';
+import StatTile from '@/components/home/stat-tile';
+import { useTodayLunch } from '@/components/home/today-lunch-card';
+import { TodayScheduleCard } from '@/components/home/today-schedule-card';
 import Card from '@/components/ui/card';
 import Pill from '@/components/ui/pill';
 import Screen from '@/components/ui/screen';
-import Section from '@/components/ui/section';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
@@ -42,6 +45,7 @@ export default function HomeScreen() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const router = useRouter();
 
   const [todaySchedule, setTodaySchedule] = useState<(string | null)[] | null>(null);
 
@@ -54,6 +58,9 @@ export default function HomeScreen() {
 
     return `${weekday}, ${monthDay}`;
   }, [today]);
+
+  const { items: lunchItems, hasError: lunchError } = useTodayLunch();
+  const lunchLines = useMemo(() => (lunchItems ? lunchItems.slice(0, 3) : []), [lunchItems]);
 
   useEffect(() => {
     const key = `${STORAGE_KEY}_${todayLetter}`;
@@ -77,23 +84,65 @@ export default function HomeScreen() {
       .catch(() => setTodaySchedule(null));
   }, [todayLetter]);
 
+  const periodCount = todaySchedule
+    ? todaySchedule.filter((entry) => entry != null && entry !== '').length
+    : 0;
+
   return (
     <Screen>
+      <View style={styles.header}>
+        <Text style={styles.greeting}>{greeting}</Text>
+        <Pill label={dateLabel} value={`Day ${todayLetter}`} />
+      </View>
+
+      <LiveNowCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
+
       <Stagger>
-        <View style={styles.header}>
-          <Text style={styles.greeting}>{greeting}</Text>
-          <Pill label={dateLabel} value={`Day ${todayLetter}`} />
+        <View style={styles.row}>
+          <StatTile
+            label="Today's lunch"
+            icon="coffee"
+            onPress={() => router.push('/calendar')}
+            style={styles.rowItem}
+          >
+            {lunchError ? (
+              <Text style={styles.tileMuted}>Menu unavailable</Text>
+            ) : lunchItems === null ? (
+              <Text style={styles.tileMuted}>Loading…</Text>
+            ) : lunchLines.length === 0 ? (
+              <Text style={styles.tileMuted}>No menu posted</Text>
+            ) : (
+              <View style={styles.lunchList}>
+                {lunchLines.map((name, index) => (
+                  <Text key={`${name}-${index}`} style={styles.lunchItem} numberOfLines={1}>
+                    {name}
+                  </Text>
+                ))}
+              </View>
+            )}
+          </StatTile>
+
+          <StatTile
+            label="Schedule"
+            icon="calendar"
+            onPress={() => router.push('/tools-routes/schedule')}
+            style={styles.rowItem}
+          >
+            <Text style={styles.dayGlyph}>{todayLetter}</Text>
+            <Text style={styles.daySub}>
+              {periodCount > 0 ? `${periodCount} periods` : 'Day type'}
+            </Text>
+          </StatTile>
         </View>
 
-        <LiveNowCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
-
-        <TodayLunchCard />
-
-        <Card>
-          <Section title="Today's events">
-            <Text style={styles.empty}>No events posted</Text>
-          </Section>
+        <Card style={styles.eventsTile}>
+          <Text style={styles.eventsLabel}>Today&apos;s events</Text>
+          <Text style={styles.empty}>No events posted</Text>
         </Card>
+
+        <QuickActions />
+
+        <TodayScheduleCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
       </Stagger>
     </Screen>
   );
@@ -110,6 +159,47 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       fontSize: Type.display.fontSize,
       fontWeight: Type.display.fontWeight,
       letterSpacing: Type.display.letterSpacing,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: Spacing.lg,
+    },
+    rowItem: {
+      flex: 1,
+    },
+    tileMuted: {
+      color: colors.mutedText,
+      fontSize: Type.body.fontSize,
+      fontWeight: '600',
+    },
+    lunchList: {
+      gap: Spacing.xs,
+    },
+    lunchItem: {
+      color: colors.text,
+      fontSize: Type.body.fontSize,
+      fontWeight: '700',
+    },
+    dayGlyph: {
+      color: colors.text,
+      fontSize: 56,
+      fontWeight: '800',
+      letterSpacing: -1.5,
+      lineHeight: 58,
+    },
+    daySub: {
+      color: colors.mutedText,
+      fontSize: Type.label.fontSize,
+      fontWeight: '700',
+    },
+    eventsTile: {
+      gap: Spacing.sm,
+    },
+    eventsLabel: {
+      color: colors.text,
+      fontSize: Type.heading.fontSize,
+      fontWeight: Type.heading.fontWeight,
+      letterSpacing: Type.heading.letterSpacing,
     },
     empty: {
       color: colors.mutedText,

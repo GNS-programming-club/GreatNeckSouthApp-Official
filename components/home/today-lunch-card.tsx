@@ -10,12 +10,7 @@ import { useTheme } from '@/contexts/theme-context';
 
 const MAX_ITEMS = 4;
 
-export default function TodayLunchCard() {
-  const { actualTheme } = useTheme();
-  const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
-  const router = useRouter();
-
+export function useTodayLunch() {
   const [items, setItems] = useState<string[] | null>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -56,10 +51,21 @@ export default function TodayLunchCard() {
     };
   }, []);
 
+  return { items, hasError };
+}
+
+export default function TodayLunchCard() {
+  const { actualTheme } = useTheme();
+  const colors = Colors[actualTheme];
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const router = useRouter();
+
+  const { items, hasError } = useTodayLunch();
+
   const visibleItems = items ? items.slice(0, MAX_ITEMS) : [];
 
   return (
-    <Card>
+    <Card style={styles.card}>
       <Section title="Today's lunch">
         {hasError ? (
           <Text style={styles.muted}>Lunch menu unavailable</Text>
@@ -88,6 +94,11 @@ export default function TodayLunchCard() {
 
 const createStyles = (colors: (typeof Colors)['light']) =>
   StyleSheet.create({
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderCurve: 'continuous',
+    },
     muted: {
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
@@ -105,7 +116,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       width: 6,
       height: 6,
       borderRadius: 3,
-      backgroundColor: colors.accent,
+      backgroundColor: colors.primary,
     },
     itemText: {
       flex: 1,

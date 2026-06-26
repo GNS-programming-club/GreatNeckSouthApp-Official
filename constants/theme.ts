@@ -5,62 +5,56 @@
 
 import { Platform } from 'react-native';
 
-const palette = {
-  blue: '#1e3a8a',
-  blueBright: '#3b82f6',
-  blueSoft: '#dbeafe',
-  navy: '#020617',
-  deepNavy: '#0a1628',
-  midNavy: '#0f1d32',
-  orange: '#f97316',
-  orangeSoft: '#fff7ed',
-  white: '#ffffff',
-  offWhite: '#f8fafc',
-  slate: '#0f172a',
-  slateMuted: '#64748b',
-  borderLight: '#cbd5e1',
-  borderDark: '#1e3a5f',
-};
-
 export const Colors = {
   light: {
-    text: palette.slate,
-    mutedText: palette.slateMuted,
-    background: palette.offWhite,
-    surface: palette.white,
-    surfaceAlt: '#e2e8f0',
-    border: palette.borderLight,
-    primary: palette.blueBright,
-    primaryText: palette.white,
-    accent: palette.orange,
-    accentSoft: palette.orangeSoft,
-    icon: '#475569',
-    tint: palette.blueBright,
-    tabIconDefault: '#64748b',
-    tabIconSelected: palette.blueBright,
-    shadow: 'rgba(15, 23, 42, 0.1)',
-    successText: '#15803d',
-    warnText: '#b45309',
+    text: '#0A0B0D',
+    mutedText: '#5B6472',
+    background: '#FFFFFF',
+    surface: '#F4F6F9',
+    surfaceAlt: '#EBEEF3',
+    border: '#E2E6EC',
+    primary: '#2563EB',
+    primaryText: '#FFFFFF',
+    accent: '#2563EB',
+    accentSoft: '#E8EEFF',
+    icon: '#5B6472',
+    tint: '#2563EB',
+    tabIconDefault: '#9AA3B2',
+    tabIconSelected: '#2563EB',
+    shadow: 'rgba(10,11,13,0.12)',
+    successText: '#2563EB',
+    warnText: '#5B6472',
   },
   dark: {
-    text: '#f1f5f9',
-    mutedText: '#94a3b8',
-    background: palette.navy,
-    surface: palette.deepNavy,
-    surfaceAlt: palette.midNavy,
-    border: palette.borderDark,
-    primary: '#3b82f6',
-    primaryText: '#ffffff',
-    accent: '#f97316',
-    accentSoft: '#1c1917',
-    icon: '#94a3b8',
-    tint: '#3b82f6',
-    tabIconDefault: '#64748b',
-    tabIconSelected: '#3b82f6',
-    shadow: 'rgba(0, 0, 0, 0.5)',
-    successText: '#4ade80',
-    warnText: '#fbbf24',
+    text: '#F5F7FA',
+    mutedText: '#8A93A3',
+    background: '#0A0B0D',
+    surface: '#14161A',
+    surfaceAlt: '#1C1F26',
+    border: '#23262E',
+    primary: '#3B82F6',
+    primaryText: '#FFFFFF',
+    accent: '#3B82F6',
+    accentSoft: '#0D1B3A',
+    icon: '#8A93A3',
+    tint: '#3B82F6',
+    tabIconDefault: '#5B6472',
+    tabIconSelected: '#3B82F6',
+    shadow: 'rgba(0,0,0,0.6)',
+    successText: '#3B82F6',
+    warnText: '#8A93A3',
   },
+};
+
+export const Fields = {
+  hero: '#0D1B3A',
+  heroAccent: '#3B82F6',
+  card: '#14161A',
+  cardInset: '#1C1F26',
+  hairline: 'rgba(255,255,255,0.08)',
+  onField: '#F5F7FA',
+  onFieldMuted: '#94A0B4',
+  accent: '#3B82F6',
 };
 
 export const Spacing = {
@@ -106,7 +100,7 @@ type ElevationStyle = {
   elevation: number;
 };
 
-export const Elevation: Record<'flat' | 'raised' | 'floating', ElevationStyle> = {
+export const Elevation: Record<'flat' | 'raised' | 'floating' | 'glow', ElevationStyle> = {
   flat: {
     shadowColor: '#000000',
     shadowOpacity: 0,
@@ -127,6 +121,13 @@ export const Elevation: Record<'flat' | 'raised' | 'floating', ElevationStyle> =
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 10 },
     elevation: 8,
+  },
+  glow: {
+    shadowColor: '#3B82F6',
+    shadowOpacity: 0.35,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 12,
   },
 };
 
