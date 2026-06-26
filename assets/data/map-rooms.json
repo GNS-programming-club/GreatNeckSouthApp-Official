@@ -1,0 +1,1023 @@
+{
+  "sections": {
+    "100s": {
+      "dept": "TESL · West Gym",
+      "area": "By the West Gym",
+      "level": "Ground"
+    },
+    "200s": {
+      "dept": "Art · Business · Science · Technology",
+      "area": "Near the West Gym & shops",
+      "level": "Lower"
+    },
+    "300s": {
+      "dept": "Deans · Drama · Music · Special Ed",
+      "area": "By the Auditorium & Music wing",
+      "level": "Ground"
+    },
+    "400s": {
+      "dept": "English · Health · LOTE · Social Studies",
+      "area": "Upper level, off the cafeterias",
+      "level": "Upper"
+    },
+    "500s": {
+      "dept": "Library · Multimedia · Science",
+      "area": "Around the Library",
+      "level": "Ground"
+    },
+    "600s": {
+      "dept": "Math · Science",
+      "area": "Along the Courtyard spine",
+      "level": "Lower"
+    },
+    "700s": {
+      "dept": "Admin · Guidance · Nurse",
+      "area": "Main Office, by the Main Entrance",
+      "level": "Upper"
+    },
+    "800s": {
+      "dept": "East Gym",
+      "area": "By the East Gym",
+      "level": "Bottom"
+    }
+  },
+  "places": [
+    {
+      "id": "main-entrance",
+      "label": "Main Entrance",
+      "sub": "",
+      "section": "700s",
+      "area": "Center, front of the building",
+      "keywords": [
+        "entrance",
+        "front",
+        "door"
+      ]
+    },
+    {
+      "id": "main-office",
+      "label": "Main Office",
+      "sub": "727",
+      "section": "700s",
+      "area": "Main Office Complex, by the Main Entrance",
+      "keywords": [
+        "office",
+        "main",
+        "admin"
+      ]
+    },
+    {
+      "id": "nurse",
+      "label": "Nurse",
+      "sub": "732",
+      "section": "700s",
+      "area": "Main Office Complex",
+      "keywords": [
+        "nurse",
+        "health",
+        "sick"
+      ]
+    },
+    {
+      "id": "attendance",
+      "label": "Attendance",
+      "sub": "730",
+      "section": "700s",
+      "area": "Main Office Complex",
+      "keywords": [
+        "attendance",
+        "late",
+        "absent"
+      ]
+    },
+    {
+      "id": "guidance",
+      "label": "Guidance",
+      "sub": "",
+      "section": "700s",
+      "area": "Main Office Complex",
+      "keywords": [
+        "guidance",
+        "counselor",
+        "college"
+      ]
+    },
+    {
+      "id": "principal",
+      "label": "Principal's Office",
+      "sub": "726",
+      "section": "700s",
+      "area": "Main Office Complex",
+      "keywords": [
+        "principal",
+        "726"
+      ]
+    },
+    {
+      "id": "deans",
+      "label": "Deans",
+      "sub": "327 · 328",
+      "section": "300s",
+      "area": "Center, by the Auditorium",
+      "keywords": [
+        "dean",
+        "discipline",
+        "327",
+        "328"
+      ]
+    },
+    {
+      "id": "library",
+      "label": "Library",
+      "sub": "502",
+      "section": "500s",
+      "area": "Center of the building",
+      "keywords": [
+        "library",
+        "books",
+        "study",
+        "502"
+      ]
+    },
+    {
+      "id": "computer-lab",
+      "label": "Computer Lab",
+      "sub": "",
+      "section": "500s",
+      "area": "By the Library",
+      "keywords": [
+        "computer",
+        "lab",
+        "tech"
+      ]
+    },
+    {
+      "id": "auditorium",
+      "label": "Auditorium",
+      "sub": "",
+      "section": "300s",
+      "area": "Center, by the Main Entrance",
+      "keywords": [
+        "auditorium",
+        "theater",
+        "show",
+        "play"
+      ]
+    },
+    {
+      "id": "stage",
+      "label": "Stage",
+      "sub": "",
+      "section": "300s",
+      "area": "Behind the Auditorium",
+      "keywords": [
+        "stage",
+        "theater",
+        "drama"
+      ]
+    },
+    {
+      "id": "choral-room",
+      "label": "Choral Room",
+      "sub": "306",
+      "section": "300s",
+      "area": "By the Auditorium",
+      "keywords": [
+        "choir",
+        "choral",
+        "sing",
+        "306"
+      ]
+    },
+    {
+      "id": "music",
+      "label": "Music",
+      "sub": "309",
+      "section": "300s",
+      "area": "By the Auditorium",
+      "keywords": [
+        "music",
+        "band",
+        "orchestra",
+        "309"
+      ]
+    },
+    {
+      "id": "upper-cafeteria",
+      "label": "Upper Cafeteria",
+      "sub": "",
+      "section": "400s",
+      "area": "Upper level, top of the building",
+      "keywords": [
+        "cafeteria",
+        "lunch",
+        "food",
+        "upper",
+        "cafe"
+      ]
+    },
+    {
+      "id": "lower-cafeteria",
+      "label": "Lower Cafeteria",
+      "sub": "",
+      "section": "400s",
+      "area": "Lower level, top of the building",
+      "keywords": [
+        "cafeteria",
+        "lunch",
+        "food",
+        "lower",
+        "cafe"
+      ]
+    },
+    {
+      "id": "east-gym",
+      "label": "East Gym",
+      "sub": "808",
+      "section": "800s",
+      "area": "Bottom level, far end",
+      "keywords": [
+        "gym",
+        "east",
+        "pe",
+        "808",
+        "sports"
+      ]
+    },
+    {
+      "id": "west-gym",
+      "label": "West Gym",
+      "sub": "102",
+      "section": "100s",
+      "area": "Far side by the shops",
+      "keywords": [
+        "gym",
+        "west",
+        "pe",
+        "102",
+        "sports"
+      ]
+    },
+    {
+      "id": "aux-gym-100",
+      "label": "Aux Gym",
+      "sub": "100",
+      "section": "100s",
+      "area": "By the West Gym",
+      "keywords": [
+        "gym",
+        "aux",
+        "100"
+      ]
+    },
+    {
+      "id": "aux-gym-809",
+      "label": "Aux Gym",
+      "sub": "809",
+      "section": "800s",
+      "area": "By the East Gym",
+      "keywords": [
+        "gym",
+        "aux",
+        "809"
+      ]
+    },
+    {
+      "id": "weight-room",
+      "label": "Weight Room",
+      "sub": "810",
+      "section": "800s",
+      "area": "By the East Gym",
+      "keywords": [
+        "weight",
+        "fitness",
+        "810",
+        "gym"
+      ]
+    },
+    {
+      "id": "wood-shop",
+      "label": "Wood Shop",
+      "sub": "200",
+      "section": "200s",
+      "area": "By the West Gym",
+      "keywords": [
+        "wood",
+        "shop",
+        "tech",
+        "200"
+      ]
+    },
+    {
+      "id": "auto-shop",
+      "label": "Auto Shop",
+      "sub": "",
+      "section": "200s",
+      "area": "By the West Gym",
+      "keywords": [
+        "auto",
+        "shop",
+        "car",
+        "tech"
+      ]
+    },
+    {
+      "id": "greenhouse",
+      "label": "Greenhouse",
+      "sub": "641",
+      "section": "600s",
+      "area": "Off the Courtyard",
+      "keywords": [
+        "greenhouse",
+        "plants",
+        "641",
+        "bio"
+      ]
+    },
+    {
+      "id": "observatory",
+      "label": "Observatory",
+      "sub": "",
+      "section": "600s",
+      "area": "Off the Courtyard",
+      "keywords": [
+        "observatory",
+        "stars",
+        "telescope",
+        "astronomy"
+      ]
+    },
+    {
+      "id": "courtyard",
+      "label": "Courtyard",
+      "sub": "",
+      "section": "600s",
+      "area": "Center of the building",
+      "keywords": [
+        "courtyard",
+        "outside",
+        "middle"
+      ]
+    },
+    {
+      "id": "school-store",
+      "label": "School Store",
+      "sub": "",
+      "section": "700s",
+      "area": "By the Main Entrance",
+      "keywords": [
+        "store",
+        "store",
+        "supplies",
+        "spirit"
+      ]
+    },
+    {
+      "id": "study-center",
+      "label": "Study Center",
+      "sub": "210",
+      "section": "200s",
+      "area": "By the West Gym",
+      "keywords": [
+        "study",
+        "center",
+        "210",
+        "quiet"
+      ]
+    },
+    {
+      "id": "test-center",
+      "label": "Test Center",
+      "sub": "322",
+      "section": "300s",
+      "area": "Center, by the Deans",
+      "keywords": [
+        "test",
+        "exam",
+        "322",
+        "makeup"
+      ]
+    },
+    {
+      "id": "faculty-lounge",
+      "label": "Faculty Lounge",
+      "sub": "319C",
+      "section": "300s",
+      "area": "Center wing",
+      "keywords": [
+        "faculty",
+        "teacher",
+        "lounge",
+        "319c"
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "id": "room-104f",
+      "label": "104F",
+      "sub": "",
+      "section": "100s"
+    },
+    {
+      "id": "room-105",
+      "label": "105",
+      "sub": "",
+      "section": "100s"
+    },
+    {
+      "id": "room-199",
+      "label": "199",
+      "sub": "",
+      "section": "100s"
+    },
+    {
+      "id": "room-199a",
+      "label": "199A",
+      "sub": "",
+      "section": "100s"
+    },
+    {
+      "id": "room-206",
+      "label": "206",
+      "sub": "",
+      "section": "200s"
+    },
+    {
+      "id": "room-207",
+      "label": "207",
+      "sub": "",
+      "section": "200s"
+    },
+    {
+      "id": "room-211",
+      "label": "211",
+      "sub": "",
+      "section": "200s"
+    },
+    {
+      "id": "room-212",
+      "label": "212",
+      "sub": "",
+      "section": "200s"
+    },
+    {
+      "id": "room-213",
+      "label": "213",
+      "sub": "",
+      "section": "200s"
+    },
+    {
+      "id": "room-213a",
+      "label": "213A",
+      "sub": "",
+      "section": "200s"
+    },
+    {
+      "id": "room-214",
+      "label": "214",
+      "sub": "",
+      "section": "200s"
+    },
+    {
+      "id": "room-313",
+      "label": "313",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-314",
+      "label": "314",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-315",
+      "label": "315",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-316",
+      "label": "316",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319a",
+      "label": "319A",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319b",
+      "label": "319B",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319d",
+      "label": "319D",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319e",
+      "label": "319E",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319f",
+      "label": "319F",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319g",
+      "label": "319G",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319h",
+      "label": "319H",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319i",
+      "label": "319I",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319j",
+      "label": "319J",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-319k",
+      "label": "319K",
+      "sub": "",
+      "section": "300s"
+    },
+    {
+      "id": "room-401",
+      "label": "401",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-402",
+      "label": "402",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-403",
+      "label": "403",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-404",
+      "label": "404",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-405",
+      "label": "405",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-406",
+      "label": "406",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-407",
+      "label": "407",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-414",
+      "label": "414",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-416",
+      "label": "416",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-417",
+      "label": "417",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-418",
+      "label": "418",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-419",
+      "label": "419",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-420",
+      "label": "420",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-421",
+      "label": "421",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-423",
+      "label": "423",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-424",
+      "label": "424",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-425",
+      "label": "425",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-430",
+      "label": "430",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-431",
+      "label": "431",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-433",
+      "label": "433",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-434",
+      "label": "434",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-435",
+      "label": "435",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-437",
+      "label": "437",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-441",
+      "label": "441",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-442",
+      "label": "442",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-443",
+      "label": "443",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-445",
+      "label": "445",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-446",
+      "label": "446",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-447",
+      "label": "447",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-448",
+      "label": "448",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-449",
+      "label": "449",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-450",
+      "label": "450",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-451",
+      "label": "451",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-452",
+      "label": "452",
+      "sub": "",
+      "section": "400s"
+    },
+    {
+      "id": "room-501",
+      "label": "501",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-502a",
+      "label": "502A",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-502b",
+      "label": "502B",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-502c",
+      "label": "502C",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-502d",
+      "label": "502D",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-502f",
+      "label": "502F",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-503",
+      "label": "503",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-503a",
+      "label": "503A",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-504",
+      "label": "504",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-505",
+      "label": "505",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-506",
+      "label": "506",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-507",
+      "label": "507",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-508",
+      "label": "508",
+      "sub": "",
+      "section": "500s"
+    },
+    {
+      "id": "room-600",
+      "label": "600",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-601",
+      "label": "601",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-602",
+      "label": "602",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-603",
+      "label": "603",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-604",
+      "label": "604",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-605",
+      "label": "605",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-606",
+      "label": "606",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-607",
+      "label": "607",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-608",
+      "label": "608",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-609",
+      "label": "609",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-610",
+      "label": "610",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-611",
+      "label": "611",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-612",
+      "label": "612",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-613",
+      "label": "613",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-614",
+      "label": "614",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-615",
+      "label": "615",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-617",
+      "label": "617",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-620",
+      "label": "620",
+      "sub": "",
+      "section": "600s"
+    },
+    {
+      "id": "room-700",
+      "label": "700",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-701",
+      "label": "701",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-702",
+      "label": "702",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-703",
+      "label": "703",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-704",
+      "label": "704",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-705",
+      "label": "705",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-707a",
+      "label": "707A",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-707b",
+      "label": "707B",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-729",
+      "label": "729",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-731",
+      "label": "731",
+      "sub": "",
+      "section": "700s"
+    },
+    {
+      "id": "room-800",
+      "label": "800",
+      "sub": "",
+      "section": "800s"
+    }
+  ]
+}
