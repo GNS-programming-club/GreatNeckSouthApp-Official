@@ -3,7 +3,6 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
-  Image as RNImage,
   StyleSheet,
   Text,
   TextInput,
@@ -11,6 +10,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedReaction,
@@ -27,7 +27,7 @@ import { useTheme } from '@/contexts/theme-context';
 
 const MAP_IMAGE = require('../../../assets/images/school-map.png');
 
-const { width: IMG_W, height: IMG_H } = RNImage.resolveAssetSource(MAP_IMAGE);
+const { width: IMG_W, height: IMG_H } = resolveAssetSource(MAP_IMAGE);
 
 type MapLocation = {
   id: string;
