@@ -7,9 +7,8 @@ import LiveNowCard from '@/components/home/live-now-card';
 import { QuickActions } from '@/components/home/quick-actions';
 import StatTile from '@/components/home/stat-tile';
 import { useTodayLunch } from '@/components/home/today-lunch-card';
-import { TodayScheduleCard } from '@/components/home/today-schedule-card';
+import { WeekStrip } from '@/components/home/week-strip';
 import Card from '@/components/ui/card';
-import Pill from '@/components/ui/pill';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Spacing, Type } from '@/constants/theme';
@@ -92,8 +91,10 @@ export default function HomeScreen() {
     <Screen>
       <View style={styles.header}>
         <Text style={styles.greeting}>{greeting}</Text>
-        <Pill label={dateLabel} value={`Day ${todayLetter}`} />
+        <Text style={styles.dateSubtitle}>{dateLabel}</Text>
       </View>
+
+      <WeekStrip />
 
       <LiveNowCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
 
@@ -141,8 +142,6 @@ export default function HomeScreen() {
         </Card>
 
         <QuickActions />
-
-        <TodayScheduleCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
       </Stagger>
     </Screen>
   );
@@ -159,6 +158,11 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       fontSize: Type.display.fontSize,
       fontWeight: Type.display.fontWeight,
       letterSpacing: Type.display.letterSpacing,
+    },
+    dateSubtitle: {
+      color: colors.mutedText,
+      fontSize: Type.body.fontSize,
+      fontWeight: '600',
     },
     row: {
       flexDirection: 'row',

@@ -45,3 +45,19 @@ export function nowMinutesLocal() {
 
   return now.getHours() * 60 + now.getMinutes();
 }
+
+export function dayLetterFor(date: Date): 'A' | 'B' {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const target = new Date(date);
+  target.setHours(0, 0, 0, 0);
+
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const diff = Math.round((target.getTime() - today.getTime()) / msPerDay);
+
+  const cycle: ('A' | 'B')[] = ['B', 'A'];
+  const index = ((diff % cycle.length) + cycle.length) % cycle.length;
+
+  return cycle[index];
+}
