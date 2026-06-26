@@ -1,8 +1,3 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 import { Platform } from 'react-native';
 
 export const Colors = {
@@ -44,17 +39,6 @@ export const Colors = {
     successText: '#3B82F6',
     warnText: '#8A93A3',
   },
-};
-
-export const Fields = {
-  hero: '#0D1B3A',
-  heroAccent: '#3B82F6',
-  card: '#14161A',
-  cardInset: '#1C1F26',
-  hairline: 'rgba(255,255,255,0.08)',
-  onField: '#F5F7FA',
-  onFieldMuted: '#94A0B4',
-  accent: '#3B82F6',
 };
 
 export const Spacing = {
@@ -100,7 +84,7 @@ type ElevationStyle = {
   elevation: number;
 };
 
-export const Elevation: Record<'flat' | 'raised' | 'floating' | 'glow', ElevationStyle> = {
+export const Elevation: Record<'flat' | 'raised' | 'floating', ElevationStyle> = {
   flat: {
     shadowColor: '#000000',
     shadowOpacity: 0,
@@ -122,24 +106,13 @@ export const Elevation: Record<'flat' | 'raised' | 'floating' | 'glow', Elevatio
     shadowOffset: { width: 0, height: 10 },
     elevation: 8,
   },
-  glow: {
-    shadowColor: '#3B82F6',
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 12,
-  },
 };
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {

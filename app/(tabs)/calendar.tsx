@@ -1,645 +1,168 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useCallback, useMemo, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { getMenuItemsForDay, getParsedMenuForMonth, type ParsedMenu } from '@/api/daily-menu';
-import { Colors } from '@/constants/theme';
+import { getMenuItemsForDay } from '@/api/daily-menu';
+import DayAgenda from '@/components/calendar/day-agenda';
+import MonthCalendar from '@/components/calendar/month-calendar';
+import { useMonthMenu } from '@/components/calendar/use-month-menu';
+import Screen from '@/components/ui/screen';
+import Stagger from '@/components/ui/stagger';
+import { dayLetterFor } from '@/constants/schedule';
+import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
-interface TodayInfo {
-  date: string;
-  dayLetter: string;
-  lunchMenu: string[];
-  holidays: string[];
-  clubEvents: { name: string; time: string }[];
+const ON_HERO = '#FFFFFF';
+const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
+const PILL_BG = 'rgba(255,255,255,0.18)';
+
+const MONTHS_SHORT = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+function formatLocalISODate(date: Date): string {
+  const d = new Date(date);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+
+  return d.toISOString().split('T')[0];
 }
 
-const CalendarScreen = () => {
-  const isMountedRef = useRef(true);
-  const fadeIn = useRef(new Animated.Value(0)).current;
-  const heroAnim = useRef(new Animated.Value(0)).current;
-  const calendarAnim = useRef(new Animated.Value(0)).current;
-  const eventsAnim = useRef(new Animated.Value(0)).current;
+function parseLocalDate(dateString: string): Date {
+  return new Date(`${dateString}T00:00:00`);
+}
+
+export default function CalendarScreen() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  const formatLocalISODate = useCallback((date: Date) => {
-    const d = new Date(date);
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().split('T')[0];
-  }, []);
+  const today = useMemo(() => new Date(), []);
+  const todayISO = useMemo(() => formatLocalISODate(today), [today]);
 
-  const parseLocalDate = useCallback((dateString: string) => {
-    return new Date(`${dateString}T00:00:00`);
-  }, []);
+  const [selectedDate, setSelectedDate] = useState<string>(todayISO);
+  const [viewMonth, setViewMonth] = useState<{ year: number; month: number }>(() => ({
+    year: today.getFullYear(),
+    month: today.getMonth() + 1,
+  }));
 
-  const [selectedDate, setSelectedDate] = useState<string>(formatLocalISODate(new Date()));
-  const [todayInfo, setTodayInfo] = useState<TodayInfo>({
-    date: '',
-    dayLetter: '',
-    lunchMenu: [],
-    holidays: [],
-    clubEvents: [],
-  });
-  const [menuData, setMenuData] = useState<ParsedMenu | null>(null);
+  const { menu } = useMonthMenu(viewMonth.year, viewMonth.month);
 
-  const [currentViewMonth, setCurrentViewMonth] = useState<{ year: number; month: number }>(() => {
-    const now = new Date();
-    return { year: now.getFullYear(), month: now.getMonth() + 1 };
-  });
-  const menuItemAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
-  const holidayAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
-  const eventAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
+  const selectedDateObj = useMemo(() => parseLocalDate(selectedDate), [selectedDate]);
 
-  const getDayLetter = useCallback((date: Date): string => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const menuItems = useMemo<string[] | null>(() => {
+    const selectedMonth = selectedDateObj.getMonth() + 1;
+    const selectedYear = selectedDateObj.getFullYear();
 
-    const targetDate = new Date(date);
-    targetDate.setHours(0, 0, 0, 0);
-
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const daysDifference = Math.round((targetDate.getTime() - today.getTime()) / msPerDay);
-
-    const dayCycle = ['B', 'A'];
-    const dayIndex = ((daysDifference % dayCycle.length) + dayCycle.length) % dayCycle.length;
-
-    return dayCycle[dayIndex];
-  }, []);
-
-  const getOrCreateAnim = useCallback((map: Map<string, Animated.Value>, key: string) => {
-    if (!map.has(key)) {
-      map.set(key, new Animated.Value(0));
+    if (!menu || menu.month !== selectedMonth || menu.year !== selectedYear) {
+      return null;
     }
-    return map.get(key)!;
+
+    return getMenuItemsForDay(menu, selectedDateObj.getDate());
+  }, [menu, selectedDateObj]);
+
+  const handleDayPress = useCallback((dateString: string) => {
+    setSelectedDate((current) => (current === dateString ? current : dateString));
   }, []);
 
-  useEffect(() => {
-    menuItemAnims.forEach((anim) => anim.setValue(0));
-    holidayAnims.forEach((anim) => anim.setValue(0));
-    eventAnims.forEach((anim) => anim.setValue(0));
-
-    const animations: Animated.CompositeAnimation[] = [];
-
-    todayInfo.lunchMenu.forEach((item, index) => {
-      const anim = getOrCreateAnim(menuItemAnims, `menu-${item}-${index}`);
-      anim.setValue(0);
-      animations.push(
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 400,
-          delay: index * 50,
-          useNativeDriver: true,
-        })
-      );
-    });
-
-    todayInfo.holidays.forEach((holiday, index) => {
-      const anim = getOrCreateAnim(holidayAnims, `holiday-${holiday}-${index}`);
-      anim.setValue(0);
-      animations.push(
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 400,
-          delay: todayInfo.lunchMenu.length * 50 + index * 50,
-          useNativeDriver: true,
-        })
-      );
-    });
-
-    todayInfo.clubEvents.forEach((event, index) => {
-      const anim = getOrCreateAnim(eventAnims, `event-${event.name}-${index}`);
-      anim.setValue(0);
-      animations.push(
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 400,
-          delay: index * 50,
-          useNativeDriver: true,
-        })
-      );
-    });
-
-    if (animations.length > 0) {
-      Animated.parallel(animations).start();
-    }
-  }, [
-    todayInfo.lunchMenu,
-    todayInfo.holidays,
-    todayInfo.clubEvents,
-    menuItemAnims,
-    holidayAnims,
-    eventAnims,
-    getOrCreateAnim,
-  ]);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-
-    const animations = [
-      Animated.timing(fadeIn, {
-        toValue: 1,
-        duration: 550,
-        delay: 80,
-        useNativeDriver: true,
-      }),
-      Animated.spring(heroAnim, {
-        toValue: 1,
-        friction: 9,
-        tension: 60,
-        useNativeDriver: true,
-      }),
-      Animated.spring(calendarAnim, {
-        toValue: 1,
-        friction: 9,
-        tension: 60,
-        useNativeDriver: true,
-      }),
-      Animated.spring(eventsAnim, {
-        toValue: 1,
-        friction: 9,
-        tension: 60,
-        useNativeDriver: true,
-      }),
-    ];
-
-    Animated.stagger(90, animations).start();
-
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, [fadeIn, heroAnim, calendarAnim, eventsAnim]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadMenuData = async () => {
-      if (
-        menuData &&
-        menuData.year === currentViewMonth.year &&
-        menuData.month === currentViewMonth.month
-      ) {
-        return;
-      }
-
-      try {
-        const parsedMenu = await getParsedMenuForMonth(
-          currentViewMonth.year,
-          currentViewMonth.month
-        );
-        if (cancelled || !isMountedRef.current) return;
-        setMenuData(parsedMenu);
-      } catch (error) {
-        if (cancelled || !isMountedRef.current) return;
-        console.error('Failed to load menu data:', error);
-        setMenuData(null);
-      }
-    };
-
-    loadMenuData();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [currentViewMonth.year, currentViewMonth.month, menuData]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadTodayInfo = () => {
-      if (cancelled || !isMountedRef.current) return;
-
-      const dateObj = parseLocalDate(selectedDate);
-      const dayOfMonth = dateObj.getDate();
-      const selectedMonth = dateObj.getMonth() + 1;
-
-      const selectedYear = dateObj.getFullYear();
-
-      let lunchMenuItems: string[] = [];
-
-      if (menuData && menuData.month === selectedMonth && menuData.year === selectedYear) {
-        lunchMenuItems = getMenuItemsForDay(menuData, dayOfMonth);
-      }
-
-      setTodayInfo({
-        date: dateObj.toLocaleDateString(),
-        dayLetter: getDayLetter(dateObj),
-        lunchMenu: lunchMenuItems,
-        holidays: [],
-        clubEvents: [],
-      });
-    };
-
-    loadTodayInfo();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedDate, getDayLetter, menuData, parseLocalDate]);
-
-  const markedDates = useMemo(
-    () => ({
-      [selectedDate]: {
-        selected: true,
-        selectedColor: colors.primary,
-        selectedTextColor: colors.primaryText,
-      },
-    }),
-    [colors.primary, colors.primaryText, selectedDate]
-  );
-
-  const calendarTheme = useMemo(
-    () => ({
-      calendarBackground: colors.surface,
-      backgroundColor: colors.surface,
-      selectedDayBackgroundColor: colors.primary,
-      selectedDayTextColor: colors.primaryText,
-      todayTextColor: colors.accent,
-      todayBackgroundColor: colors.surfaceAlt,
-      arrowColor: colors.primary,
-      textSectionTitleColor: colors.mutedText,
-      dayTextColor: colors.text,
-      textDisabledColor: colors.mutedText,
-      monthTextColor: colors.text,
-      textMonthFontWeight: '800' as const,
-      textDayFontWeight: '600' as const,
-      textDayHeaderFontWeight: '700' as const,
-      dotColor: colors.accent,
-      selectedDotColor: colors.primaryText,
-      disabledArrowColor: colors.mutedText,
-      indicatorColor: colors.accent,
-      textDayHeaderFontSize: 13,
-      textDayFontSize: 16,
-      textMonthFontSize: 16,
-    }),
-    [colors]
-  );
-
-  const handleDayPress = useCallback((day: { dateString: string }) => {
-    setSelectedDate((current) => (current === day.dateString ? current : day.dateString));
+  const handleMonthChange = useCallback((year: number, month: number) => {
+    setViewMonth({ year, month });
   }, []);
 
-  const handleMonthChange = useCallback((month: { year: number; month: number }) => {
-    setCurrentViewMonth({ year: month.year, month: month.month });
-  }, []);
+  const heroLetter = dayLetterFor(today);
+  const heroDate = `${MONTHS_SHORT[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      edges={['top', 'left', 'right']}
-    >
-      <Animated.ScrollView contentContainerStyle={styles.scrollContent} style={{ opacity: fadeIn }}>
-        <Animated.View
-          style={[
-            styles.heroCard,
-            {
-              opacity: heroAnim,
-              transform: [
-                {
-                  translateY: heroAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [14, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <View style={styles.heroHeader}>
-            <View style={styles.heroBadge}>
-              <Text style={styles.heroBadgeText}>Today</Text>
-            </View>
-            <Text style={styles.heroDate}>{todayInfo.date || 'Loading...'}</Text>
+    <Screen>
+      <Stagger>
+        <View style={styles.hero}>
+          <View style={styles.heroPill}>
+            <Text style={styles.heroPillText}>Today</Text>
           </View>
           <View style={styles.heroRow}>
-            <View style={styles.heroPill}>
-              <Text style={styles.heroPillLabel}>Day</Text>
-              <Text style={styles.heroPillValue}>{todayInfo.dayLetter || '-'}</Text>
-            </View>
-            <View style={styles.heroPill}>
-              <Text style={styles.heroPillLabel}>Events</Text>
-              <Text style={styles.heroPillValue}>{todayInfo.clubEvents.length}</Text>
-            </View>
-            <View style={styles.heroPill}>
-              <Text style={styles.heroPillLabel}>Holidays</Text>
-              <Text style={styles.heroPillValue}>{todayInfo.holidays.length}</Text>
+            <Text style={styles.heroLetter}>{heroLetter}</Text>
+            <View style={styles.heroMeta}>
+              <Text style={styles.heroMetaLabel}>Day letter</Text>
+              <Text style={styles.heroDate}>{heroDate}</Text>
             </View>
           </View>
-        </Animated.View>
+        </View>
 
-        <Animated.View
-          style={[
-            styles.card,
-            {
-              opacity: calendarAnim,
-              transform: [
-                {
-                  translateY: calendarAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [14, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.sectionTitle}>Calendar</Text>
-          <View style={[styles.calendarWrapper, { backgroundColor: colors.surface }]}>
-            <Calendar
-              key={actualTheme}
-              current={selectedDate}
-              markedDates={markedDates}
-              onDayPress={handleDayPress}
-              onMonthChange={handleMonthChange}
-              theme={calendarTheme}
-              style={styles.calendar}
-            />
-          </View>
-        </Animated.View>
+        <MonthCalendar
+          selectedDate={selectedDate}
+          today={todayISO}
+          onDayPress={handleDayPress}
+          onMonthChange={handleMonthChange}
+        />
 
-        <Animated.View
-          style={[
-            styles.card,
-            {
-              opacity: eventsAnim,
-              transform: [
-                {
-                  translateY: eventsAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [14, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.sectionTitle}>Today&apos;s Information</Text>
-
-          {todayInfo.lunchMenu && todayInfo.lunchMenu.length > 0 ? (
-            <View style={styles.menuSection}>
-              <Text style={styles.menuSectionTitle}>Lunch Menu</Text>
-              {todayInfo.lunchMenu.map((item, index) => {
-                const anim = getOrCreateAnim(menuItemAnims, `menu-${item}-${index}`);
-                return (
-                  <Animated.View
-                    key={`menu-${index}`}
-                    style={[
-                      styles.menuItem,
-                      {
-                        opacity: anim,
-                        transform: [
-                          {
-                            translateY: anim.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [8, 0],
-                            }),
-                          },
-                        ],
-                      },
-                    ]}
-                  >
-                    <View style={styles.menuDot} />
-                    <Text style={styles.menuItemText}>{item}</Text>
-                  </Animated.View>
-                );
-              })}
-            </View>
-          ) : (
-            <Text style={styles.emptyText}>No menu available for this day.</Text>
-          )}
-
-          {todayInfo.holidays && todayInfo.holidays.length > 0 && (
-            <View style={styles.holidaySection}>
-              <Text style={styles.menuSectionTitle}>Holidays</Text>
-              {todayInfo.holidays.map((holiday, index) => {
-                const anim = getOrCreateAnim(holidayAnims, `holiday-${holiday}-${index}`);
-                return (
-                  <Animated.View
-                    key={`holiday-${index}`}
-                    style={[
-                      styles.menuItem,
-                      {
-                        opacity: anim,
-                        transform: [
-                          {
-                            translateY: anim.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [8, 0],
-                            }),
-                          },
-                        ],
-                      },
-                    ]}
-                  >
-                    <View style={styles.menuDot} />
-                    <Text style={styles.menuItemText}>{holiday}</Text>
-                  </Animated.View>
-                );
-              })}
-            </View>
-          )}
-          <View style={styles.holidaySection}>
-            <Text style={styles.menuSectionTitle}>Events</Text>
-
-            {todayInfo.clubEvents && todayInfo.clubEvents.length > 0 ? (
-              todayInfo.clubEvents.map((event, index) => {
-                const anim = getOrCreateAnim(eventAnims, `event-${event.name}-${index}`);
-                return (
-                  <Animated.View
-                    key={`${event.name}-${index}`}
-                    style={[
-                      styles.eventRow,
-                      {
-                        opacity: anim,
-                        transform: [
-                          {
-                            translateY: anim.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [8, 0],
-                            }),
-                          },
-                        ],
-                      },
-                    ]}
-                  >
-                    <View style={styles.eventDot} />
-                    <View style={styles.eventText}>
-                      <Text style={styles.eventName}>{event.name}</Text>
-                      <Text style={styles.eventTime}>{event.time}</Text>
-                    </View>
-                  </Animated.View>
-                );
-              })
-            ) : (
-              <Text style={styles.emptyText}>No events scheduled for this day.</Text>
-            )}
-          </View>
-        </Animated.View>
-      </Animated.ScrollView>
-    </SafeAreaView>
+        <DayAgenda date={selectedDateObj} menuItems={menuItems} />
+      </Stagger>
+    </Screen>
   );
-};
+}
 
 const createStyles = (colors: (typeof Colors)['light']) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    scrollContent: {
-      padding: 16,
-      gap: 16,
-      paddingBottom: 120,
-    },
-    heroCard: {
-      backgroundColor: colors.surface,
-      borderRadius: 20,
-      padding: 18,
-      borderWidth: 1,
-      borderColor: colors.border,
+    hero: {
+      ...Elevation.raised,
       shadowColor: colors.shadow,
-      shadowOpacity: 0.12,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 8 },
-      elevation: 6,
-      gap: 12,
-    },
-    heroHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    heroBadge: {
       backgroundColor: colors.primary,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 12,
+      borderRadius: Radius.lg,
+      borderCurve: 'continuous',
+      paddingVertical: Spacing.xl,
+      paddingHorizontal: Spacing.xl,
+      gap: Spacing.md,
+      overflow: 'hidden',
     },
-    heroBadgeText: {
-      color: colors.primaryText,
-      fontWeight: '700',
-      letterSpacing: 0.3,
+    heroPill: {
+      alignSelf: 'flex-start',
+      backgroundColor: PILL_BG,
+      borderRadius: Radius.pill,
+      paddingVertical: Spacing.xs + 1,
+      paddingHorizontal: Spacing.md,
     },
-    heroDate: {
-      color: colors.text,
-      fontSize: 18,
+    heroPillText: {
+      color: ON_HERO,
+      fontSize: Type.caption.fontSize,
       fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
     },
     heroRow: {
       flexDirection: 'row',
-      gap: 10,
-    },
-    heroPill: {
-      flex: 1,
-      backgroundColor: colors.surfaceAlt,
-      borderRadius: 14,
-      paddingVertical: 10,
-      paddingHorizontal: 12,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    heroPillLabel: {
-      color: colors.mutedText,
-      fontSize: 12,
-    },
-    heroPillValue: {
-      color: colors.text,
-      fontSize: 16,
-      fontWeight: '700',
-      marginTop: 4,
-    },
-    card: {
-      backgroundColor: colors.surface,
-      borderRadius: 20,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.08,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 4,
-      gap: 12,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      letterSpacing: 0.2,
-    },
-    calendarWrapper: {
-      borderRadius: 16,
-      overflow: 'hidden',
-      backgroundColor: colors.surface,
-    },
-    calendar: {
-      borderRadius: 16,
-      overflow: 'hidden',
-    },
-    eventRow: {
-      flexDirection: 'row',
       alignItems: 'center',
-      gap: 10,
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderColor: colors.border,
+      gap: Spacing.lg,
     },
-    eventDot: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
-      backgroundColor: colors.accent,
+    heroLetter: {
+      color: ON_HERO,
+      fontSize: 56,
+      fontWeight: '800',
+      letterSpacing: -1.5,
+      lineHeight: 58,
     },
-    eventText: {
+    heroMeta: {
       flex: 1,
-      gap: 2,
+      gap: Spacing.xs,
     },
-    eventName: {
-      color: colors.text,
-      fontWeight: '600',
+    heroMetaLabel: {
+      color: ON_HERO_MUTED,
+      fontSize: Type.label.fontSize,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
     },
-    eventTime: {
-      color: colors.mutedText,
-      fontSize: 13,
-    },
-    emptyText: {
-      color: colors.mutedText,
-      paddingVertical: 4,
-    },
-    menuSection: {
-      marginTop: 8,
-      marginBottom: 12,
-    },
-    menuSectionTitle: {
-      color: colors.text,
-      fontSize: 15,
-      fontWeight: '600',
-      marginBottom: 8,
-    },
-    menuItem: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: 10,
-      paddingVertical: 8,
-      borderBottomWidth: 1,
-      borderColor: colors.border,
-    },
-    menuDot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: colors.accent,
-      marginTop: 6,
-    },
-    menuItemText: {
-      color: colors.text,
-      fontSize: 14,
-      flex: 1,
-    },
-    holidaySection: {
-      marginTop: 12,
+    heroDate: {
+      color: ON_HERO,
+      fontSize: Type.heading.fontSize,
+      fontWeight: '700',
     },
   });
-
-export default CalendarScreen;

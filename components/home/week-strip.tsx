@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
 import { dayLetterFor } from '@/constants/schedule';
-import { Colors, Type } from '@/constants/theme';
+import { Colors, Radius, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 const WEEKDAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -142,9 +142,10 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       fontWeight: '600',
     },
     dateCircle: {
-      width: 34,
+      width: 40,
       height: 34,
-      borderRadius: 17,
+      borderRadius: Radius.md,
+      borderCurve: 'continuous',
       alignItems: 'center',
       justifyContent: 'center',
     },
