@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { getMenuItemsForDay } from '@/api/daily-menu';
@@ -46,14 +47,28 @@ export default function CalendarScreen() {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
 
+  const params = useLocalSearchParams<{ date?: string }>();
+  const paramDate =
+    typeof params.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(params.date) ? params.date : null;
+
   const today = useMemo(() => new Date(), []);
   const todayISO = useMemo(() => formatLocalISODate(today), [today]);
 
-  const [selectedDate, setSelectedDate] = useState<string>(todayISO);
-  const [viewMonth, setViewMonth] = useState<{ year: number; month: number }>(() => ({
-    year: today.getFullYear(),
-    month: today.getMonth() + 1,
-  }));
+  const [selectedDate, setSelectedDate] = useState<string>(paramDate ?? todayISO);
+  const [viewMonth, setViewMonth] = useState<{ year: number; month: number }>(() => {
+    const initial = parseLocalDate(paramDate ?? todayISO);
+
+    return { year: initial.getFullYear(), month: initial.getMonth() + 1 };
+  });
+
+  useEffect(() => {
+    if (!paramDate) return;
+
+    setSelectedDate(paramDate);
+
+    const next = parseLocalDate(paramDate);
+    setViewMonth({ year: next.getFullYear(), month: next.getMonth() + 1 });
+  }, [paramDate]);
 
   const { menu } = useMonthMenu(viewMonth.year, viewMonth.month);
 

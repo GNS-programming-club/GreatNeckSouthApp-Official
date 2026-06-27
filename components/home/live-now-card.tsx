@@ -1,16 +1,10 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import {
-  PERIOD_COUNT,
-  computePeriodTimes,
-  nowMinutesLocal,
-  parse24hToMinutes,
-} from '@/constants/schedule';
 import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { useLivePeriod } from '@/hooks/use-live-period';
 
 type LiveNowCardProps = {
   todaySchedule: (string | null)[] | null;
@@ -28,107 +22,61 @@ export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardP
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
 
-  const tilt = useSharedValue(1);
-
-  useEffect(() => {
-    tilt.value = withSpring(0, { damping: 14, stiffness: 110, mass: 0.9 });
-  }, [tilt]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: 0.6 + (1 - tilt.value) * 0.4,
-    transform: [
-      { perspective: 800 },
-      { rotateZ: `${tilt.value * 4}deg` },
-      { translateY: tilt.value * 18 },
-    ],
-  }));
-
-  const [tick, setTick] = useState(() => nowMinutesLocal());
-
-  useEffect(() => {
-    const interval = setInterval(() => setTick(nowMinutesLocal()), 30_000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const live = useMemo(() => {
-    const times = computePeriodTimes(PERIOD_COUNT);
-    const nowMin = tick;
-
-    for (let i = 0; i < times.length; i++) {
-      const start = parse24hToMinutes(times[i].start);
-      const end = parse24hToMinutes(times[i].end);
-
-      if (start == null || end == null) continue;
-
-      const isIn = nowMin >= start && nowMin < end;
-      const isNext = nowMin < start;
-
-      if (!isIn && !isNext) continue;
-
-      const elapsed = isIn ? (nowMin - start) / (end - start) : 0;
-
-      return {
-        kind: isIn ? ('current' as const) : ('next' as const),
-        periodIndex: i,
-        start: times[i].start,
-        end: times[i].end,
-        minutesToBell: isIn ? end - nowMin : start - nowMin,
-        elapsedFraction: Math.min(1, Math.max(0, elapsed)),
-        courseId: todaySchedule?.[i] ?? null,
-      };
-    }
-
-    return null;
-  }, [tick, todaySchedule]);
+  const { live } = useLivePeriod();
+  const courseId = live ? (todaySchedule?.[live.index] ?? null) : null;
 
   const isCurrent = live?.kind === 'current';
-  const pillText = live
-    ? `${isCurrent ? 'NOW' : 'NEXT'} · Period ${live.periodIndex + 1}`
-    : `DAY ${todayLetter} · DONE`;
+  const pillLead = live ? (isCurrent ? 'NOW' : 'NEXT') : `Day ${todayLetter}`;
+  const pillTrail = live ? `Period ${live.index + 1}` : 'Done';
 
   return (
-    <Animated.View style={animatedStyle}>
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => router.push('/tools-routes/schedule')}
-        style={styles.field}
-      >
-        <View style={styles.pill}>
-          <Text style={styles.pillText}>{pillText}</Text>
-        </View>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => router.push('/tools-routes/schedule')}
+      style={styles.field}
+    >
+      <View style={styles.pill}>
+        <Text style={styles.pillText}>
+          {pillLead} <Text style={styles.pillTextSoft}>{pillTrail}</Text>
+        </Text>
+      </View>
 
-        {live ? (
-          <>
-            <View style={styles.numeralRow}>
-              <Text style={styles.numeral}>{live.minutesToBell}</Text>
-              <Text style={styles.numeralLabel}>
-                min to{'\n'}
-                {isCurrent ? 'bell' : 'start'}
+      {live ? (
+        <>
+          <View style={styles.numeralRow}>
+            <Text style={styles.numeral}>{live.minutesToBell}</Text>
+            <Text style={styles.numeralLabel}>min to {isCurrent ? 'bell' : 'start'}</Text>
+          </View>
+
+          {courseId ? (
+            <View style={styles.rangeRow}>
+              <Text style={styles.rangeCourse}>{courseId}</Text>
+              <View style={styles.rangeDivider} />
+              <Text style={styles.range}>
+                {live.period.start} – {live.period.end}
               </Text>
             </View>
-
+          ) : (
             <Text style={styles.range}>
-              {live.courseId ? `${live.courseId} · ` : ''}
-              {live.start} – {live.end}
+              {live.period.start} – {live.period.end}
             </Text>
+          )}
 
-            {isCurrent ? (
-              <View style={styles.track}>
-                <View style={[styles.fill, { width: `${live.elapsedFraction * 100}%` }]} />
-              </View>
-            ) : (
-              <Text style={styles.between}>Starts in {live.minutesToBell} min</Text>
-            )}
-          </>
-        ) : (
-          <>
-            <Text style={styles.doneText}>No more periods</Text>
-            <Text style={styles.range}>See you tomorrow</Text>
-          </>
-        )}
-      </TouchableOpacity>
-    </Animated.View>
+          {isCurrent ? (
+            <View style={styles.track}>
+              <View style={[styles.fill, { width: `${live.elapsedFraction * 100}%` }]} />
+            </View>
+          ) : (
+            <Text style={styles.between}>Starts in {live.minutesToBell} min</Text>
+          )}
+        </>
+      ) : (
+        <>
+          <Text style={styles.doneText}>No more periods</Text>
+          <Text style={styles.range}>See you tomorrow</Text>
+        </>
+      )}
+    </TouchableOpacity>
   );
 }
 
@@ -159,17 +107,20 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       textTransform: 'uppercase',
       letterSpacing: 0.6,
     },
+    pillTextSoft: {
+      color: ON_HERO_MUTED,
+      fontWeight: '600',
+    },
     numeralRow: {
       flexDirection: 'row',
-      alignItems: 'flex-end',
-      gap: Spacing.md,
+      alignItems: 'baseline',
+      gap: Spacing.sm,
     },
     numeral: {
       color: ON_HERO,
       fontSize: 64,
       fontWeight: '800',
       letterSpacing: -1.5,
-      lineHeight: 64,
     },
     numeralLabel: {
       color: ON_HERO_MUTED,
@@ -177,12 +128,26 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       fontWeight: '700',
       textTransform: 'uppercase',
       letterSpacing: 0.6,
-      paddingBottom: Spacing.sm,
     },
     range: {
       color: ON_HERO_MUTED,
       fontSize: Type.body.fontSize,
       fontWeight: '600',
+    },
+    rangeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing.sm,
+    },
+    rangeCourse: {
+      color: ON_HERO,
+      fontSize: Type.body.fontSize,
+      fontWeight: '700',
+    },
+    rangeDivider: {
+      width: 1,
+      height: 13,
+      backgroundColor: TRACK,
     },
     track: {
       height: 6,

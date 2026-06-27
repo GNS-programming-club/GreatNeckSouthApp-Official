@@ -1,18 +1,11 @@
-import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useRef } from 'react';
-import {
-  Animated,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import ToolTile from '@/components/tools/tool-tile';
+import Screen from '@/components/ui/screen';
+import Stagger from '@/components/ui/stagger';
+import { Colors, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 export default function ToolsPage() {
@@ -21,179 +14,72 @@ export default function ToolsPage() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
 
-  const itemAnims = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
-  const hasAnimatedOnce = useRef(false);
-
-  const onSchedulePress = () => {
-    router.push('/tools-routes/schedule' as any);
-  };
-
-  const onMapPress = () => {
-    router.push('/tools-routes/school-map' as any);
-  };
-
-  const onBusPress = () => {
-    router.push('/tools-routes/bus' as any);
-  };
-
-  const onCoursesPress = () => {
-    router.push('/tools-routes/courses' as any);
-  };
-
-  const onClubPress = () => {
-    router.push('/tools-routes/clubs' as any);
-  };
-
-  useEffect(() => {
-    if (hasAnimatedOnce.current) return;
-    hasAnimatedOnce.current = true;
-
-    itemAnims.forEach((anim) => {
-      anim.stopAnimation();
-      anim.setValue(0);
-    });
-
-    const sequence = Animated.stagger(
-      90,
-      itemAnims.map((anim) =>
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 420,
-          useNativeDriver: true,
-        })
-      )
-    );
-
-    sequence.start();
-    return () => sequence.stop();
-  }, [itemAnims]);
-
-  const renderToolRow = (index: number, title: string, subtitle: string, onPress: () => void) => {
-    const anim = itemAnims[index];
-
-    if (!anim) {
-      return (
-        <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
-          <View style={styles.navBarLeft}>
-            <Text style={styles.navBarTitle}>{title}</Text>
-            <Text style={styles.navBarSub}>{subtitle}</Text>
-          </View>
-          <Feather name="chevron-right" size={22} color={colors.mutedText} />
-        </TouchableOpacity>
-      );
-    }
-
-    return (
-      <Animated.View
-        style={{
-          opacity: anim,
-          transform: [
-            {
-              translateY: anim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [10, 0],
-              }),
-            },
-          ],
-        }}
-      >
-        <TouchableOpacity style={styles.navBar} onPress={onPress} activeOpacity={0.7}>
-          <View style={styles.navBarLeft}>
-            <Text style={styles.navBarTitle}>{title}</Text>
-            <Text style={styles.navBarSub}>{subtitle}</Text>
-          </View>
-          <Feather name="chevron-right" size={22} color={colors.mutedText} />
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
+  const go = (path: string) => () => router.push(path as never);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Tools</Text>
-      </View>
-
-      <ScrollView style={styles.content}>
-        {renderToolRow(
-          0,
-          'Daily Schedule',
-          'View period times and daily timeline',
-          onSchedulePress
-        )}
-        {renderToolRow(1, 'School Map', 'Find rooms and key locations', onMapPress)}
-        {renderToolRow(2, 'Bus Schedule', 'View bus routes and times', onBusPress)}
-        {renderToolRow(
-          3,
-          'Offered Courses',
-          'View all courses and their information',
-          onCoursesPress
-        )}
-        {renderToolRow(4, 'School Clubs', 'View all clubs and their information', onClubPress)}
-      </ScrollView>
-    </SafeAreaView>
+    <Screen
+      header={
+        <View style={styles.header}>
+          <Text style={styles.title}>Tools</Text>
+        </View>
+      }
+    >
+      <Stagger>
+        <ToolTile
+          full
+          icon="clock"
+          label="Daily Schedule"
+          meta="Period times and live timeline"
+          onPress={go('/tools-routes/schedule')}
+        />
+        <View style={styles.row}>
+          <ToolTile
+            icon="map"
+            label="School Map"
+            meta="Find rooms"
+            onPress={go('/tools-routes/school-map')}
+          />
+          <ToolTile
+            icon="navigation"
+            label="Bus"
+            meta="34 routes"
+            onPress={go('/tools-routes/bus')}
+          />
+        </View>
+        <View style={styles.row}>
+          <ToolTile
+            icon="book-open"
+            label="Courses"
+            meta="181 courses"
+            onPress={go('/tools-routes/courses')}
+          />
+          <ToolTile
+            icon="users"
+            label="Clubs"
+            meta="76 clubs"
+            onPress={go('/tools-routes/clubs')}
+          />
+        </View>
+      </Stagger>
+    </Screen>
   );
 }
 
-const createStyles = (colors: typeof Colors.light) =>
+const createStyles = (colors: (typeof Colors)['light']) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
     header: {
-      paddingHorizontal: 16,
-      paddingTop: Platform.OS === 'ios' ? 50 : 30,
-      paddingBottom: 12,
+      paddingHorizontal: Spacing.lg,
+      paddingTop: Spacing.md,
+      paddingBottom: Spacing.sm,
     },
     title: {
-      fontSize: 28,
-      fontWeight: '800',
       color: colors.text,
-      letterSpacing: 0.3,
+      fontSize: Type.display.fontSize,
+      fontWeight: Type.display.fontWeight,
+      letterSpacing: Type.display.letterSpacing,
     },
-    content: {
-      flex: 1,
-      paddingHorizontal: 16,
-    },
-    navBar: {
-      backgroundColor: colors.surface,
-      padding: 20,
-      borderRadius: 16,
+    row: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 20,
-      borderWidth: 1,
-      borderColor: colors.border,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
-    },
-    navBarLeft: {
-      flex: 1,
-    },
-    navBarTitle: {
-      color: colors.text,
-      fontSize: 18,
-      fontWeight: '700',
-    },
-    navBarSub: {
-      color: colors.mutedText,
-      fontSize: 14,
-      marginTop: 4,
-    },
-    arrow: {
-      color: colors.mutedText,
-      fontSize: 20,
-      fontWeight: 'bold',
+      gap: Spacing.lg,
     },
   });

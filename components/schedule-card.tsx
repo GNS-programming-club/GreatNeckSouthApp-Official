@@ -346,9 +346,11 @@ export default function ScheduleCard({
                     {course ? (
                       <View style={styles.courseContainer}>
                         <Text style={styles.courseTitle}>{course.title}</Text>
-                        <Text style={styles.courseMeta}>
-                          {course.dept} · {course.code}
-                        </Text>
+                        <View style={styles.metaLine}>
+                          <Text style={styles.courseMeta}>{course.dept}</Text>
+                          <View style={styles.metaDivider} />
+                          <Text style={styles.courseMeta}>{course.code}</Text>
+                        </View>
                       </View>
                     ) : (
                       <View
@@ -428,9 +430,11 @@ export default function ScheduleCard({
                     <View style={styles.courseRowInner}>
                       <View style={styles.courseRowText}>
                         <Text style={styles.courseTitleRow}>{item.title}</Text>
-                        <Text style={styles.courseMetaRow}>
-                          {item.dept} · {item.code}
-                        </Text>
+                        <View style={styles.metaLine}>
+                          <Text style={styles.courseMetaRow}>{item.dept}</Text>
+                          <View style={styles.metaDivider} />
+                          <Text style={styles.courseMetaRow}>{item.code}</Text>
+                        </View>
                       </View>
                     </View>
                   </Pressable>
@@ -632,6 +636,18 @@ function createStyles(colors: typeof Colors.light) {
       marginTop: 6,
       textAlign: 'right',
       flexShrink: 1,
+    },
+    metaLine: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      gap: 6,
+      marginTop: 6,
+    },
+    metaDivider: {
+      width: 1,
+      height: 11,
+      backgroundColor: colors.border,
     },
     footer: {
       flexDirection: 'row',
