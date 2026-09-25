@@ -21,7 +21,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
 
   const actualTheme: 'light' | 'dark' =
-    themeMode === 'auto' ? (deviceColorScheme ?? 'light') : themeMode;
+    themeMode === 'auto'
+      ? (deviceColorScheme === 'dark' ? 'dark' : 'light')
+      : themeMode;
 
   useEffect(() => {
     loadThemePreference();
