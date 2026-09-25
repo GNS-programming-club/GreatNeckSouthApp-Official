@@ -32,12 +32,6 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="courses"
-            options={{
-              title: 'Courses',
-            }}
-          />
-          <Tabs.Screen
             name="tools"
             options={{
               title: 'Tools',

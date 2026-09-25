@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
 import { PropsWithChildren, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Text } from '@react-navigation/elements';
+import { Text } from 'expo-router/react-navigation';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
