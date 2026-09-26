@@ -4,9 +4,10 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { dayLetterFor } from '@/constants/schedule';
 import { Colors, Radius, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { useDayLetters } from '@/hooks/use-day-letters';
+import { useToday } from '@/hooks/use-today';
 
 const WEEKDAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -41,12 +42,7 @@ export function WeekStrip() {
   const router = useRouter();
   const [weekOffset, setWeekOffset] = useState(0);
 
-  const today = useMemo(() => {
-    const value = new Date();
-    value.setHours(0, 0, 0, 0);
-
-    return value;
-  }, []);
+  const today = useToday();
 
   const weekDays = useMemo(() => {
     const base = startOfWeek(today);
@@ -54,6 +50,8 @@ export function WeekStrip() {
 
     return Array.from({ length: 7 }, (_, index) => new Date(base.getTime() + index * MS_PER_DAY));
   }, [today, weekOffset]);
+
+  const letters = useDayLetters(weekDays);
 
   const monthLabel = useMemo(
     () => weekDays[0].toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
@@ -85,9 +83,7 @@ export function WeekStrip() {
       <View style={styles.week}>
         {weekDays.map((day, index) => {
           const todayMarked = isSameDay(day, today);
-          const weekday = day.getDay();
-          const isSchoolDay = weekday >= 1 && weekday <= 5;
-          const letter = isSchoolDay ? dayLetterFor(day) : null;
+          const letter = letters[index];
 
           return (
             <TouchableOpacity
@@ -107,7 +103,7 @@ export function WeekStrip() {
               </View>
 
               <Text style={[styles.letter, todayMarked && styles.letterToday]}>
-                {letter ?? ' '}
+                {letter.isSchoolDay ? letter.letter : ' '}
               </Text>
             </TouchableOpacity>
           );

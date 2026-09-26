@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { dayLetterFor } from '@/constants/schedule';
 import { Colors, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { useDayLetters } from '@/hooks/use-day-letters';
 
 type DayAgendaProps = {
   date: Date;
@@ -33,9 +33,10 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   const weekdayIndex = date.getDay();
-  const isSchoolDay = weekdayIndex >= 1 && weekdayIndex <= 5;
   const headline = `${WEEKDAYS[weekdayIndex]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`;
-  const letter = isSchoolDay ? dayLetterFor(date) : null;
+
+  const [letterInfo] = useDayLetters([date]);
+  const letter = letterInfo.isSchoolDay ? letterInfo.letter : null;
 
   return (
     <Card>

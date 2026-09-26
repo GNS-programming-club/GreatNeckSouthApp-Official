@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { getMenuItemsForDay, getParsedMenuForMonth } from '@/api/daily-menu';
 import Card from '@/components/ui/card';
+import { useToday } from '@/hooks/use-today';
 import Section from '@/components/ui/section';
 import { Colors, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
@@ -11,6 +12,7 @@ import { useTheme } from '@/contexts/theme-context';
 const MAX_ITEMS = 4;
 
 export function useTodayLunch() {
+  const today = useToday();
   const [items, setItems] = useState<string[] | null>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -18,17 +20,18 @@ export function useTodayLunch() {
     let cancelled = false;
 
     const loadLunch = async () => {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth() + 1;
-      const day = now.getDate();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+
+      setItems(null);
 
       try {
         const parsedMenu = await getParsedMenuForMonth(year, month);
 
         if (cancelled) return;
 
-        if (!parsedMenu) {
+        if (!parsedMenu || parsedMenu.month !== month || parsedMenu.year !== year) {
           setItems([]);
           setHasError(false);
 
@@ -49,7 +52,7 @@ export function useTodayLunch() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [today]);
 
   return { items, hasError };
 }

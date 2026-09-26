@@ -8,9 +8,10 @@ import MonthCalendar from '@/components/calendar/month-calendar';
 import { useMonthMenu } from '@/components/calendar/use-month-menu';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
-import { dayLetterFor } from '@/constants/schedule';
 import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { useDayLetters } from '@/hooks/use-day-letters';
+import { useToday } from '@/hooks/use-today';
 
 const ON_HERO = '#FFFFFF';
 const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
@@ -51,7 +52,7 @@ export default function CalendarScreen() {
   const paramDate =
     typeof params.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(params.date) ? params.date : null;
 
-  const today = useMemo(() => new Date(), []);
+  const today = useToday();
   const todayISO = useMemo(() => formatLocalISODate(today), [today]);
 
   const [selectedDate, setSelectedDate] = useState<string>(paramDate ?? todayISO);
@@ -70,20 +71,24 @@ export default function CalendarScreen() {
     setViewMonth({ year: next.getFullYear(), month: next.getMonth() + 1 });
   }, [paramDate]);
 
-  const { menu } = useMonthMenu(viewMonth.year, viewMonth.month);
+  const { menu, loading } = useMonthMenu(viewMonth.year, viewMonth.month);
 
   const selectedDateObj = useMemo(() => parseLocalDate(selectedDate), [selectedDate]);
 
   const menuItems = useMemo<string[] | null>(() => {
+    if (loading) {
+      return null;
+    }
+
     const selectedMonth = selectedDateObj.getMonth() + 1;
     const selectedYear = selectedDateObj.getFullYear();
 
     if (!menu || menu.month !== selectedMonth || menu.year !== selectedYear) {
-      return null;
+      return [];
     }
 
     return getMenuItemsForDay(menu, selectedDateObj.getDate());
-  }, [menu, selectedDateObj]);
+  }, [loading, menu, selectedDateObj]);
 
   const handleDayPress = useCallback((dateString: string) => {
     setSelectedDate((current) => (current === dateString ? current : dateString));
@@ -93,7 +98,8 @@ export default function CalendarScreen() {
     setViewMonth({ year, month });
   }, []);
 
-  const heroLetter = dayLetterFor(today);
+  const [todayLetterInfo] = useDayLetters([today]);
+  const heroLetter = todayLetterInfo.letter;
   const heroDate = `${MONTHS_SHORT[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
 
   return (

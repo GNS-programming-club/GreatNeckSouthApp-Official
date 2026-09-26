@@ -1,3 +1,4 @@
+import { dayLetterFor } from '@/constants/schedule';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { Feather } from '@expo/vector-icons';
@@ -64,22 +65,6 @@ function parse24hToMinutes(time: string) {
 function nowMinutesLocal() {
   const now = new Date();
   return now.getHours() * 60 + now.getMinutes();
-}
-
-function getDayLetter(date: Date): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const targetDate = new Date(date);
-  targetDate.setHours(0, 0, 0, 0);
-
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const daysDifference = Math.round((targetDate.getTime() - today.getTime()) / msPerDay);
-
-  const dayCycle = ['B', 'A'];
-  const dayIndex = ((daysDifference % dayCycle.length) + dayCycle.length) % dayCycle.length;
-
-  return dayCycle[dayIndex];
 }
 
 export default function ScheduleCard({
@@ -282,7 +267,7 @@ export default function ScheduleCard({
 
   return (
     <View style={[styles.card, style]}>
-      <Text style={styles.cardTitle}>Schedule — Day {day ?? getDayLetter(new Date())}</Text>
+      <Text style={styles.cardTitle}>Schedule — Day {day ?? dayLetterFor(new Date())}</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.listWrap}>
           <View style={styles.timelineAbsolute} pointerEvents="none">

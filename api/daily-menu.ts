@@ -218,17 +218,41 @@ export function parseMenuData(rawMenu: any): ParsedMenu {
   };
 }
 
-export async function getParsedMenuForMonth(
+const menuCache = new Map<string, Promise<ParsedMenu | null>>();
+
+export function getParsedMenuForMonth(year: number, month: number): Promise<ParsedMenu | null> {
+  const cacheKey = `${year}-${month}`;
+
+  const cached = menuCache.get(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
+
+  const pending = fetchMenuForMonth(year, month)
+    .then((rawMenu) => (rawMenu ? parseMenuData(rawMenu) : null))
+    .catch((error) => {
+      menuCache.delete(cacheKey);
+
+      throw error;
+    });
+
+  menuCache.set(cacheKey, pending);
+
+  return pending;
+}
+
+export async function getSchoolDaysForMonth(
   year: number,
   month: number
-): Promise<ParsedMenu | null> {
-  const rawMenu = await fetchMenuForMonth(year, month);
+): Promise<Set<number> | null> {
+  const menu = await getParsedMenuForMonth(year, month);
 
-  if (!rawMenu) {
+  if (!menu || menu.month !== month || menu.year !== year) {
     return null;
   }
 
-  return parseMenuData(rawMenu);
+  return new Set(menu.days.map((dayMenu) => dayMenu.day));
 }
 
 export async function getParsedMenu(): Promise<ParsedMenu> {

@@ -13,24 +13,10 @@ import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { useDayLetters } from '@/hooks/use-day-letters';
+import { useToday } from '@/hooks/use-today';
 
 const STORAGE_KEY = 'userSchedule_v1';
-
-function getDayLetter(date: Date): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const targetDate = new Date(date);
-  targetDate.setHours(0, 0, 0, 0);
-
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const daysDifference = Math.round((targetDate.getTime() - today.getTime()) / msPerDay);
-
-  const dayCycle = ['B', 'A'];
-  const dayIndex = ((daysDifference % dayCycle.length) + dayCycle.length) % dayCycle.length;
-
-  return dayCycle[dayIndex];
-}
 
 function greetingForHour(hour: number) {
   if (hour < 12) return 'Good morning';
@@ -48,9 +34,10 @@ export default function HomeScreen() {
 
   const [todaySchedule, setTodaySchedule] = useState<(string | null)[] | null>(null);
 
-  const today = useMemo(() => new Date(), []);
-  const todayLetter = getDayLetter(today);
-  const greeting = useMemo(() => greetingForHour(today.getHours()), [today]);
+  const today = useToday();
+  const [todayLetterInfo] = useDayLetters([today]);
+  const todayLetter = todayLetterInfo.letter;
+  const greeting = greetingForHour(new Date().getHours());
   const dateLabel = useMemo(() => {
     const weekday = today.toLocaleDateString(undefined, { weekday: 'long' });
     const monthDay = today.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
