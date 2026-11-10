@@ -103,18 +103,16 @@ export default function ScheduleCard({
   const [searchQuery, setSearchQuery] = useState('');
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [nowMinutes, setNowMinutes] = useState(() => nowMinutesLocal());
-  const listItemAnims = useRef(Array.from({ length: 14 }, () => new Animated.Value(0))).current;
+  const [listItemAnims] = useState(() => Array.from({ length: 14 }, () => new Animated.Value(0)));
   const hasAnimatedOnce = useRef(false);
-  const rowAnims = useRef<Animated.Value[]>(
-    Array.from({ length: periods }, () => new Animated.Value(0))
-  ).current;
+  const [rowAnims] = useState(() => Array.from({ length: periods }, () => new Animated.Value(0)));
   const hasRowAnimatedOnce = useRef(false);
 
   useEffect(() => {
     (async () => {
       setIsHydrated(false);
       try {
-        const raw = await AsyncStorage.getItem(storageKey); // get data from storage for the given day
+        const raw = await AsyncStorage.getItem(storageKey);
         if (raw) {
           const parsed = JSON.parse(raw) as (string | null)[];
           if (Array.isArray(parsed)) {
@@ -130,7 +128,6 @@ export default function ScheduleCard({
           setSchedule(Array(periods).fill(null));
         }
       } catch {
-        // ignore parse errors
         setSchedule(Array(periods).fill(null));
       } finally {
         setIsHydrated(true);

@@ -12,7 +12,14 @@ import { useTheme } from '@/contexts/theme-context';
 
 const MAP_IMAGE = require('../../../assets/images/school-map.png');
 
-const { width: IMG_W, height: IMG_H } = RNImage.resolveAssetSource(MAP_IMAGE);
+const resolvedMapImage = RNImage.resolveAssetSource(MAP_IMAGE);
+
+if (!resolvedMapImage?.width || !resolvedMapImage.height) {
+  throw new Error('School map image asset could not be resolved to a known size');
+}
+
+const MAP_IMAGE_WIDTH = resolvedMapImage.width;
+const MAP_IMAGE_HEIGHT = resolvedMapImage.height;
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 6;
@@ -36,9 +43,9 @@ export default function SchoolMapFull() {
   const fitted = useMemo(() => {
     if (!stageSize.width || !stageSize.height) return null;
 
-    const scale = Math.min(stageSize.width / IMG_W, stageSize.height / IMG_H);
+    const scale = Math.min(stageSize.width / MAP_IMAGE_WIDTH, stageSize.height / MAP_IMAGE_HEIGHT);
 
-    return { width: IMG_W * scale, height: IMG_H * scale };
+    return { width: MAP_IMAGE_WIDTH * scale, height: MAP_IMAGE_HEIGHT * scale };
   }, [stageSize]);
 
   const scale = useSharedValue(MIN_SCALE);

@@ -2,7 +2,7 @@ import { Colors } from '@/constants/theme';
 import { useTabBar } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import Feather from '@expo/vector-icons/Feather';
-import { PlatformPressable } from '@react-navigation/elements';
+import { PlatformPressable } from 'expo-router/react-navigation';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {

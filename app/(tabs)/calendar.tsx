@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { getMenuItemsForDay } from '@/api/daily-menu';
@@ -61,14 +61,18 @@ export default function CalendarScreen() {
     return { year: initial.getFullYear(), month: initial.getMonth() + 1 };
   });
 
-  useEffect(() => {
-    if (!paramDate) return;
+  const [previousParamDate, setPreviousParamDate] = useState(paramDate);
 
-    setSelectedDate(paramDate);
+  if (paramDate !== previousParamDate) {
+    setPreviousParamDate(paramDate);
 
-    const next = parseLocalDate(paramDate);
-    setViewMonth({ year: next.getFullYear(), month: next.getMonth() + 1 });
-  }, [paramDate]);
+    if (paramDate) {
+      setSelectedDate(paramDate);
+
+      const next = parseLocalDate(paramDate);
+      setViewMonth({ year: next.getFullYear(), month: next.getMonth() + 1 });
+    }
+  }
 
   const { menu } = useMonthMenu(viewMonth.year, viewMonth.month);
 
