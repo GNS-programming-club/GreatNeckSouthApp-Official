@@ -3,6 +3,7 @@ import { useTabBar } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import Feather from '@expo/vector-icons/Feather';
 import { PlatformPressable } from 'expo-router/react-navigation';
+import type { BottomTabBarProps } from 'expo-router/tabs';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
@@ -16,15 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function TabBar({
-  state,
-  descriptors,
-  navigation,
-}: {
-  state: any;
-  descriptors: any;
-  navigation: any;
-}) {
+export default function TabBar({ state, descriptors, emitter, navigateToTab }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { isTabBarVisible } = useTabBar();
   const { actualTheme } = useTheme();
@@ -49,46 +42,53 @@ export default function TabBar({
         },
       ]}
     >
-      {state.routes.map(
-        (route: { key: string | number; name: string; params: object | undefined }, index: any) => {
-          const { options } = descriptors[route.key];
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
 
-          if (options?.href === null || !visibleTabs.has(route.name)) {
-            return null;
-          }
-
-          let label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-                ? options.title
-                : route.name;
-
-          if (route.name === 'index') label = 'Home';
-          if (route.name === 'calendar') label = 'Calendar';
-          if (route.name === 'tools') label = 'Tools';
-          if (route.name === 'settings') label = 'Settings';
-
-          const isFocused = state.index === index;
-
-          return (
-            <TabBarButton
-              key={route.key}
-              route={route}
-              label={label}
-              isFocused={isFocused}
-              options={options}
-              navigation={navigation}
-              buildHref={buildHref}
-            />
-          );
+        if (!visibleTabs.has(route.name)) {
+          return null;
         }
-      )}
+
+        let label =
+          options.tabBarLabel !== undefined
+            ? options.tabBarLabel
+            : options.title !== undefined
+              ? options.title
+              : route.name;
+
+        if (route.name === 'index') label = 'Home';
+        if (route.name === 'calendar') label = 'Calendar';
+        if (route.name === 'tools') label = 'Tools';
+        if (route.name === 'settings') label = 'Settings';
+
+        const isFocused = state.index === index;
+
+        return (
+          <TabBarButton
+            key={route.key}
+            route={route}
+            label={label}
+            isFocused={isFocused}
+            options={options}
+            emitter={emitter}
+            navigateToTab={navigateToTab}
+            buildHref={buildHref}
+          />
+        );
+      })}
     </View>
   );
 }
 
-function TabBarButton({ route, label, isFocused, options, navigation, buildHref }: any) {
+function TabBarButton({
+  route,
+  label,
+  isFocused,
+  options,
+  emitter,
+  navigateToTab,
+  buildHref,
+}: any) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const scale = useSharedValue(isFocused ? 1 : 0.95);
@@ -130,19 +130,19 @@ function TabBarButton({ route, label, isFocused, options, navigation, buildHref 
   });
 
   const onPress = () => {
-    const event = navigation.emit({
+    const event = emitter.emit({
       type: 'tabPress',
       target: route.key,
       canPreventDefault: true,
     });
 
     if (!isFocused && !event.defaultPrevented) {
-      navigation.navigate(route.name, route.params);
+      navigateToTab(route.key);
     }
   };
 
   const onLongPress = () => {
-    navigation.emit({
+    emitter.emit({
       type: 'tabLongPress',
       target: route.key,
     });
