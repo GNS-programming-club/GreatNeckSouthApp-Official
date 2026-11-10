@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated } from 'react-native';
 
 type StaggerProps = {
@@ -15,7 +15,7 @@ export default function Stagger({
   translateY = 10,
 }: StaggerProps) {
   const items = React.Children.toArray(children);
-  const anims = useRef(items.map(() => new Animated.Value(0))).current;
+  const [anims] = useState(() => items.map(() => new Animated.Value(0)));
 
   useEffect(() => {
     anims.forEach((value) => value.setValue(0));

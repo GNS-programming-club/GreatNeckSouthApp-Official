@@ -32,23 +32,23 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="courses"
-            options={{
-              title: 'Courses',
-            }}
-          />
-          <Tabs.Screen
             name="tools"
             options={{
               title: 'Tools',
             }}
           />
           <Tabs.Screen
-            name="tools-routes/schedule"
+            name="settings"
             options={{
-              href: null,
+              title: 'Settings',
             }}
           />
+          <Tabs.Screen name="tools-routes/schedule" options={{ href: null }} />
+          <Tabs.Screen name="tools-routes/bus" options={{ href: null }} />
+          <Tabs.Screen name="tools-routes/clubs" options={{ href: null }} />
+          <Tabs.Screen name="tools-routes/courses" options={{ href: null }} />
+          <Tabs.Screen name="tools-routes/school-map" options={{ href: null }} />
+          <Tabs.Screen name="tools-routes/school-map-full" options={{ href: null }} />
         </Tabs>
       </View>
     </TabBarProvider>

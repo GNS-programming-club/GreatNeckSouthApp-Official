@@ -1,184 +1,71 @@
 import Feather from '@expo/vector-icons/Feather';
-import React, { useEffect, useMemo, useRef } from 'react';
-import {
-  Animated,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useMemo } from 'react';
+import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import Screen from '@/components/ui/screen';
+import Stagger from '@/components/ui/stagger';
+import { Colors, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+
+type ThemeMode = 'auto' | 'dark' | 'light';
+
+type ThemeOption = {
+  mode: ThemeMode;
+  title: string;
+  subtitle: string;
+};
+
+const THEME_OPTIONS: ThemeOption[] = [
+  { mode: 'auto', title: 'Auto', subtitle: 'Match your device setting' },
+  { mode: 'dark', title: 'Dark', subtitle: 'Always use dark theme' },
+  { mode: 'light', title: 'Light', subtitle: 'Always use light theme' },
+];
 
 export default function SettingsPage() {
   const { actualTheme, themeMode, setThemeMode } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const sectionAnims = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
 
-  const getThemeIndex = (mode: string) => {
-    switch (mode) {
-      case 'dark':
-        return 1;
-      case 'light':
-        return 2;
-      default:
-        return 0; // auto
-    }
-  };
-
-  const selectionAnim = useRef(new Animated.Value(getThemeIndex(themeMode))).current;
-
-  useEffect(() => {
-    Animated.spring(selectionAnim, {
-      toValue: getThemeIndex(themeMode),
-      useNativeDriver: false,
-    }).start();
-  }, [themeMode, selectionAnim]);
-
-  useEffect(() => {
-    sectionAnims.forEach((anim) => {
-      anim.stopAnimation();
-      anim.setValue(0);
-    });
-
-    const sequence = Animated.stagger(
-      90,
-      sectionAnims.map((anim) =>
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 420,
-          useNativeDriver: true,
-        })
-      )
-    );
-
-    sequence.start();
-    return () => sequence.stop();
-  }, [sectionAnims]);
+  const header = (
+    <View style={styles.header}>
+      <Text style={styles.title}>Settings</Text>
+    </View>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
-      </View>
+    <Screen header={header}>
+      <Stagger>
+        <View style={styles.section}>
+          <SectionHeading icon="moon" title="App Theme" colors={colors} styles={styles} />
 
-      <ScrollView style={styles.content}>
-        <Animated.View
-          style={[
-            styles.section,
-            {
-              opacity: sectionAnims[0],
-              transform: [
-                {
-                  translateY: sectionAnims[0].interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [10, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionIcon}>
-              <Feather name="moon" size={18} color={colors.primary} />
-            </View>
-            <Text style={styles.sectionTitle}>App Theme</Text>
+          <View style={styles.card}>
+            {THEME_OPTIONS.map((option, index) => {
+              const selected = themeMode === option.mode;
+              const isLast = index === THEME_OPTIONS.length - 1;
+
+              return (
+                <TouchableOpacity
+                  key={option.mode}
+                  style={[styles.row, selected && styles.rowSelected, isLast && styles.rowLast]}
+                  onPress={() => setThemeMode(option.mode)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.rowLeft}>
+                    <Text style={[styles.rowTitle, selected && styles.rowTitleSelected]}>
+                      {option.title}
+                    </Text>
+                    <Text style={styles.rowSubtitle}>{option.subtitle}</Text>
+                  </View>
+
+                  {selected ? <Feather name="check" size={20} color={colors.primary} /> : null}
+                </TouchableOpacity>
+              );
+            })}
           </View>
+        </View>
 
-          <View style={[styles.card, { position: 'relative' }]}>
-            <Animated.View
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                width: 4,
-                height: 72,
-                backgroundColor: selectionAnim.interpolate({
-                  inputRange: [0, 1, 2],
-                  outputRange: [colors.primary, colors.tint, colors.primary],
-                }),
-                transform: [
-                  {
-                    translateY: selectionAnim.interpolate({
-                      inputRange: [0, 1, 2],
-                      outputRange: [0, 72, 144],
-                    }),
-                  },
-                ],
-                borderTopRightRadius: 4,
-                borderBottomRightRadius: 4,
-                zIndex: 10,
-              }}
-            />
-
-            <TouchableOpacity
-              style={[styles.row, { height: 72 }]}
-              onPress={() => setThemeMode('auto')}
-              activeOpacity={0.7}
-            >
-              <View style={styles.rowLeft}>
-                <Text style={styles.rowTitle}>Auto</Text>
-                <Text style={styles.rowSubtitle}>Match your device setting</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.row, { height: 72 }]}
-              onPress={() => setThemeMode('dark')}
-              activeOpacity={0.7}
-            >
-              <View style={styles.rowLeft}>
-                <Text style={styles.rowTitle}>Dark Mode</Text>
-                <Text style={styles.rowSubtitle}>Always use dark theme</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.row, styles.rowLast, { height: 72 }]}
-              onPress={() => setThemeMode('light')}
-              activeOpacity={0.7}
-            >
-              <View style={styles.rowLeft}>
-                <Text style={styles.rowTitle}>Light Mode</Text>
-                <Text style={styles.rowSubtitle}>Always use light theme</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-
-        <Animated.View
-          style={[
-            styles.section,
-            {
-              opacity: sectionAnims[1],
-              transform: [
-                {
-                  translateY: sectionAnims[1].interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [10, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionIcon}>
-              <Feather name="bell" size={18} color={colors.primary} />
-            </View>
-            <Text style={styles.sectionTitle}>Notifications</Text>
-          </View>
+        <View style={styles.section}>
+          <SectionHeading icon="bell" title="Notifications" colors={colors} styles={styles} />
 
           <View style={styles.card}>
             <View style={styles.row}>
@@ -209,86 +96,73 @@ export default function SettingsPage() {
               />
             </View>
 
-            <Text style={styles.helperText}>Notification settings coming soon!</Text>
-          </View>
-        </Animated.View>
-
-        <Animated.View
-          style={[
-            styles.section,
-            styles.sectionLast,
-            {
-              opacity: sectionAnims[2],
-              transform: [
-                {
-                  translateY: sectionAnims[2].interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [10, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionIcon}>
-              <Feather name="heart" size={18} color={colors.primary} />
+            <View style={[styles.row, styles.rowLast]}>
+              <Text style={styles.helperText}>Notification settings coming soon</Text>
             </View>
-            <Text style={styles.sectionTitle}>Acknowledgements</Text>
           </View>
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeading icon="heart" title="Acknowledgements" colors={colors} styles={styles} />
 
           <View style={styles.card}>
-            <View style={styles.ackRow}>
-              <Text style={styles.ackTitle}>Great Neck South Programming Club</Text>
-              <Text style={styles.ackSubtitle}>
-                Built with care, coffee, and love. Have a great day!
-              </Text>
+            <View style={[styles.row, styles.rowLast]}>
+              <View style={styles.rowLeft}>
+                <Text style={styles.rowTitle}>Great Neck South Programming Club</Text>
+                <Text style={styles.rowSubtitle}>
+                  Built with care, coffee, and love. Have a great day.
+                </Text>
+              </View>
             </View>
           </View>
-        </Animated.View>
-      </ScrollView>
-    </SafeAreaView>
+        </View>
+      </Stagger>
+    </Screen>
+  );
+}
+
+type SectionHeadingProps = {
+  icon: keyof typeof Feather.glyphMap;
+  title: string;
+  colors: typeof Colors.light;
+  styles: ReturnType<typeof createStyles>;
+};
+
+function SectionHeading({ icon, title, colors, styles }: SectionHeadingProps) {
+  return (
+    <View style={styles.sectionHeader}>
+      <View style={styles.sectionIcon}>
+        <Feather name={icon} size={18} color={colors.primary} />
+      </View>
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
   );
 }
 
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
-    container: {
-      paddingBottom: 75,
-      flex: 1,
-      backgroundColor: colors.background,
-    },
     header: {
-      paddingHorizontal: 16,
-      paddingTop: Platform.OS === 'ios' ? 50 : 30,
-      paddingBottom: 12,
+      paddingHorizontal: Spacing.lg,
+      paddingTop: Spacing.lg,
+      paddingBottom: Spacing.md,
     },
     title: {
-      fontSize: 28,
-      fontWeight: '800',
+      ...Type.display,
       color: colors.text,
-      letterSpacing: 0.3,
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: 16,
     },
     section: {
-      marginTop: 20,
-    },
-    sectionLast: {
-      marginBottom: 24,
+      gap: Spacing.md,
     },
     sectionHeader: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 10,
-      marginBottom: 10,
+      gap: Spacing.sm,
     },
     sectionIcon: {
       width: 34,
       height: 34,
-      borderRadius: 12,
+      borderRadius: Radius.md,
+      borderCurve: 'continuous',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: colors.surfaceAlt,
@@ -296,14 +170,13 @@ const createStyles = (colors: typeof Colors.light) =>
       borderColor: colors.border,
     },
     sectionTitle: {
+      ...Type.heading,
       color: colors.text,
-      fontSize: 16,
-      fontWeight: '800',
-      letterSpacing: 0.2,
     },
     card: {
       backgroundColor: colors.surface,
-      borderRadius: 16,
+      borderRadius: Radius.lg,
+      borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,
       overflow: 'hidden',
@@ -312,49 +185,39 @@ const createStyles = (colors: typeof Colors.light) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 16,
-      paddingVertical: 14,
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
-      gap: 12,
+      gap: Spacing.md,
+    },
+    rowSelected: {
+      backgroundColor: colors.accentSoft,
     },
     rowLast: {
       borderBottomWidth: 0,
     },
     rowLeft: {
       flex: 1,
+      gap: Spacing.xs,
     },
     rowTitle: {
-      color: colors.text,
-      fontSize: 16,
+      ...Type.body,
       fontWeight: '700',
+      color: colors.text,
+    },
+    rowTitleSelected: {
+      color: colors.primary,
     },
     rowSubtitle: {
+      ...Type.label,
+      fontWeight: '500',
       color: colors.mutedText,
-      fontSize: 13,
-      marginTop: 4,
       lineHeight: 18,
     },
     helperText: {
+      ...Type.label,
+      fontWeight: '500',
       color: colors.mutedText,
-      fontSize: 12,
-      fontStyle: 'italic',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-    },
-    ackRow: {
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-    },
-    ackTitle: {
-      color: colors.text,
-      fontSize: 16,
-      fontWeight: '700',
-    },
-    ackSubtitle: {
-      color: colors.mutedText,
-      fontSize: 13,
-      marginTop: 4,
-      lineHeight: 18,
     },
   });

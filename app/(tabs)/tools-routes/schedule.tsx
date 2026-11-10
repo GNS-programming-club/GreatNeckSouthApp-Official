@@ -1,47 +1,21 @@
-import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
-import { Colors } from '@/constants/theme';
+import { useRouter } from 'expo-router';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import Screen from '@/components/ui/screen';
+import Stagger from '@/components/ui/stagger';
+import { Colors, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { parseClockToSeconds, useNowSeconds } from '@/hooks/use-live-period';
 
 const scheduleData = require('../../../assets/data/schedule.json');
 
-const { width } = Dimensions.get('window');
-
-function getEasternSeconds() {
-  try {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/New_York',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    });
-
-    const parts = formatter.formatToParts(new Date());
-    const hour = Number(parts.find((p) => p.type === 'hour')?.value);
-    const minute = Number(parts.find((p) => p.type === 'minute')?.value);
-    const second = Number(parts.find((p) => p.type === 'second')?.value);
-    if (Number.isFinite(hour) && Number.isFinite(minute) && Number.isFinite(second)) {
-      return hour * 3600 + minute * 60 + second;
-    }
-  } catch {
-    // TODO: fallback to local timezone (if anything)
-  }
-
-  const now = new Date();
-  return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-}
+const ON_HERO = '#FFFFFF';
+const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
+const PILL_BG = 'rgba(255,255,255,0.18)';
+const TRACK = 'rgba(255,255,255,0.28)';
+const HAIRLINE = 'rgba(255,255,255,0.35)';
 
 interface Period {
   id: string;
@@ -57,480 +31,338 @@ interface ScheduleData {
   totalDuration: string;
 }
 
+type PeriodState = 'done' | 'active' | 'upcoming';
+
 const SchedulePage = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
-  const periodAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
-  const hasAnimatedOnce = useRef(false);
-  const [nowSecondsET, setNowSecondsET] = useState<number>(() => getEasternSeconds());
+  const nowSecondsET = useNowSeconds();
 
   const schedule = scheduleData as ScheduleData;
   const periods: Period[] = schedule.periods;
 
-  const parseTimeToSeconds = useCallback((timeString: string) => {
-    const match = timeString.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-    if (!match) return null;
-    const [, hourRaw, minuteRaw, ampmRaw] = match;
-    let hour = Number(hourRaw);
-    const minute = Number(minuteRaw);
-    const ampm = ampmRaw.toUpperCase();
-
-    if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null;
-    if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
-
-    if (ampm === 'AM') {
-      if (hour === 12) hour = 0;
-    } else {
-      if (hour !== 12) hour += 12;
-    }
-
-    return hour * 3600 + minute * 60;
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => setNowSecondsET(getEasternSeconds()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const getOrCreateAnim = useCallback(
-    (key: string) => {
-      if (!periodAnims.has(key)) {
-        periodAnims.set(key, new Animated.Value(0));
-      }
-      return periodAnims.get(key)!;
-    },
-    [periodAnims]
+  const header = (
+    <View style={styles.header}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => router.back()}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="Back"
+      >
+        <Feather name="chevron-left" size={26} color={colors.text} />
+      </TouchableOpacity>
+      <Text style={styles.title}>Schedule</Text>
+    </View>
   );
 
-  useEffect(() => {
-    if (hasAnimatedOnce.current) return;
-    hasAnimatedOnce.current = true;
-
-    const animations: Animated.CompositeAnimation[] = [];
-
-    periods.forEach((period) => {
-      const anim = getOrCreateAnim(period.id);
-      anim.stopAnimation();
-      anim.setValue(0);
-      animations.push(
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 380,
-          useNativeDriver: true,
-        })
-      );
-    });
-
-    const sequence = Animated.stagger(70, animations);
-    sequence.start();
-    return () => sequence.stop();
-  }, [getOrCreateAnim, periods]);
-
-  /*
-  useEffect(() => {
-    periodAnims.forEach(anim => anim.setValue(0));
-
-    Animated.stagger(
-      70,
-      periods.map((period) =>
-        Animated.timing(getOrCreateAnim(period.id), {
-          toValue: 1,
-          duration: 380,
-          useNativeDriver: true,
-        })
-      )
-    ).start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [periods.length]);
-  */
-
-  const renderPeriodCard = (period: Period, index: number) => {
-    const isEven = index % 2 === 0;
-    const anim = getOrCreateAnim(period.id);
-    const startSeconds = parseTimeToSeconds(period.start);
-    const endSeconds = parseTimeToSeconds(period.end);
-    const isValidRange = startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
-    const isActive = isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
-    const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
-    const progress = isValidRange
-      ? isCompleted
-        ? 1
-        : isActive
-          ? Math.min(1, Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!)))
-          : 0
-      : 0;
-
-    return (
-      <Animated.View
-        key={period.id}
-        style={[
-          styles.periodCard,
-          isEven ? styles.periodCardEven : styles.periodCardOdd,
-          isActive ? styles.periodCardActive : undefined,
-          {
-            opacity: anim,
-            transform: [
-              {
-                translateY: anim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [10, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        <View style={styles.periodHeader}>
-          <Text style={[styles.periodTitle, isActive ? styles.periodTitleActive : undefined]}>
-            {period.period}
-          </Text>
-          <View style={[styles.timeBadge, isActive ? styles.timeBadgeActive : undefined]}>
-            <Text style={[styles.durationText, isActive ? styles.durationTextActive : undefined]}>
-              {period.duration}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.timeContainer}>
-          <View style={styles.timeColumn}>
-            <Text style={styles.timeLabel}>Start</Text>
-            <Text style={styles.timeValue}>{period.start}</Text>
-          </View>
-
-          <View style={styles.arrowContainer}>
-            <Text style={styles.arrow}>→</Text>
-          </View>
-
-          <View style={styles.timeColumn}>
-            <Text style={styles.timeLabel}>End</Text>
-            <Text style={styles.timeValue}>{period.end}</Text>
-          </View>
-        </View>
-
-        <View style={styles.timelineContainer}>
-          <View style={styles.timeline}>
-            <View style={[styles.timelineFill, { width: `${Math.round(progress * 100)}%` }]} />
-          </View>
-          <Text style={styles.periodNumber}>{period.id}</Text>
-        </View>
-      </Animated.View>
-    );
-  };
-
-  const calculateTimeBetween = (currentEnd: string, nextStart: string) => {
-    const endSeconds = parseTimeToSeconds(currentEnd);
-    const startSeconds = parseTimeToSeconds(nextStart);
-    if (endSeconds == null || startSeconds == null) return '—';
-
-    let deltaSeconds = startSeconds - endSeconds;
-    if (deltaSeconds < 0) {
-      deltaSeconds += 24 * 3600;
-    }
-
-    const minutes = Math.max(0, Math.round(deltaSeconds / 60));
-    return `${minutes} min`;
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.replace('/tools')}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-        >
-          <Feather name="arrow-left" size={25} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Daily Schedule</Text>
+    <Screen scroll header={header}>
+      <View style={styles.summaryRow}>
+        <View style={styles.summaryCol}>
+          <Text style={styles.statValue}>{periods.length}</Text>
+          <Text style={styles.statLabel}>Periods</Text>
+        </View>
+        <View style={styles.summaryDivider} />
+        <View style={styles.summaryCol}>
+          <Text style={styles.statValue}>{schedule.totalSchoolDay}</Text>
+          <Text style={styles.statLabel}>School day</Text>
+        </View>
+        <View style={styles.summaryDivider} />
+        <View style={styles.summaryCol}>
+          <Text style={styles.statValue}>{schedule.totalDuration}</Text>
+          <Text style={styles.statLabel}>In class</Text>
+        </View>
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>School Day Overview</Text>
-          <View style={styles.summaryGrid}>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Total Periods</Text>
-              <Text style={styles.summaryValue}>{periods.length}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>School Day</Text>
-              <Text style={styles.summaryValue}>{schedule.totalSchoolDay}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Total Duration</Text>
-              <Text style={styles.summaryValue}>{schedule.totalDuration}</Text>
-            </View>
-          </View>
-        </View>
+      <Stagger delay={60} duration={360} translateY={10}>
+        {periods.map((period, index) => {
+          const startSeconds = parseClockToSeconds(period.start);
+          const endSeconds = parseClockToSeconds(period.end);
+          const isValidRange =
+            startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
+          const isActive =
+            isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
+          const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
+          const state: PeriodState = isActive ? 'active' : isCompleted ? 'done' : 'upcoming';
+          const progress =
+            isValidRange && isActive
+              ? Math.min(
+                  1,
+                  Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!))
+                )
+              : 0;
+          const minutesLeft =
+            isActive && endSeconds !== null
+              ? Math.max(1, Math.ceil((endSeconds - nowSecondsET) / 60))
+              : 0;
 
-        <View style={styles.timelineSection}>
-          <Text style={styles.sectionTitle}>Daily Schedule</Text>
+          const isFirst = index === 0;
+          const isLast = index === periods.length - 1;
+          const segColor = state === 'done' ? styles.segDone : styles.segIdle;
 
-          {periods.map((period, index) => (
-            <View key={period.id}>
-              {renderPeriodCard(period, index)}
+          return (
+            <View key={period.id} style={styles.row}>
+              <View style={styles.rail}>
+                <View style={[styles.seg, isFirst ? styles.segHidden : segColor]} />
+                <View
+                  style={[
+                    styles.dot,
+                    state === 'done' && styles.dotDone,
+                    state === 'active' && styles.dotActive,
+                    state === 'upcoming' && styles.dotUpcoming,
+                  ]}
+                />
+                <View style={[styles.seg, isLast ? styles.segHidden : segColor]} />
+              </View>
 
-              {index < periods.length - 1 && (
-                <View style={styles.breakContainer}>
-                  <View style={styles.breakLine} />
-                  <Text style={styles.breakText}>
-                    {calculateTimeBetween(period.end, periods[index + 1].start)} transition
-                  </Text>
-                  <View style={styles.breakLine} />
+              {isActive ? (
+                <View style={styles.content}>
+                  <View style={styles.activeCard}>
+                    <View style={styles.activePill}>
+                      <Text style={styles.activePillText}>NOW</Text>
+                    </View>
+
+                    <View style={styles.numeralRow}>
+                      <Text style={styles.numeral}>{minutesLeft}</Text>
+                      <Text style={styles.numeralLabel}>min left</Text>
+                    </View>
+
+                    <View style={styles.metaRow}>
+                      <Text style={styles.metaName}>{period.period}</Text>
+                      <View style={styles.metaDivider} />
+                      <Text style={styles.metaRange}>
+                        {period.start} → {period.end}
+                      </Text>
+                    </View>
+
+                    <View style={styles.track}>
+                      <View style={[styles.fill, { width: `${Math.round(progress * 100)}%` }]} />
+                    </View>
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.content}>
+                  <View style={styles.itemHead}>
+                    <Text
+                      style={[styles.itemTime, state === 'done' && styles.itemMuted]}
+                      numberOfLines={1}
+                    >
+                      {period.start}
+                    </Text>
+                    <Text style={[styles.itemName, state === 'done' && styles.itemMuted]}>
+                      {period.period}
+                    </Text>
+                  </View>
+                  <Text style={styles.itemSub}>{state === 'done' ? 'Done' : period.duration}</Text>
                 </View>
               )}
             </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          );
+        })}
+      </Stagger>
+    </Screen>
   );
 };
 
+const NODE_SIZE = 14;
+const RAIL_WIDTH = 26;
+const TIME_WIDTH = 74;
+
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
-    container: {
-      paddingBottom: 75,
-      flex: 1,
-      backgroundColor: colors.background,
-    },
     header: {
-      justifyContent: 'center',
-      alignContent: 'center',
-      paddingHorizontal: 16,
-      paddingTop: 25,
-      paddingBottom: 16,
+      paddingHorizontal: Spacing.lg,
+      paddingTop: Spacing.lg,
+      paddingBottom: Spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
       backgroundColor: colors.background,
     },
     backButton: {
       alignSelf: 'flex-start',
-      height: 36,
       width: 36,
+      height: 36,
       alignItems: 'center',
       justifyContent: 'center',
+      marginBottom: Spacing.sm,
     },
     title: {
-      marginTop: 10,
-      fontSize: 24,
-      fontWeight: '800',
+      ...Type.display,
       color: colors.text,
     },
-    scrollView: {
-      flex: 1,
-    },
-    scrollContent: {
-      padding: 16,
-      paddingBottom: 32,
-    },
-    summaryCard: {
+    summaryRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
       backgroundColor: colors.surface,
-      borderRadius: 16,
-      padding: 20,
-      marginBottom: 20,
+      borderRadius: Radius.lg,
+      borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,
+      paddingVertical: Spacing.lg,
+    },
+    summaryCol: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    summaryDivider: {
+      width: 1,
+      height: 30,
+      backgroundColor: colors.border,
+    },
+    statValue: {
+      ...Type.heading,
+      color: colors.text,
+    },
+    statLabel: {
+      ...Type.caption,
+      color: colors.mutedText,
+      marginTop: Spacing.xs,
+    },
+    row: {
+      flexDirection: 'row',
+      columnGap: Spacing.md,
+      alignItems: 'stretch',
+    },
+    rail: {
+      width: RAIL_WIDTH,
+      alignItems: 'center',
+    },
+    seg: {
+      width: 2,
+      flex: 1,
+    },
+    segHidden: {
+      backgroundColor: 'transparent',
+    },
+    segIdle: {
+      backgroundColor: colors.mutedText,
+      opacity: 0.28,
+    },
+    segDone: {
+      backgroundColor: colors.mutedText,
+      opacity: 0.45,
+    },
+    dot: {
+      width: NODE_SIZE,
+      height: NODE_SIZE,
+      borderRadius: NODE_SIZE / 2,
+      borderWidth: 2,
+    },
+    dotDone: {
+      backgroundColor: colors.mutedText,
+      borderColor: colors.mutedText,
+    },
+    dotActive: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    dotUpcoming: {
+      backgroundColor: colors.background,
+      borderColor: colors.mutedText,
+    },
+    content: {
+      flex: 1,
+      paddingVertical: Spacing.md,
+    },
+    itemHead: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      columnGap: Spacing.md,
+    },
+    itemTime: {
+      ...Type.label,
+      color: colors.text,
+      width: TIME_WIDTH,
+    },
+    itemName: {
+      ...Type.heading,
+      color: colors.text,
+    },
+    itemSub: {
+      ...Type.caption,
+      color: colors.mutedText,
+      marginTop: 2,
+      marginLeft: TIME_WIDTH + Spacing.md,
+    },
+    itemMuted: {
+      color: colors.mutedText,
+    },
+    activeCard: {
+      backgroundColor: colors.primary,
+      borderRadius: Radius.lg,
+      borderCurve: 'continuous',
+      paddingVertical: Spacing.lg,
+      paddingHorizontal: Spacing.lg,
+      gap: Spacing.md,
       shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
+      shadowOpacity: 0.08,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
       elevation: 4,
     },
-    summaryTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 16,
+    activePill: {
+      alignSelf: 'flex-start',
+      backgroundColor: PILL_BG,
+      borderRadius: Radius.pill,
+      paddingVertical: Spacing.xs,
+      paddingHorizontal: Spacing.md,
     },
-    summaryGrid: {
+    activePillText: {
+      color: ON_HERO,
+      ...Type.caption,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+    },
+    numeralRow: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      flexWrap: 'wrap',
+      alignItems: 'baseline',
+      gap: Spacing.sm,
     },
-    summaryItem: {
-      width: (width - 32 - 40) / 3,
-      alignItems: 'center',
-      marginBottom: 8,
+    numeral: {
+      color: ON_HERO,
+      fontSize: 52,
+      fontWeight: '800',
+      letterSpacing: -1.5,
     },
-    summaryLabel: {
-      fontSize: 12,
-      color: colors.mutedText,
-      marginBottom: 4,
-      textAlign: 'center',
+    numeralLabel: {
+      color: ON_HERO_MUTED,
+      ...Type.label,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
     },
-    summaryValue: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: colors.text,
-      textAlign: 'center',
-    },
-    timelineSection: {
-      marginBottom: 20,
-    },
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 16,
-    },
-    periodCard: {
-      backgroundColor: colors.surface,
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 8,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    periodCardEven: {
-      backgroundColor: colors.surface,
-    },
-    periodCardOdd: {
-      backgroundColor: colors.surface,
-    },
-    periodCardActive: {
-      borderColor: colors.primary,
-      shadowOpacity: 0.16,
-      shadowRadius: 10,
-      elevation: 6,
-    },
-    periodHeader: {
+    metaRow: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 12,
+      gap: Spacing.sm,
     },
-    periodTitle: {
-      fontSize: 18,
+    metaName: {
+      color: ON_HERO,
+      ...Type.body,
       fontWeight: '700',
-      color: colors.text,
     },
-    periodTitleActive: {
-      color: colors.primary,
+    metaDivider: {
+      width: 1,
+      height: 13,
+      backgroundColor: HAIRLINE,
     },
-    timeBadge: {
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 12,
-    },
-    timeBadgeActive: {
-      backgroundColor: colors.primary,
-    },
-    durationText: {
-      fontSize: 14,
+    metaRange: {
+      color: ON_HERO_MUTED,
+      ...Type.body,
       fontWeight: '600',
-      color: colors.primary,
     },
-    durationTextActive: {
-      color: colors.primaryText,
-    },
-    timeContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 12,
-    },
-    timeColumn: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    timeLabel: {
-      fontSize: 12,
-      color: colors.mutedText,
-      marginBottom: 4,
-    },
-    timeValue: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-    },
-    arrowContainer: {
-      paddingHorizontal: 20,
-    },
-    arrow: {
-      fontSize: 20,
-      color: colors.mutedText,
-      fontWeight: 'bold',
-    },
-    timelineContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    timeline: {
-      flex: 1,
-      height: 3,
-      backgroundColor: colors.border,
-      borderRadius: 1.5,
+    track: {
+      height: 6,
+      borderRadius: Radius.pill,
+      backgroundColor: TRACK,
       overflow: 'hidden',
     },
-    timelineFill: {
-      height: '100%',
-      backgroundColor: colors.primary,
-    },
-    periodNumber: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: colors.mutedText,
-      marginLeft: 12,
-    },
-    breakContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: 8,
-      paddingHorizontal: 8,
-    },
-    breakLine: {
-      flex: 1,
-      height: 1,
-      backgroundColor: colors.border,
-    },
-    breakText: {
-      fontSize: 11,
-      color: colors.mutedText,
-      paddingHorizontal: 12,
-      fontStyle: 'italic',
-    },
-    infoCard: {
-      backgroundColor: colors.surface,
-      borderRadius: 16,
-      padding: 20,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    infoTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 16,
-    },
-    infoList: {
-      gap: 12,
-    },
-    infoItem: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-    },
-    bulletPoint: {
-      width: 6,
+    fill: {
       height: 6,
-      borderRadius: 3,
-      backgroundColor: colors.primary,
-      marginTop: 6,
-      marginRight: 12,
-    },
-    infoText: {
-      flex: 1,
-      fontSize: 14,
-      color: colors.text,
-      lineHeight: 20,
+      borderRadius: Radius.pill,
+      backgroundColor: ON_HERO,
     },
   });
 

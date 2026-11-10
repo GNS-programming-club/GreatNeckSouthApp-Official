@@ -27,6 +27,13 @@ function isSameDay(a: Date, b: Date) {
   );
 }
 
+function toISODate(date: Date) {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 export function WeekStrip() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
@@ -87,7 +94,9 @@ export function WeekStrip() {
               key={day.toISOString()}
               style={styles.day}
               activeOpacity={0.7}
-              onPress={() => router.push('/calendar')}
+              onPress={() =>
+                router.push({ pathname: '/calendar', params: { date: toISODate(day) } })
+              }
             >
               <Text style={styles.weekdayLabel}>{WEEKDAY_LABELS[index]}</Text>
 
