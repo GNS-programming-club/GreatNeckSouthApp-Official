@@ -10,6 +10,7 @@ import Section from '@/components/ui/section';
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
 import SearchBar from '@/components/tools/search-bar';
 import { Colors, Spacing, Type } from '@/constants/theme';
+import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
 import busData from '@/assets/data/bus.json';
@@ -93,6 +94,7 @@ export default function Bus() {
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   const router = useRouter();
+  const bottomClearance = useTabBarClearance();
   const detailRef = useRef<DetailSheetHandle>(null);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<BusRoute | null>(null);
@@ -162,7 +164,7 @@ export default function Bus() {
           keyExtractor={(r) => r.id}
           stickySectionHeadersEnabled={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[styles.listContent, { paddingBottom: bottomClearance }]}
           ListHeaderComponent={
             <SearchBar
               value={query}
@@ -244,7 +246,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     listContent: {
       paddingHorizontal: Spacing.lg,
-      paddingBottom: 120,
       gap: Spacing.md,
     },
     sectionHeader: {

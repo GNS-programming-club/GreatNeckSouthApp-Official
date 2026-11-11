@@ -131,7 +131,7 @@ export default function HomeScreen() {
           <StatTile
             label="Schedule"
             icon="calendar"
-            onPress={() => router.push('/tools-routes/schedule')}
+            onPress={() => router.push('/tools/schedule')}
             style={styles.rowItem}
           >
             <Text style={styles.dayGlyph}>{dayGlyph}</Text>

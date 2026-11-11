@@ -33,6 +33,10 @@ interface ScheduleData {
 
 type PeriodState = 'done' | 'active' | 'upcoming';
 
+function withoutMeridiem(timeRange: string) {
+  return timeRange.replace(/\s?[AP]M/g, '');
+}
+
 const SchedulePage = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
@@ -67,7 +71,9 @@ const SchedulePage = () => {
         </View>
         <View style={styles.summaryDivider} />
         <View style={styles.summaryCol}>
-          <Text style={styles.statValue}>{schedule.totalSchoolDay}</Text>
+          <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
+            {withoutMeridiem(schedule.totalSchoolDay)}
+          </Text>
           <Text style={styles.statLabel}>School day</Text>
         </View>
         <View style={styles.summaryDivider} />

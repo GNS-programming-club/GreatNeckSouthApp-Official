@@ -1,6 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Colors, Radius, Spacing } from '@/constants/theme';
@@ -15,11 +15,14 @@ type DetailSheetProps = {
   children: React.ReactNode;
 };
 
+const MAX_SHEET_HEIGHT_RATIO = 0.85;
+
 const DetailSheet = forwardRef<DetailSheetHandle, DetailSheetProps>(({ children }, ref) => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
   const modalRef = useRef<BottomSheetModal>(null);
 
   useImperativeHandle(ref, () => ({
@@ -38,6 +41,7 @@ const DetailSheet = forwardRef<DetailSheetHandle, DetailSheetProps>(({ children 
     <BottomSheetModal
       ref={modalRef}
       enableDynamicSizing
+      maxDynamicContentSize={windowHeight * MAX_SHEET_HEIGHT_RATIO}
       backdropComponent={renderBackdrop}
       backgroundStyle={styles.background}
       handleIndicatorStyle={styles.handle}

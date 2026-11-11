@@ -15,10 +15,10 @@ type QuickAction = {
 };
 
 const ACTIONS: QuickAction[] = [
-  { label: 'School Map', icon: 'map', path: '/tools-routes/school-map' },
-  { label: 'Bus', icon: 'navigation', path: '/tools-routes/bus' },
-  { label: 'Courses', icon: 'book-open', path: '/tools-routes/courses' },
-  { label: 'Clubs', icon: 'users', path: '/tools-routes/clubs' },
+  { label: 'School Map', icon: 'map', path: '/tools/school-map' },
+  { label: 'Bus', icon: 'navigation', path: '/tools/bus' },
+  { label: 'Courses', icon: 'book-open', path: '/tools/courses' },
+  { label: 'Clubs', icon: 'users', path: '/tools/clubs' },
 ];
 
 export function QuickActions() {

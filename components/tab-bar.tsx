@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabBar({ state, descriptors, emitter, navigateToTab }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const { isTabBarVisible } = useTabBar();
+  const { isTabBarVisible, setTabBarHeight } = useTabBar();
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
 
@@ -32,6 +32,7 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab }: B
 
   return (
     <View
+      onLayout={(event) => setTabBarHeight(event.nativeEvent.layout.height)}
       style={[
         styles.bar,
         {

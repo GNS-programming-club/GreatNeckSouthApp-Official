@@ -63,7 +63,7 @@ export default function LiveNowCard({
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={() => router.push('/tools-routes/schedule')}
+      onPress={() => router.push('/tools/schedule')}
       style={styles.field}
     >
       <View style={styles.pill}>

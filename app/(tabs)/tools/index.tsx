@@ -30,35 +30,25 @@ export default function ToolsPage() {
           icon="clock"
           label="Daily Schedule"
           meta="Period times and live timeline"
-          onPress={go('/tools-routes/schedule')}
+          onPress={go('/tools/schedule')}
         />
         <View style={styles.row}>
           <ToolTile
             icon="map"
             label="School Map"
             meta="Find rooms"
-            onPress={go('/tools-routes/school-map')}
+            onPress={go('/tools/school-map')}
           />
-          <ToolTile
-            icon="navigation"
-            label="Bus"
-            meta="34 routes"
-            onPress={go('/tools-routes/bus')}
-          />
+          <ToolTile icon="navigation" label="Bus" meta="34 routes" onPress={go('/tools/bus')} />
         </View>
         <View style={styles.row}>
           <ToolTile
             icon="book-open"
             label="Courses"
             meta="181 courses"
-            onPress={go('/tools-routes/courses')}
+            onPress={go('/tools/courses')}
           />
-          <ToolTile
-            icon="users"
-            label="Clubs"
-            meta="76 clubs"
-            onPress={go('/tools-routes/clubs')}
-          />
+          <ToolTile icon="users" label="Clubs" meta="76 clubs" onPress={go('/tools/clubs')} />
         </View>
       </Stagger>
     </Screen>
