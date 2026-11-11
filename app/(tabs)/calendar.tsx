@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { getMenuItemsForDay } from '@/api/daily-menu';
@@ -9,9 +9,9 @@ import { useMonthMenu } from '@/components/calendar/use-month-menu';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
+import { useDayStatus } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
-import { useDayLetters } from '@/hooks/use-day-letters';
-import { useToday } from '@/hooks/use-today';
+import { useTodayIso } from '@/hooks/use-today-iso';
 
 const ON_HERO = '#FFFFFF';
 const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
@@ -32,13 +32,6 @@ const MONTHS_SHORT = [
   'Dec',
 ];
 
-function formatLocalISODate(date: Date): string {
-  const d = new Date(date);
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-
-  return d.toISOString().split('T')[0];
-}
-
 function parseLocalDate(dateString: string): Date {
   return new Date(`${dateString}T00:00:00`);
 }
@@ -52,8 +45,8 @@ export default function CalendarScreen() {
   const paramDate =
     typeof params.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(params.date) ? params.date : null;
 
-  const today = useToday();
-  const todayISO = useMemo(() => formatLocalISODate(today), [today]);
+  const todayISO = useTodayIso();
+  const today = useMemo(() => parseLocalDate(todayISO), [todayISO]);
 
   const [selectedDate, setSelectedDate] = useState<string>(paramDate ?? todayISO);
   const [viewMonth, setViewMonth] = useState<{ year: number; month: number }>(() => {
@@ -62,14 +55,18 @@ export default function CalendarScreen() {
     return { year: initial.getFullYear(), month: initial.getMonth() + 1 };
   });
 
-  useEffect(() => {
-    if (!paramDate) return;
+  const [previousParamDate, setPreviousParamDate] = useState(paramDate);
 
-    setSelectedDate(paramDate);
+  if (paramDate !== previousParamDate) {
+    setPreviousParamDate(paramDate);
 
-    const next = parseLocalDate(paramDate);
-    setViewMonth({ year: next.getFullYear(), month: next.getMonth() + 1 });
-  }, [paramDate]);
+    if (paramDate) {
+      setSelectedDate(paramDate);
+
+      const next = parseLocalDate(paramDate);
+      setViewMonth({ year: next.getFullYear(), month: next.getMonth() + 1 });
+    }
+  }
 
   const { menu, loading } = useMonthMenu(viewMonth.year, viewMonth.month);
 
@@ -98,8 +95,14 @@ export default function CalendarScreen() {
     setViewMonth({ year, month });
   }, []);
 
-  const [todayLetterInfo] = useDayLetters([today]);
-  const heroLetter = todayLetterInfo.letter;
+  const todayStatus = useDayStatus(todayISO);
+  const heroLetter =
+    todayStatus.kind === 'school'
+      ? todayStatus.letter
+      : todayStatus.kind === 'no-school'
+        ? 'Off'
+        : '—';
+  const heroLabel = todayStatus.kind === 'no-school' ? 'No school' : 'Day letter';
   const heroDate = `${MONTHS_SHORT[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
 
   return (
@@ -112,7 +115,7 @@ export default function CalendarScreen() {
           <View style={styles.heroRow}>
             <Text style={styles.heroLetter}>{heroLetter}</Text>
             <View style={styles.heroMeta}>
-              <Text style={styles.heroMetaLabel}>Day letter</Text>
+              <Text style={styles.heroMetaLabel}>{heroLabel}</Text>
               <Text style={styles.heroDate}>{heroDate}</Text>
             </View>
           </View>

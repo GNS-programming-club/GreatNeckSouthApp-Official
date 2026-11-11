@@ -1,8 +1,5 @@
 export const PERIOD_COUNT = 9;
 
-export const ROTATION_ANCHOR_DATE = '2026-09-25';
-export const ROTATION_ANCHOR_LETTER: 'A' | 'B' = 'A';
-
 export function formatMinutes(totalMinutes: number) {
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
@@ -47,45 +44,4 @@ export function nowMinutesLocal() {
   const now = new Date();
 
   return now.getHours() * 60 + now.getMinutes();
-}
-
-export function toMidnight(date: Date) {
-  const result = new Date(date);
-  result.setHours(0, 0, 0, 0);
-
-  return result;
-}
-
-export function isWeekday(date: Date) {
-  const weekday = date.getDay();
-
-  return weekday >= 1 && weekday <= 5;
-}
-
-export function parseISODate(dateString: string) {
-  return new Date(`${dateString}T00:00:00`);
-}
-
-export function dayLetterFor(
-  date: Date,
-  isSchoolDay: (date: Date) => boolean = isWeekday
-): 'A' | 'B' {
-  const anchor = parseISODate(ROTATION_ANCHOR_DATE);
-  const target = toMidnight(date);
-
-  const start = target.getTime() < anchor.getTime() ? target : anchor;
-  const end = target.getTime() < anchor.getTime() ? anchor : target;
-
-  let letter = ROTATION_ANCHOR_LETTER;
-  const cursor = toMidnight(start);
-
-  while (cursor.getTime() < end.getTime()) {
-    cursor.setDate(cursor.getDate() + 1);
-
-    if (isSchoolDay(cursor)) {
-      letter = letter === 'A' ? 'B' : 'A';
-    }
-  }
-
-  return letter;
 }

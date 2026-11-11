@@ -242,19 +242,6 @@ export function getParsedMenuForMonth(year: number, month: number): Promise<Pars
   return pending;
 }
 
-export async function getSchoolDaysForMonth(
-  year: number,
-  month: number
-): Promise<Set<number> | null> {
-  const menu = await getParsedMenuForMonth(year, month);
-
-  if (!menu || menu.month !== month || menu.year !== year) {
-    return null;
-  }
-
-  return new Set(menu.days.map((dayMenu) => dayMenu.day));
-}
-
 export async function getParsedMenu(): Promise<ParsedMenu> {
   const now = new Date();
   const currentYear = now.getFullYear();

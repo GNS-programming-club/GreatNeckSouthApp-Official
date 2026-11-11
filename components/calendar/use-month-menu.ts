@@ -8,17 +8,18 @@ type MonthMenuState = {
   error: boolean;
 };
 
+type LoadedMonthMenu = {
+  monthKey: string;
+  menu: ParsedMenu | null;
+  error: boolean;
+};
+
 export function useMonthMenu(year: number, month: number): MonthMenuState {
-  const [state, setState] = useState<MonthMenuState>({
-    menu: null,
-    loading: true,
-    error: false,
-  });
+  const monthKey = `${year}-${month}`;
+  const [loaded, setLoaded] = useState<LoadedMonthMenu | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-
-    setState({ menu: null, loading: true, error: false });
 
     const load = async () => {
       try {
@@ -26,11 +27,11 @@ export function useMonthMenu(year: number, month: number): MonthMenuState {
 
         if (cancelled) return;
 
-        setState({ menu: parsed, loading: false, error: false });
+        setLoaded({ monthKey: `${year}-${month}`, menu: parsed, error: false });
       } catch {
         if (cancelled) return;
 
-        setState({ menu: null, loading: false, error: true });
+        setLoaded({ monthKey: `${year}-${month}`, menu: null, error: true });
       }
     };
 
@@ -41,5 +42,9 @@ export function useMonthMenu(year: number, month: number): MonthMenuState {
     };
   }, [year, month]);
 
-  return state;
+  if (loaded?.monthKey !== monthKey) {
+    return { menu: null, loading: true, error: false };
+  }
+
+  return { menu: loaded.menu, loading: false, error: loaded.error };
 }

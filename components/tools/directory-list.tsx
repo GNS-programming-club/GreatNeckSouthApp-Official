@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 
 import SearchBar from '@/components/tools/search-bar';
 import { Colors, Spacing, Type } from '@/constants/theme';
+import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
 type DirectoryListProps<T> = {
@@ -30,6 +31,7 @@ export default function DirectoryList<T>({
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [query, setQuery] = useState('');
+  const bottomClearance = useTabBarClearance();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -46,7 +48,7 @@ export default function DirectoryList<T>({
       data={filtered}
       keyExtractor={keyExtractor}
       keyboardShouldPersistTaps="handled"
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
       ListHeaderComponent={
         <View style={styles.headerWrap}>
           <SearchBar
@@ -72,7 +74,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
   StyleSheet.create({
     content: {
       padding: Spacing.lg,
-      paddingBottom: 120,
       gap: Spacing.md,
     },
     headerWrap: {

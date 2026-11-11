@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import EventRow from '@/components/calendar/event-row';
 import Card from '@/components/ui/card';
 import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
-import { useDayLetters } from '@/hooks/use-day-letters';
+import { dayStatusFor, toIsoDate } from '@/lib/day-letters';
+import { eventsOnDate, holidaysOnDate } from '@/lib/school-data';
 
 type DayAgendaProps = {
   date: Date;
@@ -32,19 +35,30 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  const weekdayIndex = date.getDay();
-  const headline = `${WEEKDAYS[weekdayIndex]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`;
+  const { calendar, dayLetters } = useSchoolData();
 
-  const [letterInfo] = useDayLetters([date]);
-  const letter = letterInfo.isSchoolDay ? letterInfo.letter : null;
+  const isoDate = toIsoDate(date);
+  const headline = `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`;
+  const dayStatus = dayStatusFor(isoDate, dayLetters);
+  const badge =
+    dayStatus.kind === 'school'
+      ? `Day ${dayStatus.letter}`
+      : dayStatus.kind === 'no-school'
+        ? 'No school'
+        : null;
+
+  const events = useMemo(() => calendar?.events ?? [], [calendar]);
+  const dayEvents = useMemo(() => eventsOnDate(events, isoDate), [events, isoDate]);
+  const dayHolidays = useMemo(() => holidaysOnDate(events, isoDate), [events, isoDate]);
+  const eventsFallback = calendar ? 'No events posted' : "Couldn't load school events";
 
   return (
     <Card>
       <View style={styles.headerRow}>
         <Text style={styles.headline}>{headline}</Text>
-        {letter ? (
+        {badge ? (
           <View style={styles.letterBadge}>
-            <Text style={styles.letterText}>Day {letter}</Text>
+            <Text style={styles.letterText}>{badge}</Text>
           </View>
         ) : null}
       </View>
@@ -75,14 +89,33 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
 
       <View style={styles.group}>
         <Text style={styles.groupLabel}>Events</Text>
-        <Text style={styles.emptyText}>No events posted</Text>
+        {dayEvents.length === 0 ? (
+          <Text style={styles.emptyText}>{eventsFallback}</Text>
+        ) : (
+          <View style={styles.itemList}>
+            {dayEvents.map((event) => (
+              <EventRow key={event.id} event={event} />
+            ))}
+          </View>
+        )}
       </View>
 
       <View style={styles.divider} />
 
       <View style={styles.group}>
         <Text style={styles.groupLabel}>Holidays</Text>
-        <Text style={styles.emptyText}>No holidays</Text>
+        {dayHolidays.length === 0 ? (
+          <Text style={styles.emptyText}>{calendar ? 'No holidays' : eventsFallback}</Text>
+        ) : (
+          <View style={styles.itemList}>
+            {dayHolidays.map((holiday) => (
+              <View key={holiday.id} style={styles.itemRow}>
+                <View style={styles.dot} />
+                <Text style={styles.itemText}>{holiday.title}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </View>
     </Card>
   );

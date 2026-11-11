@@ -21,11 +21,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
 
   const actualTheme: 'light' | 'dark' =
-    themeMode === 'auto'
-      ? (deviceColorScheme === 'dark' ? 'dark' : 'light')
-      : themeMode;
+    themeMode === 'auto' ? (deviceColorScheme === 'dark' ? 'dark' : 'light') : themeMode;
 
   useEffect(() => {
+    const loadThemePreference = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem('themeMode');
+        if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto') {
+          setThemeModeState(savedTheme);
+        }
+      } catch (error) {
+        console.error('Error loading theme preference:', error);
+      }
+    };
+
     loadThemePreference();
   }, []);
 
@@ -42,20 +51,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     themedText.defaultProps = themedText.defaultProps ?? {};
     themedText.defaultProps.style = [{ color: Colors[actualTheme].text }, ...baseArray];
   }, [actualTheme]);
-
-  const loadThemePreference = async () => {
-    try {
-      const savedTheme = await AsyncStorage.getItem('themeMode');
-      if (
-        savedTheme &&
-        (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto')
-      ) {
-        setThemeModeState(savedTheme as ThemeMode);
-      }
-    } catch (error) {
-      console.error('Error loading theme preference:', error);
-    }
-  };
 
   const setThemeMode = async (mode: ThemeMode) => {
     try {

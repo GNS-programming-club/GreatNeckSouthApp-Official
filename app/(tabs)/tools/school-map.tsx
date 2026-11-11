@@ -137,7 +137,7 @@ export default function SchoolMap() {
   const detailRef = useRef<DetailSheetHandle>(null);
   const [selected, setSelected] = useState<Entry | null>(null);
 
-  const openFullMap = () => router.push('/tools-routes/school-map-full');
+  const openFullMap = () => router.push('/tools/school-map-full');
 
   const listHeader = (
     <TouchableOpacity style={styles.mapCard} onPress={openFullMap} activeOpacity={0.85}>

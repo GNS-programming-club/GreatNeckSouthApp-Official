@@ -1,6 +1,7 @@
-import { dayLetterFor } from '@/constants/schedule';
 import { Colors } from '@/constants/theme';
+import { useDayStatus } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
+import { toIsoDate } from '@/lib/day-letters';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -79,6 +80,8 @@ export default function ScheduleCard({
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const todayStatus = useDayStatus(toIsoDate(new Date()));
+  const todayLetter = todayStatus.kind === 'school' ? todayStatus.letter : '—';
 
   const storageKey = day ? `${STORAGE_KEY}_${day}` : STORAGE_KEY;
   const [schedule, setSchedule] = useState<(string | null)[]>(() => Array(periods).fill(null));
@@ -88,18 +91,16 @@ export default function ScheduleCard({
   const [searchQuery, setSearchQuery] = useState('');
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [nowMinutes, setNowMinutes] = useState(() => nowMinutesLocal());
-  const listItemAnims = useRef(Array.from({ length: 14 }, () => new Animated.Value(0))).current;
+  const [listItemAnims] = useState(() => Array.from({ length: 14 }, () => new Animated.Value(0)));
   const hasAnimatedOnce = useRef(false);
-  const rowAnims = useRef<Animated.Value[]>(
-    Array.from({ length: periods }, () => new Animated.Value(0))
-  ).current;
+  const [rowAnims] = useState(() => Array.from({ length: periods }, () => new Animated.Value(0)));
   const hasRowAnimatedOnce = useRef(false);
 
   useEffect(() => {
     (async () => {
       setIsHydrated(false);
       try {
-        const raw = await AsyncStorage.getItem(storageKey); // get data from storage for the given day
+        const raw = await AsyncStorage.getItem(storageKey);
         if (raw) {
           const parsed = JSON.parse(raw) as (string | null)[];
           if (Array.isArray(parsed)) {
@@ -115,7 +116,6 @@ export default function ScheduleCard({
           setSchedule(Array(periods).fill(null));
         }
       } catch {
-        // ignore parse errors
         setSchedule(Array(periods).fill(null));
       } finally {
         setIsHydrated(true);
@@ -267,7 +267,7 @@ export default function ScheduleCard({
 
   return (
     <View style={[styles.card, style]}>
-      <Text style={styles.cardTitle}>Schedule — Day {day ?? dayLetterFor(new Date())}</Text>
+      <Text style={styles.cardTitle}>Schedule — Day {day ?? todayLetter}</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.listWrap}>
           <View style={styles.timelineAbsolute} pointerEvents="none">

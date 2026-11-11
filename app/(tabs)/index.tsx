@@ -3,18 +3,20 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import AnnouncementsCard from '@/components/home/announcements-card';
+import EventsCard from '@/components/home/events-card';
 import LiveNowCard from '@/components/home/live-now-card';
 import { QuickActions } from '@/components/home/quick-actions';
 import StatTile from '@/components/home/stat-tile';
 import { useTodayLunch } from '@/components/home/today-lunch-card';
 import { WeekStrip } from '@/components/home/week-strip';
-import Card from '@/components/ui/card';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Spacing, Type } from '@/constants/theme';
+import { useDayStatus, useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
-import { useDayLetters } from '@/hooks/use-day-letters';
-import { useToday } from '@/hooks/use-today';
+import { useTodayIso } from '@/hooks/use-today-iso';
+import { fromIsoDate, nextSchoolDay, toIsoDate } from '@/lib/day-letters';
 
 const STORAGE_KEY = 'userSchedule_v1';
 
@@ -32,12 +34,26 @@ export default function HomeScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
 
-  const [todaySchedule, setTodaySchedule] = useState<(string | null)[] | null>(null);
+  const [loadedSchedule, setLoadedSchedule] = useState<{
+    letter: string;
+    entries: (string | null)[] | null;
+  } | null>(null);
 
-  const today = useToday();
-  const [todayLetterInfo] = useDayLetters([today]);
-  const todayLetter = todayLetterInfo.letter;
-  const greeting = greetingForHour(new Date().getHours());
+  const todayIso = useTodayIso();
+  const today = useMemo(() => {
+    const now = new Date();
+
+    return todayIso === toIsoDate(now) ? now : fromIsoDate(todayIso);
+  }, [todayIso]);
+  const todayStatus = useDayStatus(todayIso);
+  const { dayLetters } = useSchoolData();
+  const upcomingSchoolDay = useMemo(
+    () => nextSchoolDay(todayIso, dayLetters),
+    [todayIso, dayLetters]
+  );
+  const todayLetter = todayStatus.kind === 'school' ? todayStatus.letter : null;
+  const dayGlyph = todayLetter ?? (todayStatus.kind === 'no-school' ? 'Off' : '—');
+  const greeting = useMemo(() => greetingForHour(today.getHours()), [today]);
   const dateLabel = useMemo(() => {
     const weekday = today.toLocaleDateString(undefined, { weekday: 'long' });
     const monthDay = today.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
@@ -49,26 +65,24 @@ export default function HomeScreen() {
   const lunchLines = useMemo(() => (lunchItems ? lunchItems.slice(0, 3) : []), [lunchItems]);
 
   useEffect(() => {
-    const key = `${STORAGE_KEY}_${todayLetter}`;
+    if (!todayLetter) {
+      return;
+    }
 
-    AsyncStorage.getItem(key)
+    AsyncStorage.getItem(`${STORAGE_KEY}_${todayLetter}`)
       .then((raw) => {
-        if (!raw) {
-          setTodaySchedule(null);
+        const parsed = raw ? (JSON.parse(raw) as unknown) : null;
 
-          return;
-        }
-
-        const parsed = JSON.parse(raw) as unknown;
-
-        if (Array.isArray(parsed)) {
-          setTodaySchedule(parsed as (string | null)[]);
-        } else {
-          setTodaySchedule(null);
-        }
+        setLoadedSchedule({
+          letter: todayLetter,
+          entries: Array.isArray(parsed) ? (parsed as (string | null)[]) : null,
+        });
       })
-      .catch(() => setTodaySchedule(null));
+      .catch(() => setLoadedSchedule({ letter: todayLetter, entries: null }));
   }, [todayLetter]);
+
+  const todaySchedule =
+    todayLetter && loadedSchedule?.letter === todayLetter ? loadedSchedule.entries : null;
 
   const periodCount = todaySchedule
     ? todaySchedule.filter((entry) => entry != null && entry !== '').length
@@ -84,7 +98,11 @@ export default function HomeScreen() {
 
         <WeekStrip />
 
-        <LiveNowCard todaySchedule={todaySchedule} todayLetter={todayLetter} />
+        <LiveNowCard
+          todaySchedule={todaySchedule}
+          todayStatus={todayStatus}
+          nextSchoolDay={upcomingSchoolDay}
+        />
 
         <View style={styles.row}>
           <StatTile
@@ -113,20 +131,23 @@ export default function HomeScreen() {
           <StatTile
             label="Schedule"
             icon="calendar"
-            onPress={() => router.push('/tools-routes/schedule')}
+            onPress={() => router.push('/tools/schedule')}
             style={styles.rowItem}
           >
-            <Text style={styles.dayGlyph}>{todayLetter}</Text>
+            <Text style={styles.dayGlyph}>{dayGlyph}</Text>
             <Text style={styles.daySub}>
-              {periodCount > 0 ? `${periodCount} periods` : 'Day type'}
+              {periodCount > 0
+                ? `${periodCount} periods`
+                : todayStatus.kind === 'no-school'
+                  ? 'No school'
+                  : 'Day type'}
             </Text>
           </StatTile>
         </View>
 
-        <Card style={styles.eventsTile}>
-          <Text style={styles.eventsLabel}>Today&apos;s events</Text>
-          <Text style={styles.empty}>No events posted</Text>
-        </Card>
+        <EventsCard todayIso={todayIso} />
+
+        <AnnouncementsCard />
 
         <QuickActions />
       </Stagger>
@@ -182,19 +203,5 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       color: colors.mutedText,
       fontSize: Type.label.fontSize,
       fontWeight: '700',
-    },
-    eventsTile: {
-      gap: Spacing.sm,
-    },
-    eventsLabel: {
-      color: colors.text,
-      fontSize: Type.heading.fontSize,
-      fontWeight: Type.heading.fontWeight,
-      letterSpacing: Type.heading.letterSpacing,
-    },
-    empty: {
-      color: colors.mutedText,
-      fontSize: Type.body.fontSize,
-      fontWeight: Type.body.fontWeight,
     },
   });

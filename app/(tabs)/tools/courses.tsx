@@ -525,7 +525,7 @@ export default function Courses() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: colors.background, paddingBottom: 75 }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       edges={['top', 'left', 'right']}
     >
       <View

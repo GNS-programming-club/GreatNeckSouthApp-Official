@@ -5,6 +5,7 @@ import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { useReminders } from '@/contexts/reminders-context';
 import { useTheme } from '@/contexts/theme-context';
 
 type ThemeMode = 'auto' | 'dark' | 'light';
@@ -25,6 +26,7 @@ export default function SettingsPage() {
   const { actualTheme, themeMode, setThemeMode } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const reminders = useReminders();
 
   const header = (
     <View style={styles.header}>
@@ -68,6 +70,23 @@ export default function SettingsPage() {
           <SectionHeading icon="bell" title="Notifications" colors={colors} styles={styles} />
 
           <View style={styles.card}>
+            <View style={styles.row}>
+              <View style={styles.rowLeft}>
+                <Text style={styles.rowTitle}>Day Letter Reminder</Text>
+                <Text style={styles.rowSubtitle}>
+                  {reminders.isPermissionDenied
+                    ? 'Turn on notifications for this app in your phone settings'
+                    : 'At 8 PM, see whether tomorrow is an A or B day'}
+                </Text>
+              </View>
+              <Switch
+                value={reminders.isEnabled}
+                onValueChange={reminders.setEnabled}
+                trackColor={{ false: colors.border, true: colors.primary }}
+                accessibilityLabel="Day letter reminder"
+              />
+            </View>
+
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Text style={styles.rowTitle}>Lunch Menu Updates</Text>
