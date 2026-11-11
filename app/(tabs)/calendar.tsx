@@ -68,20 +68,24 @@ export default function CalendarScreen() {
     }
   }
 
-  const { menu } = useMonthMenu(viewMonth.year, viewMonth.month);
+  const { menu, loading } = useMonthMenu(viewMonth.year, viewMonth.month);
 
   const selectedDateObj = useMemo(() => parseLocalDate(selectedDate), [selectedDate]);
 
   const menuItems = useMemo<string[] | null>(() => {
+    if (loading) {
+      return null;
+    }
+
     const selectedMonth = selectedDateObj.getMonth() + 1;
     const selectedYear = selectedDateObj.getFullYear();
 
     if (!menu || menu.month !== selectedMonth || menu.year !== selectedYear) {
-      return null;
+      return [];
     }
 
     return getMenuItemsForDay(menu, selectedDateObj.getDate());
-  }, [menu, selectedDateObj]);
+  }, [loading, menu, selectedDateObj]);
 
   const handleDayPress = useCallback((dateString: string) => {
     setSelectedDate((current) => (current === dateString ? current : dateString));

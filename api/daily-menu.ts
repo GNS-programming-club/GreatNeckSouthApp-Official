@@ -218,17 +218,28 @@ export function parseMenuData(rawMenu: any): ParsedMenu {
   };
 }
 
-export async function getParsedMenuForMonth(
-  year: number,
-  month: number
-): Promise<ParsedMenu | null> {
-  const rawMenu = await fetchMenuForMonth(year, month);
+const menuCache = new Map<string, Promise<ParsedMenu | null>>();
 
-  if (!rawMenu) {
-    return null;
+export function getParsedMenuForMonth(year: number, month: number): Promise<ParsedMenu | null> {
+  const cacheKey = `${year}-${month}`;
+
+  const cached = menuCache.get(cacheKey);
+
+  if (cached) {
+    return cached;
   }
 
-  return parseMenuData(rawMenu);
+  const pending = fetchMenuForMonth(year, month)
+    .then((rawMenu) => (rawMenu ? parseMenuData(rawMenu) : null))
+    .catch((error) => {
+      menuCache.delete(cacheKey);
+
+      throw error;
+    });
+
+  menuCache.set(cacheKey, pending);
+
+  return pending;
 }
 
 export async function getParsedMenu(): Promise<ParsedMenu> {
