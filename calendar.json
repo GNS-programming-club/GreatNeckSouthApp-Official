@@ -1,0 +1,2318 @@
+{
+  "generatedAt": "2026-11-11T20:02:41.688Z",
+  "events": [
+    {
+      "id": "1198e099-a275-5d32-9d24-94a3b1ff4b0b",
+      "title": "Gr. 12 Photo Make-ups by Appt. (thru 11/6)",
+      "source": "school",
+      "location": "Library Makerspace",
+      "allDay": true,
+      "start": "2026-11-05",
+      "end": "2026-11-06"
+    },
+    {
+      "id": "47fc3ea5-3413-53e1-93dd-b4f3836f1d4b",
+      "title": "Gr. K-5 11:45am Dismissal",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2026-11-05T11:45:00-05:00",
+      "end": "2026-11-05T12:45:00-05:00"
+    },
+    {
+      "id": "d8872199-4f30-5c96-91c3-491fc0ce6f81",
+      "title": "Music Night I",
+      "source": "school",
+      "location": "Room 309",
+      "allDay": false,
+      "start": "2026-11-05T19:00:00-05:00",
+      "end": "2026-11-05T21:00:00-05:00"
+    },
+    {
+      "id": "56252046-e67b-5ac7-92cf-326e25cf2908",
+      "title": "FIRST QUARTER MARKING PERIOD ENDS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-06",
+      "end": "2026-11-06"
+    },
+    {
+      "id": "a4304a2e-0e6f-5eb9-a0de-bdf6c94620c6",
+      "title": "HS Winter Sports Registration Deadline",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-06",
+      "end": "2026-11-06"
+    },
+    {
+      "id": "d8501b83-34e8-597b-9e53-8c95562ac3e7",
+      "title": "Blood Drive",
+      "source": "school",
+      "location": "West Gym",
+      "allDay": true,
+      "start": "2026-11-06",
+      "end": "2026-11-06"
+    },
+    {
+      "id": "61f8067b-9671-512a-aa2f-1b4b79fee391",
+      "title": "HS SAT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-07",
+      "end": "2026-11-07"
+    },
+    {
+      "id": "dc7084ec-712a-5073-b50d-47281d151dda",
+      "title": "SAT",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-07",
+      "end": "2026-11-07"
+    },
+    {
+      "id": "0192a43b-04e5-553b-a59b-c1eab7cccaaa",
+      "title": "Diwali",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-08",
+      "end": "2026-11-08"
+    },
+    {
+      "id": "535e3ba2-9181-5309-833d-e1c0edac1e35",
+      "title": "SECOND QUARTER MARKING PERIOD BEGINS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-09",
+      "end": "2026-11-09"
+    },
+    {
+      "id": "d1c325fb-fbdd-593d-b600-d6395232e2bd",
+      "title": "Fall Sports Awards Night",
+      "source": "school",
+      "location": "East Gym",
+      "allDay": false,
+      "start": "2026-11-09T18:30:00-05:00",
+      "end": "2026-11-09T20:30:00-05:00"
+    },
+    {
+      "id": "1d406866-fef3-5395-b059-5485e5407828",
+      "title": "Veterans Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-11",
+      "end": "2026-11-11"
+    },
+    {
+      "id": "4fa807d0-ee46-5cb2-9d71-bdac5b80af49",
+      "title": "SCHOOLS CLOSED",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-11",
+      "end": "2026-11-11"
+    },
+    {
+      "id": "54ecd623-6ec5-54ce-a8d6-aa65b433af6f",
+      "title": "Gr. 9-11 Photo Make-ups",
+      "source": "school",
+      "location": "Library Makerspace",
+      "allDay": true,
+      "start": "2026-11-12",
+      "end": "2026-11-12"
+    },
+    {
+      "id": "7a01e76e-4b7f-52f8-a54a-9b9bc0ae6f1d",
+      "title": "HS Winter Sports Begin",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-16",
+      "end": "2026-11-16"
+    },
+    {
+      "id": "c773147a-85b0-5ea1-9571-b12739ef2ce0",
+      "title": "Gr. 12 Herff Jones Cap/Gown Rep",
+      "source": "school",
+      "location": "Main Lobby",
+      "allDay": false,
+      "start": "2026-11-17T09:30:00-05:00",
+      "end": "2026-11-17T14:00:00-05:00"
+    },
+    {
+      "id": "cf3789e5-b75c-52ab-a31c-4c8072d31c73",
+      "title": "Board of Education Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2026-11-17T19:30:00-05:00",
+      "end": "2026-11-17T20:30:00-05:00"
+    },
+    {
+      "id": "5c286d45-84fa-525c-a111-d408b9568a21",
+      "title": "Musical: Rock of Ages",
+      "source": "school",
+      "location": "South Middle",
+      "allDay": false,
+      "start": "2026-11-20T19:00:00-05:00",
+      "end": "2026-11-20T21:00:00-05:00"
+    },
+    {
+      "id": "c5f0b101-0cd7-5f23-82e2-cd62f4aa160e",
+      "title": "Musical: Rock of Ages",
+      "source": "school",
+      "location": "South Middle",
+      "allDay": false,
+      "start": "2026-11-21T19:00:00-05:00",
+      "end": "2026-11-21T21:00:00-05:00"
+    },
+    {
+      "id": "62e8f27d-e40c-5d98-92e0-ea5a6a27cfdd",
+      "title": "SCHOOLS CLOSED - Thanksgiving Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-26",
+      "end": "2026-11-26"
+    },
+    {
+      "id": "72c8bd65-4a09-5664-b3c3-64eafc98d2ab",
+      "title": "Thanksgiving",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-26",
+      "end": "2026-11-26"
+    },
+    {
+      "id": "e63a89ea-0364-59d0-8dbb-54388322dab3",
+      "title": "SCHOOLS CLOSED - Thanksgiving Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-27",
+      "end": "2026-11-27"
+    },
+    {
+      "id": "f3b0372b-7e87-5f3a-aef1-ee79d3b2aaec",
+      "title": "Pre Kindergarten Registration Opens for the 2027-28 School Year",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-11-30",
+      "end": "2026-11-30"
+    },
+    {
+      "id": "c3811f2e-b09b-5cfc-b174-43c6b8e710ff",
+      "title": "SEPTA Mtg",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2026-12-02T19:00:00-05:00",
+      "end": "2026-12-02T20:00:00-05:00"
+    },
+    {
+      "id": "417db84f-30eb-551d-9d64-3a7aac964f04",
+      "title": "Pre-K & Elementary Report Card Portal Opens",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-04",
+      "end": "2026-12-04"
+    },
+    {
+      "id": "9fa3c1c6-68c0-5823-825d-72cf2021461c",
+      "title": "Hanukkah begins at sunset",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-04",
+      "end": "2026-12-04"
+    },
+    {
+      "id": "ceb50d6f-e6c6-55a1-a21d-b512a002e81e",
+      "title": "HS SAT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-05",
+      "end": "2026-12-05"
+    },
+    {
+      "id": "d41861b5-f8df-58d8-98b6-8bb760c0f6b5",
+      "title": "SAT",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-05",
+      "end": "2026-12-05"
+    },
+    {
+      "id": "c1e893bb-8eff-5bf5-81ef-b6800da0c279",
+      "title": "Cultural Heritage Night",
+      "source": "school",
+      "location": "South Middle",
+      "allDay": false,
+      "start": "2026-12-05T18:00:00-05:00",
+      "end": "2026-12-05T20:00:00-05:00"
+    },
+    {
+      "id": "09ae18db-7c42-515a-92b3-f86f5f84e34b",
+      "title": "Pearl Harbor Remembrance Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-07",
+      "end": "2026-12-07"
+    },
+    {
+      "id": "a9f832d2-26fe-5deb-bb87-ee156e227e65",
+      "title": "Feast of the Immaculate Conception",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-08",
+      "end": "2026-12-08"
+    },
+    {
+      "id": "9ff61569-ef74-5a33-8538-fcab34e930fe",
+      "title": "Board of Education Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2026-12-08T19:30:00-05:00",
+      "end": "2026-12-08T20:30:00-05:00"
+    },
+    {
+      "id": "84bae4ed-b4a8-5bc7-bf0a-b4f7e6df4b50",
+      "title": "Winter Concert I",
+      "source": "school",
+      "location": "South Middle",
+      "allDay": false,
+      "start": "2026-12-10T19:00:00-05:00",
+      "end": "2026-12-10T21:00:00-05:00"
+    },
+    {
+      "id": "61a07794-2c7a-5dcd-bb22-f460a2b65fff",
+      "title": "Improv Night I",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2026-12-11T19:00:00-05:00",
+      "end": "2026-12-11T21:00:00-05:00"
+    },
+    {
+      "id": "2f2232dd-2c3e-52d2-bf25-3fc1354a86bc",
+      "title": "Hanukkah ends",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-12",
+      "end": "2026-12-12"
+    },
+    {
+      "id": "a899b046-86ed-59fe-9084-c819b7299807",
+      "title": "ACT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-12",
+      "end": "2026-12-12"
+    },
+    {
+      "id": "bd8302d4-4a4d-52fd-ad1d-9d218989077a",
+      "title": "Winter Concert II",
+      "source": "school",
+      "location": "South Middle",
+      "allDay": false,
+      "start": "2026-12-16T19:00:00-05:00",
+      "end": "2026-12-16T21:00:00-05:00"
+    },
+    {
+      "id": "0f40f696-db2f-52a8-b96b-de4c74883da2",
+      "title": "Research Round Tables",
+      "source": "school",
+      "location": "Library",
+      "allDay": false,
+      "start": "2026-12-17T14:45:00-05:00",
+      "end": "2026-12-17T16:45:00-05:00"
+    },
+    {
+      "id": "32e16dc7-bde3-5096-a01b-0b3bb3274d3c",
+      "title": "First Day of Winter",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-21",
+      "end": "2026-12-21"
+    },
+    {
+      "id": "a41a14af-2120-50d5-ac4b-8023ec672c57",
+      "title": "Research Round Tables",
+      "source": "school",
+      "location": "Library",
+      "allDay": false,
+      "start": "2026-12-22T14:45:00-05:00",
+      "end": "2026-12-22T16:45:00-05:00"
+    },
+    {
+      "id": "6a0cbc27-a916-552c-a104-3f3bdedb6577",
+      "title": "Holiday Brass Tour",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-23",
+      "end": "2026-12-23"
+    },
+    {
+      "id": "b38999ba-314b-5675-8edd-69a303474229",
+      "title": "SCHOOLS CLOSED - Holiday Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-24",
+      "end": "2026-12-24"
+    },
+    {
+      "id": "f8d656d2-86f1-521a-99c4-10e2bf977762",
+      "title": "Christmas Eve",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-24",
+      "end": "2026-12-24"
+    },
+    {
+      "id": "116d9647-e96a-5a2f-ba9e-6537b2c68e99",
+      "title": "SCHOOLS CLOSED - Holiday Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-25",
+      "end": "2026-12-25"
+    },
+    {
+      "id": "882fee92-5ef8-520b-a007-4a2165181d2b",
+      "title": "Christmas Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-25",
+      "end": "2026-12-25"
+    },
+    {
+      "id": "20e32504-bcd6-57df-8dc1-2f1e3768e991",
+      "title": "Kwanzaa begins",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-26",
+      "end": "2026-12-26"
+    },
+    {
+      "id": "6aaa6afa-4ed5-534d-b6eb-cfa060a35a8e",
+      "title": "SCHOOLS CLOSED - Holiday Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-28",
+      "end": "2026-12-28"
+    },
+    {
+      "id": "22263777-b387-52d9-8191-fcef83d14263",
+      "title": "SCHOOLS CLOSED - Holiday Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-29",
+      "end": "2026-12-29"
+    },
+    {
+      "id": "729ecad3-242d-59f3-8236-082b6bbb58b6",
+      "title": "SCHOOLS CLOSED - Holiday Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-30",
+      "end": "2026-12-30"
+    },
+    {
+      "id": "0c0e5f45-8d8d-5a18-a427-19f69e3b7050",
+      "title": "New Year's Eve",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-31",
+      "end": "2026-12-31"
+    },
+    {
+      "id": "c02d01aa-3113-5ce1-8266-fc667eb22ade",
+      "title": "SCHOOLS CLOSED - Holiday Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2026-12-31",
+      "end": "2026-12-31"
+    },
+    {
+      "id": "062b118e-55ee-549f-b8e2-4533e5cefbec",
+      "title": "SCHOOLS CLOSED - Holiday Recess",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-01",
+      "end": "2027-01-01"
+    },
+    {
+      "id": "3c43e3fd-b656-5734-8235-52aee869e91c",
+      "title": "New Year's Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-01",
+      "end": "2027-01-01"
+    },
+    {
+      "id": "a82be02e-c834-59f9-a15a-0d09ac358498",
+      "title": "MS Winter II Sports Registration Deadline",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-05",
+      "end": "2027-01-05"
+    },
+    {
+      "id": "7263af61-31dc-597b-b710-05f5b764bd93",
+      "title": "Epiphany",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-06",
+      "end": "2027-01-06"
+    },
+    {
+      "id": "6afd8a67-7a95-5dd8-a387-1ca12710ac5c",
+      "title": "Pep Rally",
+      "source": "school",
+      "location": "East Gym",
+      "allDay": true,
+      "start": "2027-01-08",
+      "end": "2027-01-08"
+    },
+    {
+      "id": "5df90ae2-a2e6-5eb3-9cd8-0f00d2f01e0c",
+      "title": "Coffee House I",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-01-08T19:00:00-05:00",
+      "end": "2027-01-08T21:00:00-05:00"
+    },
+    {
+      "id": "ad8c958e-32e3-500e-8a8e-740fc5e7126b",
+      "title": "Fashion Show",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-01-09T19:00:00-05:00",
+      "end": "2027-01-09T21:00:00-05:00"
+    },
+    {
+      "id": "def890e4-f1dd-5834-a2f2-bcf732688cdc",
+      "title": "Fashion Show 2pm (snow date, if needed)",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-10",
+      "end": "2027-01-10"
+    },
+    {
+      "id": "c1432d59-7b02-51df-9b7a-c3a528a67f63",
+      "title": "Kindergarten-Gr. 12 Registration Opens for the 2027-28 School Year",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-11",
+      "end": "2027-01-11"
+    },
+    {
+      "id": "484bdd1b-3569-54d1-b5c2-5ff8e9759b0d",
+      "title": "Board of Education Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-01-12T19:30:00-05:00",
+      "end": "2027-01-12T20:30:00-05:00"
+    },
+    {
+      "id": "c10c1ff5-d94f-502b-98f3-14b52c060ff2",
+      "title": "Special Education Transition to Middle School for Students (Webinar)",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-01-13T19:00:00-05:00",
+      "end": "2027-01-13T20:00:00-05:00"
+    },
+    {
+      "id": "939fed10-1562-5724-846c-8d91bb9b7e33",
+      "title": "SCHOOLS CLOSED",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-18",
+      "end": "2027-01-18"
+    },
+    {
+      "id": "d2d359d2-accc-5721-9c95-4f81d8a4d4ae",
+      "title": "Martin Luther King Jr. Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-18",
+      "end": "2027-01-18"
+    },
+    {
+      "id": "0f46c237-05d7-56b1-a0dd-50ffe559026f",
+      "title": "MS Winter II Sports Begin",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-19",
+      "end": "2027-01-19"
+    },
+    {
+      "id": "c912470b-080d-5ff3-812c-1b9c7847caf9",
+      "title": "Gr. 11 College Night (Virtual)",
+      "source": "school",
+      "location": "Virtual",
+      "allDay": false,
+      "start": "2027-01-20T18:00:00-05:00",
+      "end": "2027-01-20T20:00:00-05:00"
+    },
+    {
+      "id": "6551cdcb-6f21-5129-97d1-16ad0a8e0cbc",
+      "title": "Elementary Parent-Teacher Conference Sign-Up Window Opens (thru 2/4)",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-21",
+      "end": "2027-01-21"
+    },
+    {
+      "id": "94f579f8-4f57-544e-805e-7a729fcf435a",
+      "title": "Martin Luther King, Jr. Assembly",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-21",
+      "end": "2027-01-21"
+    },
+    {
+      "id": "9653636e-37ad-530d-8383-91c8f3145a91",
+      "title": "MS SECOND QUARTER MARKING PERIOD ENDS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-22",
+      "end": "2027-01-22"
+    },
+    {
+      "id": "37a59cab-98fc-5417-a2c4-bc19cf1e83a6",
+      "title": "MS THIRD QUARTER MARKING PERIOD BEGINS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-25",
+      "end": "2027-01-25"
+    },
+    {
+      "id": "a3c32479-426e-5fb4-85e2-e1af516e4427",
+      "title": "Spring Driver Ed Begins",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-25",
+      "end": "2027-01-25"
+    },
+    {
+      "id": "68f42695-96ce-57c3-ad38-95504c4c99d4",
+      "title": "HS Regents Exams (thru 1/29)",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-26",
+      "end": "2027-01-29"
+    },
+    {
+      "id": "88067a9d-b44c-5941-8340-08207cccc7fa",
+      "title": "Board of Education Mtg (snow date, if needed)",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-01-26T19:30:00-05:00",
+      "end": "2027-01-26T20:30:00-05:00"
+    },
+    {
+      "id": "a657fa63-80d7-5dfe-b718-27c6f1358ed1",
+      "title": "Holocaust Remembrance Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-27",
+      "end": "2027-01-27"
+    },
+    {
+      "id": "e12c4026-8f15-5a29-ad46-d65da1ddbbdb",
+      "title": "Winter Play",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-01-28T19:00:00-05:00",
+      "end": "2027-01-28T21:00:00-05:00"
+    },
+    {
+      "id": "f907ef1d-e0af-54d6-8d81-93b61e00e215",
+      "title": "HS SECOND QUARTER MARKING PERIOD ENDS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-01-29",
+      "end": "2027-01-29"
+    },
+    {
+      "id": "18e887d5-90e9-5dd4-ab2e-f9b2f986629b",
+      "title": "Winter Play",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-01-29T19:00:00-05:00",
+      "end": "2027-01-29T21:00:00-05:00"
+    },
+    {
+      "id": "b72f043d-661e-5a99-8b49-d4b031a8a8cc",
+      "title": "Winter Play",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-01-30T14:00:00-05:00",
+      "end": "2027-01-30T16:00:00-05:00"
+    },
+    {
+      "id": "7e2ca9e1-bb43-538b-9e9c-6e4ebcc533db",
+      "title": "Winter Play",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-01-30T19:00:00-05:00",
+      "end": "2027-01-30T21:00:00-05:00"
+    },
+    {
+      "id": "30dac9e5-1b24-5428-a749-fe6d9aeff462",
+      "title": "HS THIRD QUARTER MARKING PERIOD BEGINS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-01",
+      "end": "2027-02-01"
+    },
+    {
+      "id": "7255570e-7311-54fa-87a4-c306832bea31",
+      "title": "Groundhog Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-02",
+      "end": "2027-02-02"
+    },
+    {
+      "id": "733e4b92-7cba-5797-9c10-dddc055e92f0",
+      "title": "2nd Semester Parking Mtg",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-02-02T14:45:00-05:00",
+      "end": "2027-02-02T15:45:00-05:00"
+    },
+    {
+      "id": "3a948e3e-6643-52a6-9f15-35225664ad81",
+      "title": "Music Night II",
+      "source": "school",
+      "location": "Room 309",
+      "allDay": false,
+      "start": "2027-02-03T19:00:00-05:00",
+      "end": "2027-02-03T21:00:00-05:00"
+    },
+    {
+      "id": "40c50b43-ed72-516a-9c96-a3516bad39ef",
+      "title": "Lunar New Year Eve",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-05",
+      "end": "2027-02-05"
+    },
+    {
+      "id": "fb667ac3-1e62-5c5d-bb64-8bdab6e09c5e",
+      "title": "SCHOOLS CLOSED",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-05",
+      "end": "2027-02-05"
+    },
+    {
+      "id": "58c96f44-1bc2-51f4-89bd-4ea1348770d5",
+      "title": "Lunar New Year",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-06",
+      "end": "2027-02-06"
+    },
+    {
+      "id": "24ba833c-68c8-546b-9d23-28c9b86044e1",
+      "title": "Ramadan begins at sunset",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-07",
+      "end": "2027-02-07"
+    },
+    {
+      "id": "a7aaf581-9c40-59e3-a0c4-22b439ff3c99",
+      "title": "PTO Mtg (Virtual)",
+      "source": "school",
+      "location": "Virtual",
+      "allDay": false,
+      "start": "2027-02-08T19:00:00-05:00",
+      "end": "2027-02-08T21:00:00-05:00"
+    },
+    {
+      "id": "8ee3a3f5-a4f3-5986-817b-e51201741381",
+      "title": "Board of Education Budget Presentation #1 and Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-02-09T19:30:00-05:00",
+      "end": "2027-02-09T20:30:00-05:00"
+    },
+    {
+      "id": "3f798d48-5789-5d74-8737-c71f0aae446b",
+      "title": "Ash Wednesday",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-10",
+      "end": "2027-02-10"
+    },
+    {
+      "id": "c5e60834-190c-5f39-922e-561df8e4b9d8",
+      "title": "Pops Concert at NM",
+      "source": "district",
+      "location": "NM",
+      "allDay": false,
+      "start": "2027-02-11T19:00:00-05:00",
+      "end": "2027-02-11T20:00:00-05:00"
+    },
+    {
+      "id": "037e0519-8286-5e41-b154-ed0a26e49848",
+      "title": "Valentine's Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-14",
+      "end": "2027-02-14"
+    },
+    {
+      "id": "050e7dff-5010-5afa-8d7d-90f7a42ef9f5",
+      "title": "President's Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-15",
+      "end": "2027-02-15"
+    },
+    {
+      "id": "3583ff3f-8ecb-5026-bf89-7a2ff2d3a699",
+      "title": "SCHOOLS CLOSED - Winter Break",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-15",
+      "end": "2027-02-15"
+    },
+    {
+      "id": "5052ea1e-fca7-5200-bd81-9556f0c2d8cf",
+      "title": "SCHOOLS CLOSED - Winter Break",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-16",
+      "end": "2027-02-16"
+    },
+    {
+      "id": "e9112edf-6dad-56da-befc-092887fa24ba",
+      "title": "SCHOOLS CLOSED - Winter Break",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-17",
+      "end": "2027-02-17"
+    },
+    {
+      "id": "bffde841-ab86-5e76-8239-b2e929359471",
+      "title": "SCHOOLS CLOSED - Winter Break",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-18",
+      "end": "2027-02-18"
+    },
+    {
+      "id": "7c332dd4-8d69-52aa-aa69-d2043220e2e7",
+      "title": "SCHOOLS CLOSED - Winter Break",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-19",
+      "end": "2027-02-19"
+    },
+    {
+      "id": "6f68ce33-b4a5-5265-b1cc-b983645aad37",
+      "title": "Spirit Week (thru 2/26)",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-22",
+      "end": "2027-02-26"
+    },
+    {
+      "id": "a0d08973-d09f-5070-8dd1-d7fc52ac9cb8",
+      "title": "Lincoln Center Chamber Music Society - Young Musicians Competition",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-02-23T18:30:00-05:00",
+      "end": "2027-02-23T19:30:00-05:00"
+    },
+    {
+      "id": "e11b7a1b-cf98-5a87-9781-1f9ae61ca14b",
+      "title": "Board of Education Mtg (snow date, if needed)",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-02-23T19:30:00-05:00",
+      "end": "2027-02-23T20:30:00-05:00"
+    },
+    {
+      "id": "440a073b-d5fa-5cf4-a9d5-660f4c84405f",
+      "title": "3-on-3 Basketball Tournament (thru 2/25)",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-02-24T14:45:00-05:00",
+      "end": "2027-02-24T16:45:00-05:00"
+    },
+    {
+      "id": "f9240afb-529d-5f99-ae64-645443224f0f",
+      "title": "Incoming Gr. 9 Parent Meeting",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-02-24T18:00:00-05:00",
+      "end": "2027-02-24T20:00:00-05:00"
+    },
+    {
+      "id": "21351b74-3ae9-52ef-8e58-deb54c16637e",
+      "title": "3-on-3 Basketball Tournament (thru 2/25)",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-02-25T14:45:00-05:00",
+      "end": "2027-02-25T16:45:00-05:00"
+    },
+    {
+      "id": "dbd9d15b-242f-5855-a209-a081bbc717f7",
+      "title": "Rebel War",
+      "source": "school",
+      "location": "East Gym",
+      "allDay": false,
+      "start": "2027-02-26T14:45:00-05:00",
+      "end": "2027-02-26T16:45:00-05:00"
+    },
+    {
+      "id": "00f3157b-618a-5e27-91fd-dc0cf0f53224",
+      "title": "Battle of the Bands",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-02-26T19:00:00-05:00",
+      "end": "2027-02-26T21:00:00-05:00"
+    },
+    {
+      "id": "c67800e8-27d7-5dfc-b71a-6361facc0afe",
+      "title": "ACT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-02-27",
+      "end": "2027-02-27"
+    },
+    {
+      "id": "3fb18e93-8016-504a-9a81-e19b357ada7f",
+      "title": "HS Spring Sports Registration Deadline for Baseball, Lacrosse, Softball & Track",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-01",
+      "end": "2027-03-01"
+    },
+    {
+      "id": "c7e113d2-5ef0-5596-8397-d47aa31323f5",
+      "title": "World Language Week (thru 3/5)",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-01",
+      "end": "2027-03-05"
+    },
+    {
+      "id": "4060a76c-1a51-54b2-aa17-6354a5e02a7c",
+      "title": "Charity Volleyball Tournament (thru 3/2)",
+      "source": "school",
+      "location": "East Gym",
+      "allDay": false,
+      "start": "2027-03-01T14:45:00-05:00",
+      "end": "2027-03-01T16:45:00-05:00"
+    },
+    {
+      "id": "f0beff5c-076c-5988-9284-d19e99c7ff1d",
+      "title": "Winter Sports Awards Night",
+      "source": "school",
+      "location": "East Gym",
+      "allDay": false,
+      "start": "2027-03-01T18:30:00-05:00",
+      "end": "2027-03-01T20:30:00-05:00"
+    },
+    {
+      "id": "8af9e7ed-609b-5fec-816e-98d2db911599",
+      "title": "Charity Volleyball Tournament (thru 3/2)",
+      "source": "school",
+      "location": "East Gym",
+      "allDay": false,
+      "start": "2027-03-02T14:45:00-05:00",
+      "end": "2027-03-02T16:45:00-05:00"
+    },
+    {
+      "id": "fd25d8e0-0b3a-52b6-b834-2120bf4e7e13",
+      "title": "Board of Education Budget Presentation #2 and Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-03-02T19:30:00-05:00",
+      "end": "2027-03-02T20:30:00-05:00"
+    },
+    {
+      "id": "c7f15710-9dd3-51e4-8e4f-0fb434f72de8",
+      "title": "Gr. K-5 11:45 Dismissal",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-04",
+      "end": "2027-03-04"
+    },
+    {
+      "id": "e0fe6bfb-902c-51ea-9f0c-d28650e76512",
+      "title": "HS SAT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-06",
+      "end": "2027-03-06"
+    },
+    {
+      "id": "f7b08118-a827-5bc4-b649-5ca4791b6499",
+      "title": "SAT",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-06",
+      "end": "2027-03-06"
+    },
+    {
+      "id": "8e0bb5d1-1d68-5b3f-94c6-7c9d1790c671",
+      "title": "HS Baseball, Lacrosse, Softball & Track Begin",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-08",
+      "end": "2027-03-08"
+    },
+    {
+      "id": "9375d809-0136-54c5-89c2-5d6a2faeb9d0",
+      "title": "HS Spring Sports Registration Deadline for All Other Spring Sports",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-08",
+      "end": "2027-03-08"
+    },
+    {
+      "id": "a8e57d68-bfe1-5390-a601-9cd6f807de51",
+      "title": "Ramadan ends",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-08",
+      "end": "2027-03-08"
+    },
+    {
+      "id": "497bfc9c-d610-5959-bfde-53be014990a2",
+      "title": "SCHOOLS CLOSED FOR STUDENTS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-09",
+      "end": "2027-03-09"
+    },
+    {
+      "id": "72ffed6d-e46f-52ed-9a93-20d661938b90",
+      "title": "SUPERINTENDENT'S CONFERENCE DAY",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-09",
+      "end": "2027-03-09"
+    },
+    {
+      "id": "87b23d38-0c9a-5af0-ad6c-5994beb59904",
+      "title": "Eid al Fitr",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-09",
+      "end": "2027-03-09"
+    },
+    {
+      "id": "09e9fea5-55fd-567a-93b6-361284a23ee5",
+      "title": "Eid Al Fitr ends",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-10",
+      "end": "2027-03-10"
+    },
+    {
+      "id": "afe096ec-14dd-5b05-8496-512168fa8784",
+      "title": "Performing Arts Fundraiser Concert",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-03-10T19:00:00-05:00",
+      "end": "2027-03-10T21:00:00-05:00"
+    },
+    {
+      "id": "64e154f7-f7a8-5f60-aeee-13f570e14d4f",
+      "title": "SADD Assembly",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-11",
+      "end": "2027-03-11"
+    },
+    {
+      "id": "68817d80-6551-5e08-aa64-12271ab93624",
+      "title": "Daylight Saving Time Begins",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-03-14T09:00:00-04:00",
+      "end": "2027-03-14T10:00:00-04:00"
+    },
+    {
+      "id": "e4c8640e-a82a-528b-a03c-7dc099238524",
+      "title": "10th Annual Table Tennis Invitational at NH",
+      "source": "district",
+      "location": "NH",
+      "allDay": false,
+      "start": "2027-03-14T09:00:00-04:00",
+      "end": "2027-03-14T10:00:00-04:00"
+    },
+    {
+      "id": "6d1a89fc-97df-5066-a633-4ddfaa8873fd",
+      "title": "HS All Other Spring Sports Begin",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-15",
+      "end": "2027-03-15"
+    },
+    {
+      "id": "d31384c4-81c2-5ea2-9014-4bf4b3c74e38",
+      "title": "MS Spring Sports Registration Deadline",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-15",
+      "end": "2027-03-15"
+    },
+    {
+      "id": "16239385-5ff5-5f53-9bbd-37cd3d120254",
+      "title": "SEPTA Mtg",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-03-16T19:00:00-04:00",
+      "end": "2027-03-16T20:00:00-04:00"
+    },
+    {
+      "id": "276466c7-43b5-54ed-86ff-6a96b85a9287",
+      "title": "St. Patrick's Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-17",
+      "end": "2027-03-17"
+    },
+    {
+      "id": "0bc204d4-498b-54e5-a54d-1c2bd04bbed2",
+      "title": "Pre-K & Elementary Report Card Portal Opens",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-19",
+      "end": "2027-03-19"
+    },
+    {
+      "id": "5a782f97-3a31-5e13-a493-a7cb3c0b939e",
+      "title": "Gr. 11 Mini College Fair",
+      "source": "school",
+      "location": "West Gym",
+      "allDay": true,
+      "start": "2027-03-19",
+      "end": "2027-03-19"
+    },
+    {
+      "id": "5ad7dac7-12cf-5b56-ac51-8edc88c73612",
+      "title": "First Day of Spring",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-20",
+      "end": "2027-03-20"
+    },
+    {
+      "id": "77cb6b36-5eb1-543c-9783-ea3a341d2b61",
+      "title": "Persian New Year",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-20",
+      "end": "2027-03-20"
+    },
+    {
+      "id": "9739293b-a106-56db-9af1-ec6e058323f4",
+      "title": "Palm Sunday",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-21",
+      "end": "2027-03-21"
+    },
+    {
+      "id": "8cda85ef-962b-5d30-a445-db17ebfd053f",
+      "title": "Purim begins at sunset",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-22",
+      "end": "2027-03-22"
+    },
+    {
+      "id": "ba91e602-0603-5fa6-a599-74ea00468f54",
+      "title": "Purim",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-23",
+      "end": "2027-03-23"
+    },
+    {
+      "id": "8ce22241-3ef3-514f-ad85-2cb20653a358",
+      "title": "Career Day",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-24",
+      "end": "2027-03-24"
+    },
+    {
+      "id": "48761c42-7a72-5b99-a54a-bc72067d54e0",
+      "title": "Holy Thursday",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-25",
+      "end": "2027-03-25"
+    },
+    {
+      "id": "eff4bf8a-3bb4-5d36-b5e2-ef2cd27f2bea",
+      "title": "SCHOOLS CLOSED - Spring Recess 1",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-25",
+      "end": "2027-03-25"
+    },
+    {
+      "id": "feb19afa-67cb-5698-a98e-c1dfdaca015e",
+      "title": "Annunciation of the Virgin Mary",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-25",
+      "end": "2027-03-25"
+    },
+    {
+      "id": "2e4dcbb3-bce2-5782-b031-5e74f0331ac4",
+      "title": "SCHOOLS CLOSED - Spring Recess 1",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-26",
+      "end": "2027-03-26"
+    },
+    {
+      "id": "ccf8efa2-46b5-5e0e-90e4-42bb6b373035",
+      "title": "Good Friday",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-26",
+      "end": "2027-03-26"
+    },
+    {
+      "id": "97949e4e-0266-5be7-8f80-ebdfe3ef3c56",
+      "title": "Easter",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-28",
+      "end": "2027-03-28"
+    },
+    {
+      "id": "8dbae143-a8b2-5d0e-a91d-4e04e5254370",
+      "title": "SCHOOLS CLOSED - Spring Recess 1",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-29",
+      "end": "2027-03-29"
+    },
+    {
+      "id": "c75fa42a-385d-5d4a-b9c1-17d25690bd46",
+      "title": "MS Spring Sports Begin",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-03-29",
+      "end": "2027-03-29"
+    },
+    {
+      "id": "4d548e99-524b-53fb-bf64-2aeeb5610991",
+      "title": "PTO Mtg (Virtual)",
+      "source": "school",
+      "location": "Virtual",
+      "allDay": false,
+      "start": "2027-03-30T19:00:00-04:00",
+      "end": "2027-03-30T21:00:00-04:00"
+    },
+    {
+      "id": "2a5f16ac-1931-548f-9213-6500242d12cc",
+      "title": "Board of Education Budget Presentation #3 and Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-03-31T19:30:00-04:00",
+      "end": "2027-03-31T20:30:00-04:00"
+    },
+    {
+      "id": "36b84e48-80c3-58e3-bf29-344f13fb3bfa",
+      "title": "Exams: NYSESLAT (thru 5/22)",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-06",
+      "end": "2027-04-06"
+    },
+    {
+      "id": "7b0e7f88-9e7f-58b8-b662-a9d8e9e57f72",
+      "title": "Exams: Gr. 6-8 ELA Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-06",
+      "end": "2027-04-06"
+    },
+    {
+      "id": "80aeca3e-47de-532f-a146-f12e189256e6",
+      "title": "Exams: Gr. 3-5 ELA Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-06",
+      "end": "2027-04-06"
+    },
+    {
+      "id": "3215ba88-8ab4-57df-876c-855b5562db57",
+      "title": "UPTC SHAI Mtg @ GN Library",
+      "source": "district",
+      "location": "Great Neck Library",
+      "allDay": false,
+      "start": "2027-04-06T19:15:00-04:00",
+      "end": "2027-04-06T20:15:00-04:00"
+    },
+    {
+      "id": "8b195c58-030c-5717-8f3d-18ed517e7f25",
+      "title": "Exams: Gr. 3-5 ELA Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-07",
+      "end": "2027-04-07"
+    },
+    {
+      "id": "fdfe5bb2-c728-5675-843a-39eaa55f2132",
+      "title": "Exams: Gr. 6-8 ELA Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-07",
+      "end": "2027-04-07"
+    },
+    {
+      "id": "ac8e03af-3146-5f03-8f52-01a891cf0c43",
+      "title": "SEPTA Mtg 7pm",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-04-07T19:00:00-04:00",
+      "end": "2027-04-07T20:00:00-04:00"
+    },
+    {
+      "id": "1462a9b2-054f-5c18-b482-a92edcfca203",
+      "title": "Blood Drive",
+      "source": "school",
+      "location": "West Gym",
+      "allDay": true,
+      "start": "2027-04-09",
+      "end": "2027-04-09"
+    },
+    {
+      "id": "d3a17769-b18f-52f7-8d64-9fd6135f420f",
+      "title": "THIRD QUARTER MARKING PERIOD ENDS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-09",
+      "end": "2027-04-09"
+    },
+    {
+      "id": "633607e2-32bc-592a-beca-3e6d4e11af65",
+      "title": "Opera: Orpheus in the Underworld",
+      "source": "school",
+      "location": "South Middle",
+      "allDay": false,
+      "start": "2027-04-09T19:00:00-04:00",
+      "end": "2027-04-09T21:00:00-04:00"
+    },
+    {
+      "id": "d3fe5899-ee4e-55e4-9bac-e575ac7a5263",
+      "title": "ACT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-10",
+      "end": "2027-04-10"
+    },
+    {
+      "id": "71e442a8-90a8-57eb-9e4f-289b3ef2915f",
+      "title": "Opera: Orpheus in the Underworld",
+      "source": "school",
+      "location": "South Middle",
+      "allDay": false,
+      "start": "2027-04-10T19:00:00-04:00",
+      "end": "2027-04-10T21:00:00-04:00"
+    },
+    {
+      "id": "f8564094-6f2a-5db8-b639-e821ba100b02",
+      "title": "FOURTH QUARTER MARKING PERIOD BEGINS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-12",
+      "end": "2027-04-12"
+    },
+    {
+      "id": "26920850-4c57-5471-b839-760407ead065",
+      "title": "Senior Prom Parent/Student Mtg",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-04-12T19:00:00-04:00",
+      "end": "2027-04-12T21:00:00-04:00"
+    },
+    {
+      "id": "e82b51e4-295b-5fed-9588-a4bdc1289edb",
+      "title": "Board of Education Budget Presentation #4 and Adoption of Budget Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-04-13T19:30:00-04:00",
+      "end": "2027-04-13T20:30:00-04:00"
+    },
+    {
+      "id": "c5a953ec-e8fa-5414-91d2-15aacf8ddeb2",
+      "title": "ENL School Day SAT",
+      "source": "school",
+      "location": "West Gym",
+      "allDay": true,
+      "start": "2027-04-14",
+      "end": "2027-04-14"
+    },
+    {
+      "id": "ac0f0e18-50da-5e33-a00b-a6911251d6b6",
+      "title": "Coffee House II",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-04-16T19:00:00-04:00",
+      "end": "2027-04-16T21:00:00-04:00"
+    },
+    {
+      "id": "26a98b0a-07c9-57ed-85b2-9093b180ab29",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-21",
+      "end": "2027-04-21"
+    },
+    {
+      "id": "487fbcce-d3d7-5cf2-8a67-779054f0165a",
+      "title": "Passover Begins at sunset",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-21",
+      "end": "2027-04-21"
+    },
+    {
+      "id": "63d340cd-83b9-54a0-98f1-ff234f8c4fca",
+      "title": "Earth Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-22",
+      "end": "2027-04-22"
+    },
+    {
+      "id": "ec9615a6-5c45-5cc9-984d-6d60c30f9591",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-22",
+      "end": "2027-04-22"
+    },
+    {
+      "id": "b9e9d18d-aa3f-58d5-b820-a6931458c410",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-23",
+      "end": "2027-04-23"
+    },
+    {
+      "id": "472f18e2-c9f0-5b5a-b52c-523a17a2aed8",
+      "title": "Orthodox Palm Sunday",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-25",
+      "end": "2027-04-25"
+    },
+    {
+      "id": "48daca90-e00b-5af0-9ebf-79c221da5243",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-26",
+      "end": "2027-04-26"
+    },
+    {
+      "id": "4600a0ed-ac98-57a5-9154-4f82518d9bae",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-27",
+      "end": "2027-04-27"
+    },
+    {
+      "id": "ecf967a6-c068-5a62-92f4-43d8bdb3be40",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-28",
+      "end": "2027-04-28"
+    },
+    {
+      "id": "24458f74-cf7f-5cf8-9749-e21c4f9e80c2",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-29",
+      "end": "2027-04-29"
+    },
+    {
+      "id": "8dbbdbc6-55c0-51f6-b3a0-292f49359c11",
+      "title": "Passover Ends",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-29",
+      "end": "2027-04-29"
+    },
+    {
+      "id": "5beae1a2-2c27-56c1-a32d-9c8a386d0da4",
+      "title": "Orthodox Good Friday",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-30",
+      "end": "2027-04-30"
+    },
+    {
+      "id": "cc09a110-3d79-5295-9376-cea2fdc4f57b",
+      "title": "SCHOOLS CLOSED - Spring Recess 2",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-04-30",
+      "end": "2027-04-30"
+    },
+    {
+      "id": "cca787f7-e61a-50c9-8a38-227fe6005479",
+      "title": "HS SAT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-01",
+      "end": "2027-05-01"
+    },
+    {
+      "id": "f8ba529d-24ab-57f0-9cf3-970d485ad1d5",
+      "title": "SAT",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-01",
+      "end": "2027-05-01"
+    },
+    {
+      "id": "26398448-cf69-59de-b672-bebfa21ed3a5",
+      "title": "Orthodox Easter",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-02",
+      "end": "2027-05-02"
+    },
+    {
+      "id": "518e81a6-5877-5f96-b23d-f4e4a88d6dec",
+      "title": "Exams: HS AP Testing (thru 5/14)",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-03",
+      "end": "2027-05-07"
+    },
+    {
+      "id": "853204f2-13b3-5188-9a32-2efae8272597",
+      "title": "Yom Hashoah",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-04",
+      "end": "2027-05-04"
+    },
+    {
+      "id": "95521ca7-54a8-557d-951d-cc31c80acffe",
+      "title": "Board of Education Official Public Budget Hearing Public Action Mtg at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-05-04T19:30:00-04:00",
+      "end": "2027-05-04T20:30:00-04:00"
+    },
+    {
+      "id": "2a74d719-ff4e-51b6-94d0-2d0b6d7e2051",
+      "title": "Exams: Gr. 6-8 Math Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-05",
+      "end": "2027-05-05"
+    },
+    {
+      "id": "de3920e7-4107-53c0-a093-8bf1950ef4bf",
+      "title": "Exams: Gr. 3-5 Math Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-05",
+      "end": "2027-05-05"
+    },
+    {
+      "id": "0da05f34-acd8-5df4-855f-af765d96589b",
+      "title": "Exams: Gr. 3-5 Math Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-06",
+      "end": "2027-05-06"
+    },
+    {
+      "id": "cea7b63f-35c0-563c-9edf-fe02ffa06642",
+      "title": "Ascension Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-06",
+      "end": "2027-05-06"
+    },
+    {
+      "id": "dc3ae5b1-4d9c-53c8-a24e-6ae9147ab84d",
+      "title": "Exams: Gr. 6-8 Math Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-06",
+      "end": "2027-05-06"
+    },
+    {
+      "id": "a4b25f83-668b-587e-a74e-ec03c01ac788",
+      "title": "Mother's Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-09",
+      "end": "2027-05-09"
+    },
+    {
+      "id": "12fc200e-15e2-5210-bdc3-dc588678e541",
+      "title": "Exams: HS AP Testing (thru 5/14)",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-10",
+      "end": "2027-05-14"
+    },
+    {
+      "id": "7c823087-8607-5092-b1f1-df2d60cd7d1b",
+      "title": "Exams: Gr. 5 Science Testing",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-11",
+      "end": "2027-05-11"
+    },
+    {
+      "id": "a685ca8e-7746-502b-a5fb-0e66da240eb5",
+      "title": "Improv Night II",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-05-14T19:00:00-04:00",
+      "end": "2027-05-14T21:00:00-04:00"
+    },
+    {
+      "id": "4c412282-69e9-5852-a435-ba9acc7ec021",
+      "title": "Junior Event",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-15",
+      "end": "2027-05-15"
+    },
+    {
+      "id": "fab6e402-e4e1-54f0-a065-ec42c99ab214",
+      "title": "Armed Forces Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-15",
+      "end": "2027-05-15"
+    },
+    {
+      "id": "257b647b-fba7-52df-9454-84fe6aa7e794",
+      "title": "Eid al Adha begins",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-16",
+      "end": "2027-05-16"
+    },
+    {
+      "id": "5ef6873b-6204-5abf-9cae-d0cf770f4c08",
+      "title": "Pentecost",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-16",
+      "end": "2027-05-16"
+    },
+    {
+      "id": "a3b955a6-ec6a-5d83-95fd-ba4785a553a4",
+      "title": "SUPERINTENDENT'S CONFERENCE DAY",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-17",
+      "end": "2027-05-17"
+    },
+    {
+      "id": "c8736128-ad74-5826-957c-855cfeb443ff",
+      "title": "SCHOOLS CLOSED FOR STUDENTS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-17",
+      "end": "2027-05-17"
+    },
+    {
+      "id": "fe18cdd6-6254-56e7-b582-5e8dbb642b58",
+      "title": "Eid al Adha",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-17",
+      "end": "2027-05-17"
+    },
+    {
+      "id": "288780dc-1d75-5e93-80fb-6357ec28b70c",
+      "title": "BUDGET VOTE Polls Open 6am to 9pm at EMB, LAK, SR, SH",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-05-18T06:00:00-04:00",
+      "end": "2027-05-18T21:00:00-04:00"
+    },
+    {
+      "id": "bb986655-d81a-5369-a118-f4976a0ee33a",
+      "title": "Board of Education Mtg 10pm at PHIPPS",
+      "source": "district",
+      "location": "PHIPPS",
+      "allDay": false,
+      "start": "2027-05-18T22:00:00-04:00",
+      "end": "2027-05-18T23:00:00-04:00"
+    },
+    {
+      "id": "88da1667-2c98-5ad2-ab11-e7b01d9ac755",
+      "title": "One Act Play Festival",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-05-20T19:00:00-04:00",
+      "end": "2027-05-20T21:00:00-04:00"
+    },
+    {
+      "id": "02108f5f-9ba9-54a5-8c87-7ce4f47a090e",
+      "title": "One Act Play Festival",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-05-21T19:00:00-04:00",
+      "end": "2027-05-21T21:00:00-04:00"
+    },
+    {
+      "id": "ab2f9a09-5af5-5a9a-8aeb-5530095e224e",
+      "title": "One Act Play Festival",
+      "source": "school",
+      "location": "GP Room",
+      "allDay": false,
+      "start": "2027-05-22T19:00:00-04:00",
+      "end": "2027-05-22T21:00:00-04:00"
+    },
+    {
+      "id": "ba39afc2-e63c-5335-bbfd-54018b4da621",
+      "title": "Art Show (thru 5/28)",
+      "source": "school",
+      "location": "Library",
+      "allDay": true,
+      "start": "2027-05-24",
+      "end": "2027-05-28"
+    },
+    {
+      "id": "2a0d2b6e-5375-5d71-a627-8afab0fd7dd5",
+      "title": "Student Government Assembly",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-26",
+      "end": "2027-05-26"
+    },
+    {
+      "id": "cbcc91d8-958a-5f7a-9861-1ae2fbb8b1d1",
+      "title": "Senior Instrumental Concerto Night",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-05-26T19:00:00-04:00",
+      "end": "2027-05-26T21:00:00-04:00"
+    },
+    {
+      "id": "68452d63-335c-587e-af8f-cf16c9dd2f18",
+      "title": "Fifth-Grade Olympics at NM",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-27",
+      "end": "2027-05-27"
+    },
+    {
+      "id": "8f24c69d-9e72-524e-801b-f596f20efe30",
+      "title": "Art Show Reception",
+      "source": "school",
+      "location": "Library",
+      "allDay": false,
+      "start": "2027-05-27T18:00:00-04:00",
+      "end": "2027-05-27T20:00:00-04:00"
+    },
+    {
+      "id": "52e3cc11-5f30-58e7-b5e6-0969c9c2c35f",
+      "title": "Spring Concert I",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-05-27T19:00:00-04:00",
+      "end": "2027-05-27T21:00:00-04:00"
+    },
+    {
+      "id": "535907b3-e925-52a2-b634-1fee3b4a60e0",
+      "title": "Car Show",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-28",
+      "end": "2027-05-28"
+    },
+    {
+      "id": "ddc0faba-aebf-5fdd-a4a3-ec4330d732e8",
+      "title": "Gr. 8 Orientation Walk Through",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-05-28T09:00:00-04:00",
+      "end": "2027-05-28T11:00:00-04:00"
+    },
+    {
+      "id": "b633ba68-40d9-5f8a-9c55-73e36f6be77f",
+      "title": "Memorial Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-05-31",
+      "end": "2027-05-31"
+    },
+    {
+      "id": "b5eb9d00-3034-5746-825c-7d775ac6f652",
+      "title": "Great Neck Memorial Day Parade 9:30am",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-05-31T09:30:00-04:00",
+      "end": "2027-05-31T10:30:00-04:00"
+    },
+    {
+      "id": "7f51a87a-fc8f-5d55-ae95-140f87f26697",
+      "title": "Spring Concert II",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-01T19:00:00-04:00",
+      "end": "2027-06-01T21:00:00-04:00"
+    },
+    {
+      "id": "5aabb67d-27b0-5d45-a8de-03df49e9c72c",
+      "title": "Research Symposium",
+      "source": "school",
+      "location": "Cafeterias/English classrooms",
+      "allDay": false,
+      "start": "2027-06-02T14:45:00-04:00",
+      "end": "2027-06-02T16:45:00-04:00"
+    },
+    {
+      "id": "4dbaf815-c872-5d7b-ae9d-6ce2a909e789",
+      "title": "UPTC Gen. Mtg. 6pm",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-02T18:00:00-04:00",
+      "end": "2027-06-02T19:00:00-04:00"
+    },
+    {
+      "id": "9abaa3bf-634d-58cf-8ea4-27cd63a75c23",
+      "title": "Board of Education Public Action Mtg and UPTC Committee Reports at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-06-02T19:00:00-04:00",
+      "end": "2027-06-02T20:00:00-04:00"
+    },
+    {
+      "id": "5a033b0b-47a0-5a31-9c17-cc2584ca011c",
+      "title": "Fifth-Grade Olympics at NM (rain date)",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-03",
+      "end": "2027-06-03"
+    },
+    {
+      "id": "62ef8fab-04bb-59cd-b2b3-7c26958ea902",
+      "title": "Senior Prom",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-03",
+      "end": "2027-06-03"
+    },
+    {
+      "id": "c6d17949-34bf-56e2-8022-06fcfe17808a",
+      "title": "Music Buddies Concert",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-04T19:00:00-04:00",
+      "end": "2027-06-04T21:00:00-04:00"
+    },
+    {
+      "id": "0ac019d0-6ac5-589a-bf59-6593bb4dbb6b",
+      "title": "HS SAT",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-05",
+      "end": "2027-06-05"
+    },
+    {
+      "id": "370c607c-be5c-552a-b1ca-99f1daeae321",
+      "title": "SAT",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-05",
+      "end": "2027-06-05"
+    },
+    {
+      "id": "70490e66-f118-5f6e-8033-4d7d0d8541e9",
+      "title": "Fifth Grade Trip to Adventureland (Districtwide)",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-07",
+      "end": "2027-06-07"
+    },
+    {
+      "id": "524d98db-3f18-50b3-a3ea-72b410599a80",
+      "title": "Senior Awards",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-07T19:00:00-04:00",
+      "end": "2027-06-07T21:00:00-04:00"
+    },
+    {
+      "id": "eebc9793-e74b-5b64-b91c-b74eb2dfad65",
+      "title": "Pops Concert",
+      "source": "school",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-08T19:00:00-04:00",
+      "end": "2027-06-08T21:00:00-04:00"
+    },
+    {
+      "id": "9b7513b4-51ef-543c-913b-1eca049381da",
+      "title": "Shavuot begins at sunset",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-10",
+      "end": "2027-06-10"
+    },
+    {
+      "id": "cba3c5e8-3b3a-51b1-8105-c72e99abad64",
+      "title": "Gr. K-5 11:45am Dismissal - No AM/PM PreK",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-10T11:45:00-04:00",
+      "end": "2027-06-10T12:45:00-04:00"
+    },
+    {
+      "id": "4eba0bf5-8b6f-5182-8a32-0d3b0f52d397",
+      "title": "Shavuot",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-11",
+      "end": "2027-06-11"
+    },
+    {
+      "id": "e3074ea4-7fd2-5a82-9604-cd7c55748379",
+      "title": "ACT",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-12",
+      "end": "2027-06-12"
+    },
+    {
+      "id": "eeaf90fe-26bd-59f1-9999-4c580f697e7f",
+      "title": "Shavuot ends",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-12",
+      "end": "2027-06-12"
+    },
+    {
+      "id": "3c027ba3-aaff-5066-bad8-ab3d5e97b8eb",
+      "title": "HS Last Day of Classes",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-14",
+      "end": "2027-06-14"
+    },
+    {
+      "id": "aaf29781-72e7-5135-81c2-240b3f922c94",
+      "title": "Last Day of Classes",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-14",
+      "end": "2027-06-14"
+    },
+    {
+      "id": "b98c9546-e354-58fa-9f3a-c1f0c479064d",
+      "title": "Senior Clap-Out",
+      "source": "school",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-14",
+      "end": "2027-06-14"
+    },
+    {
+      "id": "d2fe30f8-7e2d-5e67-b62d-d2539ed2070b",
+      "title": "Flag Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-14",
+      "end": "2027-06-14"
+    },
+    {
+      "id": "f0f4e738-2565-5a0a-891a-778b5a36cd5f",
+      "title": "HS Visits to Elementary",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-14",
+      "end": "2027-06-14"
+    },
+    {
+      "id": "0e39c2ad-04b7-5182-b22a-1da3dc236027",
+      "title": "Spring Sports Awards Night",
+      "source": "school",
+      "location": "East Gym",
+      "allDay": false,
+      "start": "2027-06-14T18:30:00-04:00",
+      "end": "2027-06-14T20:30:00-04:00"
+    },
+    {
+      "id": "8f1ff366-e627-5ce7-8fd3-01ecbfdc08d5",
+      "title": "HS Finals & Regents Begin",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-15",
+      "end": "2027-06-15"
+    },
+    {
+      "id": "cd9eb2b2-aff6-544d-bd8a-88aa96807e48",
+      "title": "Board of Education Public Action Mtg and SDMC Reports at EMB",
+      "source": "district",
+      "location": "EMB",
+      "allDay": false,
+      "start": "2027-06-15T19:00:00-04:00",
+      "end": "2027-06-15T20:00:00-04:00"
+    },
+    {
+      "id": "4d1e6473-ca81-5628-843d-3ee449e15a81",
+      "title": "Gr. K-5 11:45am Dismissal",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-17T11:45:00-04:00",
+      "end": "2027-06-17T12:45:00-04:00"
+    },
+    {
+      "id": "87f7b96b-1232-516e-bb14-014eab5d8f08",
+      "title": "SCHOOLS CLOSED - Regents Rating Day",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-18",
+      "end": "2027-06-18"
+    },
+    {
+      "id": "fac23109-0883-5c48-958c-710cf821edf6",
+      "title": "Juneteenth Observed",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-18",
+      "end": "2027-06-18"
+    },
+    {
+      "id": "c15f2b3a-8255-5a02-af41-e7149b07bf6e",
+      "title": "Juneteenth",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-19",
+      "end": "2027-06-19"
+    },
+    {
+      "id": "c4d4f251-0a3a-50ff-8105-28c5a09fcbc4",
+      "title": "Father's Day",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-20",
+      "end": "2027-06-20"
+    },
+    {
+      "id": "17bb356c-1a97-58e0-8af4-451053bff511",
+      "title": "Elementary Gr. 5 Farewell Assemblies",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-21",
+      "end": "2027-06-21"
+    },
+    {
+      "id": "41930468-31b3-5951-9c93-69d27f778a0d",
+      "title": "First Day of Summer",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-21",
+      "end": "2027-06-21"
+    },
+    {
+      "id": "587b27aa-5416-5b5d-9fd9-e2b67bbf0991",
+      "title": "Graduation Rehearsal at Tilles Center",
+      "source": "school",
+      "location": "LIU Post - Tilles Center",
+      "allDay": false,
+      "start": "2027-06-23T08:00:00-04:00",
+      "end": "2027-06-23T10:00:00-04:00"
+    },
+    {
+      "id": "a5846b4c-4830-5066-b1cf-aea7b08b86b3",
+      "title": "Graduation",
+      "source": "school",
+      "location": "LIU Post - Tilles Center",
+      "allDay": false,
+      "start": "2027-06-24T10:00:00-04:00",
+      "end": "2027-06-24T12:00:00-04:00"
+    },
+    {
+      "id": "5678976b-e5ac-52f2-b249-374171fc3ffb",
+      "title": "Middle School 11:15am Dismissal",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-24T11:15:00-04:00",
+      "end": "2027-06-24T12:15:00-04:00"
+    },
+    {
+      "id": "06e3ffbc-7bbf-590e-9de0-1a5066cb72d3",
+      "title": "Gr. K-5 11:45am Dismissal",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-24T11:45:00-04:00",
+      "end": "2027-06-24T12:45:00-04:00"
+    },
+    {
+      "id": "21af333f-8732-545d-a21b-7e71130e3e06",
+      "title": "Pre-K & Elementary Report Card Portal Opens",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-25",
+      "end": "2027-06-25"
+    },
+    {
+      "id": "25773594-5a7d-597c-a7c2-b8de86383f41",
+      "title": "Regents Rating Day",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-25",
+      "end": "2027-06-25"
+    },
+    {
+      "id": "ff37053b-4d8d-5d71-8d3c-3fc93d698977",
+      "title": "FOURTH QUARTER MARKING PERIOD ENDS",
+      "source": "district",
+      "location": null,
+      "allDay": true,
+      "start": "2027-06-25",
+      "end": "2027-06-25"
+    },
+    {
+      "id": "f696518b-d88f-52ab-b587-5509a5ee63aa",
+      "title": "AM Pre-K & Gr. K-5 11:45am Dismissal",
+      "source": "district",
+      "location": null,
+      "allDay": false,
+      "start": "2027-06-25T11:45:00-04:00",
+      "end": "2027-06-25T12:45:00-04:00"
+    },
+    {
+      "id": "274b6f41-0770-5779-b830-3694e8adbf6f",
+      "title": "Fourth of July",
+      "source": "holiday",
+      "location": null,
+      "allDay": true,
+      "start": "2027-07-04",
+      "end": "2027-07-04"
+    }
+  ]
+}
