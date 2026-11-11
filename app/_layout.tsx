@@ -1,3 +1,5 @@
+import { RemindersProvider } from '@/contexts/reminders-context';
+import { SchoolDataProvider } from '@/contexts/school-data-context';
 import { ThemeProvider as AppThemeProvider } from '@/contexts/theme-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
@@ -24,17 +26,24 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AppThemeProvider>
-        <SafeAreaProvider>
-          <NavigationThemeProvider value={navTheme}>
-            <BottomSheetModalProvider>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-              </Stack>
-            </BottomSheetModalProvider>
-            <StatusBar style="auto" />
-          </NavigationThemeProvider>
-        </SafeAreaProvider>
+        <SchoolDataProvider>
+          <RemindersProvider>
+            <SafeAreaProvider>
+              <NavigationThemeProvider value={navTheme}>
+                <BottomSheetModalProvider>
+                  <Stack>
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen
+                      name="modal"
+                      options={{ presentation: 'modal', title: 'Modal' }}
+                    />
+                  </Stack>
+                </BottomSheetModalProvider>
+                <StatusBar style="auto" />
+              </NavigationThemeProvider>
+            </SafeAreaProvider>
+          </RemindersProvider>
+        </SchoolDataProvider>
       </AppThemeProvider>
     </GestureHandlerRootView>
   );

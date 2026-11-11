@@ -1,5 +1,7 @@
 import { Colors } from '@/constants/theme';
+import { useDayStatus } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
+import { toIsoDate } from '@/lib/day-letters';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -66,22 +68,6 @@ function nowMinutesLocal() {
   return now.getHours() * 60 + now.getMinutes();
 }
 
-function getDayLetter(date: Date): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const targetDate = new Date(date);
-  targetDate.setHours(0, 0, 0, 0);
-
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const daysDifference = Math.round((targetDate.getTime() - today.getTime()) / msPerDay);
-
-  const dayCycle = ['B', 'A'];
-  const dayIndex = ((daysDifference % dayCycle.length) + dayCycle.length) % dayCycle.length;
-
-  return dayCycle[dayIndex];
-}
-
 export default function ScheduleCard({
   periods = 9,
   day,
@@ -94,6 +80,8 @@ export default function ScheduleCard({
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const todayStatus = useDayStatus(toIsoDate(new Date()));
+  const todayLetter = todayStatus.kind === 'school' ? todayStatus.letter : '—';
 
   const storageKey = day ? `${STORAGE_KEY}_${day}` : STORAGE_KEY;
   const [schedule, setSchedule] = useState<(string | null)[]>(() => Array(periods).fill(null));
@@ -279,7 +267,7 @@ export default function ScheduleCard({
 
   return (
     <View style={[styles.card, style]}>
-      <Text style={styles.cardTitle}>Schedule — Day {day ?? getDayLetter(new Date())}</Text>
+      <Text style={styles.cardTitle}>Schedule — Day {day ?? todayLetter}</Text>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.listWrap}>
           <View style={styles.timelineAbsolute} pointerEvents="none">

@@ -6,9 +6,9 @@ import { test } from 'node:test';
 import {
   buildOutputs,
   hasContentChanged,
-  type AnnouncementsFile,
-  type CalendarFile,
+  type DayLettersFile,
   type FetchedSources,
+  type PreviousFiles,
 } from './build-outputs.ts';
 import type { CalendarEvent, CalendarSource } from './calendar.ts';
 
@@ -25,7 +25,36 @@ function allOk(): FetchedSources {
     holiday: { ok: true, text: calendar },
     district: { ok: true, text: calendar },
     announcements: { ok: true, text: 'Robotics club meets Tuesday.\n\nBake sale today!\n' },
+    dayLetters: schoolYearPdf(120),
   };
+}
+
+function schoolYearPdf(letteredDayCount: number): FetchedSources['dayLetters'] {
+  const words = [
+    '<word xMin="40" yMin="20" xMax="80" yMax="27">09/01/2030</word>',
+    '<word xMin="90" yMin="20" xMax="120" yMax="27">through</word>',
+    '<word xMin="130" yMin="20" xMax="170" yMax="27">06/30/2031</word>',
+  ];
+  const cells: string[] = [];
+  const months = ['September', 'October', 'November', 'December', 'January'];
+
+  months.forEach((month, monthIndex) => {
+    const top = 100 + monthIndex * 200;
+    words.push(`<word xMin="100" yMin="${top}" xMax="140" yMax="${top + 7}">${month}</word>`);
+
+    for (let day = 1; day <= 28 && monthIndex * 28 + day <= letteredDayCount; day++) {
+      const left = 60 + ((day - 1) % 7) * 24;
+      const rowTop = top + 20 + Math.floor((day - 1) / 7) * 14;
+      words.push(
+        `<word xMin="${left + 4}" yMin="${rowTop + 2}" xMax="${left + 13}" yMax="${rowTop + 9}">${day}</word>`
+      );
+      cells.push(
+        `<path fill="rgb(94%, 0%, 0%)" d="M ${left} ${rowTop} L ${left + 20} ${rowTop} L ${left + 20} ${rowTop + 12} L ${left} ${rowTop + 12} Z"/>`
+      );
+    }
+  });
+
+  return { ok: true, wordBoxes: words.join('\n'), drawing: cells.join('\n') };
 }
 
 function previousEvent(id: string, source: CalendarSource): CalendarEvent {
@@ -40,15 +69,22 @@ function previousEvent(id: string, source: CalendarSource): CalendarEvent {
   };
 }
 
-function previousCalendar(event: CalendarEvent): {
-  calendar: CalendarFile;
-  announcements: AnnouncementsFile | null;
-} {
-  return { calendar: { generatedAt: 'earlier', events: [event] }, announcements: null };
+function previousCalendar(event: CalendarEvent): PreviousFiles {
+  return {
+    calendar: { generatedAt: 'earlier', events: [event] },
+    announcements: null,
+    dayLetters: null,
+  };
 }
 
-function noPrevious(): { calendar: null; announcements: null } {
-  return { calendar: null, announcements: null };
+function noPrevious(): PreviousFiles {
+  return { calendar: null, announcements: null, dayLetters: null };
+}
+
+function previousDayLetters(): PreviousFiles {
+  const dayLetters: DayLettersFile = { generatedAt: 'earlier', letters: { '2030-09-03': 'B' } };
+
+  return { calendar: null, announcements: null, dayLetters };
 }
 
 test('keeps the previous events of a calendar that served an HTML error page', () => {
@@ -95,6 +131,7 @@ test('keeps the previous announcements when the deck parses to nothing', () => {
     {
       calendar: null,
       announcements: { generatedAt: 'earlier', items: [{ id: 'abcd1234', text: 'Previous item' }] },
+      dayLetters: null,
     },
     now
   );
@@ -103,6 +140,33 @@ test('keeps the previous announcements when the deck parses to nothing', () => {
     ['Previous item']
   );
   assert.deepEqual(result.failures, ['announcements: no items']);
+});
+
+test('publishes the letters read from the schedule PDF', () => {
+  const letters = buildOutputs(allOk(), noPrevious(), now).dayLetters.letters;
+  assert.equal(Object.keys(letters).length, 120);
+  assert.equal(letters['2030-09-03'], 'A');
+  assert.equal(letters['2031-01-08'], 'A');
+});
+
+test('keeps the previous letters when the schedule PDF failed to download', () => {
+  const result = buildOutputs(
+    { ...allOk(), dayLetters: { ok: false, reason: 'no schedule PDF link' } },
+    previousDayLetters(),
+    now
+  );
+  assert.deepEqual(result.dayLetters.letters, { '2030-09-03': 'B' });
+  assert.deepEqual(result.failures, ['dayLetters: no schedule PDF link']);
+});
+
+test('keeps the previous letters when the schedule PDF yields too few days', () => {
+  const result = buildOutputs(
+    { ...allOk(), dayLetters: schoolYearPdf(40) },
+    previousDayLetters(),
+    now
+  );
+  assert.deepEqual(result.dayLetters.letters, { '2030-09-03': 'B' });
+  assert.deepEqual(result.failures, ['dayLetters: too few lettered days (40)']);
 });
 
 test('reports no failures when every source succeeds', () => {

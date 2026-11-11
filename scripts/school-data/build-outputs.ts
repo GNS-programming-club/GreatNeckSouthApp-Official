@@ -5,33 +5,44 @@ import {
   type CalendarEvent,
   type CalendarSource,
 } from './calendar.ts';
+import { parseDayLetters, type DayLetters } from './day-letters.ts';
 import { parseIcs } from './ics.ts';
 
 export type SourceText = { ok: true; text: string } | { ok: false; reason: string };
+
+export type SchedulePdfText =
+  | { ok: true; wordBoxes: string; drawing: string }
+  | { ok: false; reason: string };
 
 export type FetchedSources = {
   school: SourceText;
   holiday: SourceText;
   district: SourceText;
   announcements: SourceText;
+  dayLetters: SchedulePdfText;
 };
 
 export type CalendarFile = { generatedAt: string; events: CalendarEvent[] };
 
 export type AnnouncementsFile = { generatedAt: string; items: Announcement[] };
 
+export type DayLettersFile = { generatedAt: string; letters: DayLetters };
+
 export type PreviousFiles = {
   calendar: CalendarFile | null;
   announcements: AnnouncementsFile | null;
+  dayLetters: DayLettersFile | null;
 };
 
 export type BuildResult = {
   calendar: CalendarFile;
   announcements: AnnouncementsFile;
+  dayLetters: DayLettersFile;
   failures: string[];
 };
 
 const CALENDAR_SOURCES: CalendarSource[] = ['school', 'holiday', 'district'];
+const MINIMUM_LETTERED_DAYS = 100;
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -53,6 +64,21 @@ function parseNonEmpty<Item>(
   }
 
   return items;
+}
+
+function readSchedulePdf(source: SchedulePdfText): DayLetters {
+  if (!source.ok) {
+    throw new Error(source.reason);
+  }
+
+  const letters = parseDayLetters(source.wordBoxes, source.drawing);
+  const count = Object.keys(letters).length;
+
+  if (count < MINIMUM_LETTERED_DAYS) {
+    throw new Error(`too few lettered days (${count})`);
+  }
+
+  return letters;
 }
 
 export function buildOutputs(
@@ -82,11 +108,21 @@ export function buildOutputs(
     items = previous.announcements?.items ?? [];
   }
 
+  let letters: DayLetters;
+
+  try {
+    letters = readSchedulePdf(fetched.dayLetters);
+  } catch (error) {
+    failures.push(`dayLetters: ${errorMessage(error)}`);
+    letters = previous.dayLetters?.letters ?? {};
+  }
+
   const generatedAt = now.toISOString();
 
   return {
     calendar: { generatedAt, events: sortCalendarEvents(events) },
     announcements: { generatedAt, items },
+    dayLetters: { generatedAt, letters },
     failures,
   };
 }

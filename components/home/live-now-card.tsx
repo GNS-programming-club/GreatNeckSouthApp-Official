@@ -5,10 +5,12 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useLivePeriod } from '@/hooks/use-live-period';
+import { fromIsoDate, type DayLetter, type DayStatus } from '@/lib/day-letters';
 
 type LiveNowCardProps = {
   todaySchedule: (string | null)[] | null;
-  todayLetter: string;
+  todayStatus: DayStatus;
+  nextSchoolDay: { date: string; letter: DayLetter } | null;
 };
 
 const ON_HERO = '#FFFFFF';
@@ -16,18 +18,47 @@ const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
 const PILL_BG = 'rgba(255,255,255,0.18)';
 const TRACK = 'rgba(255,255,255,0.28)';
 
-export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardProps) {
+function nextSchoolDayLabel(nextSchoolDay: LiveNowCardProps['nextSchoolDay']): string | null {
+  if (!nextSchoolDay) {
+    return null;
+  }
+
+  const weekday = fromIsoDate(nextSchoolDay.date).toLocaleDateString(undefined, {
+    weekday: 'short',
+  });
+
+  return `Next: ${nextSchoolDay.letter} day, ${weekday}`;
+}
+
+export default function LiveNowCard({
+  todaySchedule,
+  todayStatus,
+  nextSchoolDay,
+}: LiveNowCardProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
 
-  const { live } = useLivePeriod();
+  const { live: livePeriod } = useLivePeriod();
+  const weekday = new Date().getDay();
+  const isWeekend = weekday === 0 || weekday === 6;
+  const isNoSchool =
+    todayStatus.kind === 'no-school' || (todayStatus.kind === 'unknown' && isWeekend);
+  const live = isNoSchool ? null : livePeriod;
+  const todayLetter = todayStatus.kind === 'school' ? todayStatus.letter : '—';
+  const nextLabel = nextSchoolDayLabel(nextSchoolDay);
   const courseId = live ? (todaySchedule?.[live.index] ?? null) : null;
 
   const isCurrent = live?.kind === 'current';
-  const pillLead = live ? (isCurrent ? 'NOW' : 'NEXT') : `Day ${todayLetter}`;
-  const pillTrail = live ? `Period ${live.index + 1}` : 'Done';
+  const pillLead = isNoSchool
+    ? 'Today'
+    : live
+      ? isCurrent
+        ? 'NOW'
+        : 'NEXT'
+      : `Day ${todayLetter}`;
+  const pillTrail = isNoSchool ? 'Off' : live ? `Period ${live.index + 1}` : 'Done';
 
   return (
     <TouchableOpacity
@@ -70,10 +101,15 @@ export default function LiveNowCard({ todaySchedule, todayLetter }: LiveNowCardP
             <Text style={styles.between}>Starts in {live.minutesToBell} min</Text>
           )}
         </>
+      ) : isNoSchool ? (
+        <>
+          <Text style={styles.doneText}>No school today</Text>
+          {nextLabel ? <Text style={styles.range}>{nextLabel}</Text> : null}
+        </>
       ) : (
         <>
           <Text style={styles.doneText}>No more periods</Text>
-          <Text style={styles.range}>See you tomorrow</Text>
+          <Text style={styles.range}>{nextLabel ?? 'See you tomorrow'}</Text>
         </>
       )}
     </TouchableOpacity>

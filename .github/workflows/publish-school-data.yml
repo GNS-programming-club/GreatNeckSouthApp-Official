@@ -24,6 +24,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install PDF tools
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
       - name: Check out the data branch
         run: |
           if git ls-remote --exit-code --heads origin data > /dev/null; then

@@ -1,13 +1,19 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 
 import {
   buildOutputs,
   hasContentChanged,
   type AnnouncementsFile,
   type CalendarFile,
+  type DayLettersFile,
+  type SchedulePdfText,
   type SourceText,
 } from './build-outputs.ts';
+import { findSchedulePdfUrl } from './day-letters.ts';
 
 const CALENDAR_FEED_URL =
   'https://shs.greatneck.k12.ny.us/fs/calendar-manager/events.ics?calendar_ids[]=';
@@ -18,10 +24,13 @@ const SOURCE_URLS = {
   announcements:
     'https://docs.google.com/presentation/d/1SUIhXFy_Sl0eaCF-TgDycv273qTtNZpgEAQQbZ_k7Cg/export/txt',
 };
+const SCHEDULE_PAGE_URL = 'https://shs.greatneck.k12.ny.us/ab-schedule';
 const FETCH_TIMEOUT_MILLISECONDS = 20_000;
 const USER_AGENT = 'gns-school-data-pipeline';
 const CALENDAR_FILE_NAME = 'calendar.json';
 const ANNOUNCEMENTS_FILE_NAME = 'announcements.json';
+const DAY_LETTERS_FILE_NAME = 'day-letters.json';
+const runCommand = promisify(execFile);
 
 async function fetchSource(url: string): Promise<SourceText> {
   try {
@@ -37,6 +46,48 @@ async function fetchSource(url: string): Promise<SourceText> {
     return { ok: true, text: await response.text() };
   } catch (error) {
     return { ok: false, reason: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+async function fetchSchedulePdf(): Promise<SchedulePdfText> {
+  const page = await fetchSource(SCHEDULE_PAGE_URL);
+
+  if (!page.ok) {
+    return { ok: false, reason: `schedule page ${page.reason}` };
+  }
+
+  const pdfUrl = findSchedulePdfUrl(page.text, SCHEDULE_PAGE_URL);
+
+  if (!pdfUrl) {
+    return { ok: false, reason: 'no schedule PDF link on the page' };
+  }
+
+  const workDirectory = await mkdtemp(join(tmpdir(), 'ab-schedule-'));
+
+  try {
+    const response = await fetch(pdfUrl, {
+      headers: { 'User-Agent': USER_AGENT },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MILLISECONDS),
+    });
+
+    if (!response.ok) {
+      return { ok: false, reason: `schedule PDF HTTP ${response.status}` };
+    }
+
+    const pdfPath = join(workDirectory, 'schedule.pdf');
+    await writeFile(pdfPath, Buffer.from(await response.arrayBuffer()));
+    const [wordBoxes, drawing] = await Promise.all([
+      runCommand('pdftotext', ['-bbox', '-f', '1', '-l', '1', pdfPath, '-']),
+      runCommand('pdftocairo', ['-svg', '-f', '1', '-l', '1', pdfPath, '-'], {
+        maxBuffer: 64 * 1024 * 1024,
+      }),
+    ]);
+
+    return { ok: true, wordBoxes: wordBoxes.stdout, drawing: drawing.stdout };
+  } catch (error) {
+    return { ok: false, reason: error instanceof Error ? error.message : String(error) };
+  } finally {
+    await rm(workDirectory, { recursive: true, force: true });
   }
 }
 
@@ -70,25 +121,41 @@ async function publish(outputDirectory: string): Promise<number> {
 
   const calendarPath = join(outputDirectory, CALENDAR_FILE_NAME);
   const announcementsPath = join(outputDirectory, ANNOUNCEMENTS_FILE_NAME);
+  const dayLettersPath = join(outputDirectory, DAY_LETTERS_FILE_NAME);
 
-  const [school, holiday, district, announcements, previousCalendar, previousAnnouncements] =
-    await Promise.all([
-      fetchSource(SOURCE_URLS.school),
-      fetchSource(SOURCE_URLS.holiday),
-      fetchSource(SOURCE_URLS.district),
-      fetchSource(SOURCE_URLS.announcements),
-      readPreviousFile<CalendarFile>(calendarPath),
-      readPreviousFile<AnnouncementsFile>(announcementsPath),
-    ]);
+  const [
+    school,
+    holiday,
+    district,
+    announcements,
+    dayLetters,
+    previousCalendar,
+    previousAnnouncements,
+    previousDayLetters,
+  ] = await Promise.all([
+    fetchSource(SOURCE_URLS.school),
+    fetchSource(SOURCE_URLS.holiday),
+    fetchSource(SOURCE_URLS.district),
+    fetchSource(SOURCE_URLS.announcements),
+    fetchSchedulePdf(),
+    readPreviousFile<CalendarFile>(calendarPath),
+    readPreviousFile<AnnouncementsFile>(announcementsPath),
+    readPreviousFile<DayLettersFile>(dayLettersPath),
+  ]);
 
   const result = buildOutputs(
-    { school, holiday, district, announcements },
-    { calendar: previousCalendar, announcements: previousAnnouncements },
+    { school, holiday, district, announcements, dayLetters },
+    {
+      calendar: previousCalendar,
+      announcements: previousAnnouncements,
+      dayLetters: previousDayLetters,
+    },
     new Date()
   );
 
   await writeIfChanged(calendarPath, previousCalendar, result.calendar);
   await writeIfChanged(announcementsPath, previousAnnouncements, result.announcements);
+  await writeIfChanged(dayLettersPath, previousDayLetters, result.dayLetters);
 
   for (const failure of result.failures) {
     console.error(`Source failed, previous data kept: ${failure}`);

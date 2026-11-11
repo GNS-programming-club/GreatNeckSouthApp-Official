@@ -4,21 +4,13 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { dayLetterFor } from '@/constants/schedule';
 import { Colors, Radius, Type } from '@/constants/theme';
+import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
+import { useTodayIso } from '@/hooks/use-today-iso';
+import { dayStatusFor, fromIsoDate, toIsoDate, weekDates } from '@/lib/day-letters';
 
 const WEEKDAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
-
-function startOfWeek(date: Date) {
-  const result = new Date(date);
-  result.setHours(0, 0, 0, 0);
-  result.setDate(result.getDate() - result.getDay());
-
-  return result;
-}
-
 function isSameDay(a: Date, b: Date) {
   return (
     a.getFullYear() === b.getFullYear() &&
@@ -27,11 +19,20 @@ function isSameDay(a: Date, b: Date) {
   );
 }
 
-function toISODate(date: Date) {
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+function stripLabel(day: Date, dayLetters: ReturnType<typeof useSchoolData>['dayLetters']) {
+  const weekday = day.getDay();
 
-  return `${date.getFullYear()}-${month}-${day}`;
+  if (weekday === 0 || weekday === 6) {
+    return ' ';
+  }
+
+  const status = dayStatusFor(toIsoDate(day), dayLetters);
+
+  if (status.kind === 'school') {
+    return status.letter;
+  }
+
+  return status.kind === 'no-school' ? 'Off' : '—';
 }
 
 export function WeekStrip() {
@@ -40,20 +41,15 @@ export function WeekStrip() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
   const [weekOffset, setWeekOffset] = useState(0);
+  const { dayLetters } = useSchoolData();
 
-  const today = useMemo(() => {
-    const value = new Date();
-    value.setHours(0, 0, 0, 0);
+  const todayIso = useTodayIso();
+  const today = useMemo(() => fromIsoDate(todayIso), [todayIso]);
 
-    return value;
-  }, []);
-
-  const weekDays = useMemo(() => {
-    const base = startOfWeek(today);
-    base.setDate(base.getDate() + weekOffset * 7);
-
-    return Array.from({ length: 7 }, (_, index) => new Date(base.getTime() + index * MS_PER_DAY));
-  }, [today, weekOffset]);
+  const weekDays = useMemo(
+    () => weekDates(todayIso, weekOffset).map(fromIsoDate),
+    [todayIso, weekOffset]
+  );
 
   const monthLabel = useMemo(
     () => weekDays[0].toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
@@ -85,9 +81,7 @@ export function WeekStrip() {
       <View style={styles.week}>
         {weekDays.map((day, index) => {
           const todayMarked = isSameDay(day, today);
-          const weekday = day.getDay();
-          const isSchoolDay = weekday >= 1 && weekday <= 5;
-          const letter = isSchoolDay ? dayLetterFor(day) : null;
+          const letter = stripLabel(day, dayLetters);
 
           return (
             <TouchableOpacity
@@ -95,7 +89,7 @@ export function WeekStrip() {
               style={styles.day}
               activeOpacity={0.7}
               onPress={() =>
-                router.push({ pathname: '/calendar', params: { date: toISODate(day) } })
+                router.push({ pathname: '/calendar', params: { date: toIsoDate(day) } })
               }
             >
               <Text style={styles.weekdayLabel}>{WEEKDAY_LABELS[index]}</Text>
@@ -106,9 +100,7 @@ export function WeekStrip() {
                 </Text>
               </View>
 
-              <Text style={[styles.letter, todayMarked && styles.letterToday]}>
-                {letter ?? ' '}
-              </Text>
+              <Text style={[styles.letter, todayMarked && styles.letterToday]}>{letter}</Text>
             </TouchableOpacity>
           );
         })}
