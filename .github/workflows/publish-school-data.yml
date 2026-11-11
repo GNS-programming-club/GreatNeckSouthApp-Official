@@ -1,0 +1,58 @@
+name: Publish school data
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: publish-school-data
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out master
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: master
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+
+      - name: Check out the data branch
+        run: |
+          if git ls-remote --exit-code --heads origin data > /dev/null; then
+            git fetch --depth 1 origin data
+            git worktree add --detach data-out FETCH_HEAD
+          else
+            git worktree add --orphan -b data data-out
+          fi
+
+      - name: Test the pipeline
+        run: npm run test:school-data
+
+      - name: Publish
+        id: publish
+        continue-on-error: true
+        run: node --experimental-strip-types scripts/school-data/publish.ts data-out
+
+      - name: Commit changed files
+        if: always()
+        working-directory: data-out
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -A
+            git commit -m 'Refresh school data'
+            git push origin HEAD:data
+          fi
+
+      - name: Fail when a source failed
+        if: steps.publish.outcome == 'failure'
+        run: exit 1

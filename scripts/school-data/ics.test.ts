@@ -23,10 +23,10 @@ function eventWith(line: string): string {
   ].join('\r\n');
 }
 
-test('parses every event in the South High fixture', () => {
-  const events = parseIcs(readFixture('south-high.ics'));
+test('parses every event in the example calendar', () => {
+  const events = parseIcs(readFixture('example-calendar.ics'));
   assert.equal(events.length, 3);
-  assert.equal(events[0].summary, 'SH PSAT');
+  assert.equal(events[0].summary, 'SH Club Fair');
   assert.deepEqual(events[0].start, { kind: 'date', date: '2026-10-17' });
   assert.deepEqual(events[0].end, { kind: 'date', date: '2026-10-18' });
 });
