@@ -24,7 +24,15 @@ function allOk(): FetchedSources {
     school: { ok: true, text: calendar },
     holiday: { ok: true, text: calendar },
     district: { ok: true, text: calendar },
-    announcements: { ok: true, text: 'Robotics club meets Tuesday.\n\nBake sale today!\n' },
+    announcements: {
+      ok: true,
+      slides: [
+        { title: null, paragraphs: ['Kite Flying Club meets Tuesday.'] },
+        { title: null, paragraphs: ['Bake sale today!'] },
+      ],
+    },
+    announcementsDeckUrl: 'https://example.com/deck',
+    clubNames: ['Kite Flying Club'],
     dayLetters: schoolYearPdf(120),
   };
 }
@@ -126,11 +134,20 @@ test('keeps the previous announcements when the deck parses to nothing', () => {
   const result = buildOutputs(
     {
       ...allOk(),
-      announcements: { ok: true, text: 'Mission Statement\n\nThe district provides...' },
+      announcements: {
+        ok: true,
+        slides: [
+          { title: null, paragraphs: ['Mission Statement', '', 'The district provides...'] },
+        ],
+      },
     },
     {
       calendar: null,
-      announcements: { generatedAt: 'earlier', items: [{ id: 'abcd1234', text: 'Previous item' }] },
+      announcements: {
+        generatedAt: 'earlier',
+        deckUrl: 'https://example.com/deck',
+        items: [{ id: 'abcd1234', title: null, text: 'Previous item', club: null }],
+      },
       dayLetters: null,
     },
     now
@@ -140,6 +157,38 @@ test('keeps the previous announcements when the deck parses to nothing', () => {
     ['Previous item']
   );
   assert.deepEqual(result.failures, ['announcements: no items']);
+});
+
+test('publishes announcements tagged with their club and the deck address', () => {
+  const result = buildOutputs(allOk(), noPrevious(), now);
+
+  assert.equal(result.announcements.deckUrl, 'https://example.com/deck');
+  assert.deepEqual(
+    result.announcements.items.map((item) => item.club),
+    ['Kite Flying Club', null]
+  );
+});
+
+test('keeps the previous announcements when the deck failed to download', () => {
+  const result = buildOutputs(
+    { ...allOk(), announcements: { ok: false, reason: 'HTTP 404' } },
+    {
+      calendar: null,
+      announcements: {
+        generatedAt: 'earlier',
+        deckUrl: 'https://example.com/deck',
+        items: [{ id: 'abcd1234', title: null, text: 'Previous item', club: null }],
+      },
+      dayLetters: null,
+    },
+    now
+  );
+
+  assert.deepEqual(
+    result.announcements.items.map((item) => item.text),
+    ['Previous item']
+  );
+  assert.deepEqual(result.failures, ['announcements: HTTP 404']);
 });
 
 test('publishes the letters read from the schedule PDF', () => {

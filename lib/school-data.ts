@@ -35,8 +35,22 @@ function isCalendarEvent(value: unknown): value is CalendarEvent {
   );
 }
 
-function isAnnouncement(value: unknown): value is Announcement {
-  return isRecord(value) && typeof value.id === 'string' && typeof value.text === 'string';
+function isOptionalText(value: unknown): value is string | null | undefined {
+  return value === undefined || value === null || typeof value === 'string';
+}
+
+function toAnnouncement(value: unknown): Announcement | null {
+  if (
+    !isRecord(value) ||
+    typeof value.id !== 'string' ||
+    typeof value.text !== 'string' ||
+    !isOptionalText(value.title) ||
+    !isOptionalText(value.club)
+  ) {
+    return null;
+  }
+
+  return { id: value.id, title: value.title ?? null, text: value.text, club: value.club ?? null };
 }
 
 export function parseCalendarFile(value: unknown): CalendarFile | null {
@@ -54,8 +68,14 @@ export function parseAnnouncementsFile(value: unknown): AnnouncementsFile | null
     return null;
   }
 
-  return value.items.every(isAnnouncement)
-    ? { generatedAt: value.generatedAt, items: value.items }
+  if (!isOptionalText(value.deckUrl)) {
+    return null;
+  }
+
+  const items = value.items.map(toAnnouncement);
+
+  return items.every((item) => item !== null)
+    ? { generatedAt: value.generatedAt, deckUrl: value.deckUrl ?? null, items }
     : null;
 }
 

@@ -37,8 +37,28 @@ test('rejects a calendar file whose events are malformed', () => {
 });
 
 test('accepts a well-formed announcements file', () => {
-  const file = { generatedAt: 'x', items: [{ id: 'a1', text: 'Yearbook photos Friday' }] };
+  const file = {
+    generatedAt: 'x',
+    deckUrl: 'https://example.com/deck',
+    items: [{ id: 'a1', title: 'Photos', text: 'Yearbook photos Friday', club: 'Kite Club' }],
+  };
   assert.deepEqual(parseAnnouncementsFile(file), file);
+});
+
+test('fills in an empty title, club and deck address for a file published before they existed', () => {
+  const file = { generatedAt: 'x', items: [{ id: 'a1', text: 'Yearbook photos Friday' }] };
+  assert.deepEqual(parseAnnouncementsFile(file), {
+    generatedAt: 'x',
+    deckUrl: null,
+    items: [{ id: 'a1', title: null, text: 'Yearbook photos Friday', club: null }],
+  });
+});
+
+test('rejects an announcements file whose item title is not text', () => {
+  assert.equal(
+    parseAnnouncementsFile({ generatedAt: 'x', items: [{ id: 'a1', title: 7, text: 'Hi' }] }),
+    null
+  );
 });
 
 test('rejects an announcements file whose items lack text', () => {

@@ -11,9 +11,11 @@ import {
   type CalendarFile,
   type DayLettersFile,
   type SchedulePdfText,
+  type SourceSlides,
   type SourceText,
 } from './build-outputs.ts';
 import { findSchedulePdfUrl } from './day-letters.ts';
+import { extractSlideText, readSlideXmlFromPptx } from './slides.ts';
 
 const CALENDAR_FEED_URL =
   'https://shs.greatneck.k12.ny.us/fs/calendar-manager/events.ics?calendar_ids[]=';
@@ -21,9 +23,10 @@ const SOURCE_URLS = {
   school: `${CALENDAR_FEED_URL}11`,
   holiday: `${CALENDAR_FEED_URL}58`,
   district: `${CALENDAR_FEED_URL}53`,
-  announcements:
-    'https://docs.google.com/presentation/d/1SUIhXFy_Sl0eaCF-TgDycv273qTtNZpgEAQQbZ_k7Cg/export/txt',
 };
+const ANNOUNCEMENTS_DECK_URL =
+  'https://docs.google.com/presentation/d/1SUIhXFy_Sl0eaCF-TgDycv273qTtNZpgEAQQbZ_k7Cg';
+const CLUBS_FILE_URL = new URL('../../assets/data/club.json', import.meta.url);
 const SCHEDULE_PAGE_URL = 'https://shs.greatneck.k12.ny.us/ab-schedule';
 const FETCH_TIMEOUT_MILLISECONDS = 20_000;
 const USER_AGENT = 'gns-school-data-pipeline';
@@ -47,6 +50,31 @@ async function fetchSource(url: string): Promise<SourceText> {
   } catch (error) {
     return { ok: false, reason: error instanceof Error ? error.message : String(error) };
   }
+}
+
+async function fetchAnnouncementSlides(): Promise<SourceSlides> {
+  try {
+    const response = await fetch(`${ANNOUNCEMENTS_DECK_URL}/export/pptx`, {
+      headers: { 'User-Agent': USER_AGENT },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MILLISECONDS),
+    });
+
+    if (!response.ok) {
+      return { ok: false, reason: `HTTP ${response.status}` };
+    }
+
+    const pptx = new Uint8Array(await response.arrayBuffer());
+
+    return { ok: true, slides: readSlideXmlFromPptx(pptx).map(extractSlideText) };
+  } catch (error) {
+    return { ok: false, reason: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+async function readClubNames(): Promise<string[]> {
+  const clubs = JSON.parse(await readFile(CLUBS_FILE_URL, 'utf8')) as { title: string }[];
+
+  return clubs.map((club) => club.title);
 }
 
 async function fetchSchedulePdf(): Promise<SchedulePdfText> {
@@ -132,19 +160,29 @@ async function publish(outputDirectory: string): Promise<number> {
     previousCalendar,
     previousAnnouncements,
     previousDayLetters,
+    clubNames,
   ] = await Promise.all([
     fetchSource(SOURCE_URLS.school),
     fetchSource(SOURCE_URLS.holiday),
     fetchSource(SOURCE_URLS.district),
-    fetchSource(SOURCE_URLS.announcements),
+    fetchAnnouncementSlides(),
     fetchSchedulePdf(),
     readPreviousFile<CalendarFile>(calendarPath),
     readPreviousFile<AnnouncementsFile>(announcementsPath),
     readPreviousFile<DayLettersFile>(dayLettersPath),
+    readClubNames(),
   ]);
 
   const result = buildOutputs(
-    { school, holiday, district, announcements, dayLetters },
+    {
+      school,
+      holiday,
+      district,
+      announcements,
+      announcementsDeckUrl: `${ANNOUNCEMENTS_DECK_URL}/present`,
+      clubNames,
+      dayLetters,
+    },
     {
       calendar: previousCalendar,
       announcements: previousAnnouncements,

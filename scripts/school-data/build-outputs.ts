@@ -7,8 +7,11 @@ import {
 } from './calendar.ts';
 import { parseDayLetters, type DayLetters } from './day-letters.ts';
 import { parseIcs } from './ics.ts';
+import type { SlideText } from './slides.ts';
 
 export type SourceText = { ok: true; text: string } | { ok: false; reason: string };
+
+export type SourceSlides = { ok: true; slides: SlideText[] } | { ok: false; reason: string };
 
 export type SchedulePdfText =
   | { ok: true; wordBoxes: string; drawing: string }
@@ -18,13 +21,19 @@ export type FetchedSources = {
   school: SourceText;
   holiday: SourceText;
   district: SourceText;
-  announcements: SourceText;
+  announcements: SourceSlides;
+  announcementsDeckUrl: string;
+  clubNames: string[];
   dayLetters: SchedulePdfText;
 };
 
 export type CalendarFile = { generatedAt: string; events: CalendarEvent[] };
 
-export type AnnouncementsFile = { generatedAt: string; items: Announcement[] };
+export type AnnouncementsFile = {
+  generatedAt: string;
+  deckUrl: string | null;
+  items: Announcement[];
+};
 
 export type DayLettersFile = { generatedAt: string; letters: DayLetters };
 
@@ -66,6 +75,20 @@ function parseNonEmpty<Item>(
   return items;
 }
 
+function readAnnouncements(source: SourceSlides, clubNames: string[]): Announcement[] {
+  if (!source.ok) {
+    throw new Error(source.reason);
+  }
+
+  const items = parseAnnouncements(source.slides, clubNames);
+
+  if (items.length === 0) {
+    throw new Error('no items');
+  }
+
+  return items;
+}
+
 function readSchedulePdf(source: SchedulePdfText): DayLetters {
   if (!source.ok) {
     throw new Error(source.reason);
@@ -102,7 +125,7 @@ export function buildOutputs(
   let items: Announcement[];
 
   try {
-    items = parseNonEmpty(fetched.announcements, parseAnnouncements, 'no items');
+    items = readAnnouncements(fetched.announcements, fetched.clubNames);
   } catch (error) {
     failures.push(`announcements: ${errorMessage(error)}`);
     items = previous.announcements?.items ?? [];
@@ -121,7 +144,7 @@ export function buildOutputs(
 
   return {
     calendar: { generatedAt, events: sortCalendarEvents(events) },
-    announcements: { generatedAt, items },
+    announcements: { generatedAt, deckUrl: fetched.announcementsDeckUrl, items },
     dayLetters: { generatedAt, letters },
     failures,
   };
