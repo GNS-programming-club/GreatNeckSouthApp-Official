@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T20:02:41.688Z",
+  "generatedAt": "2026-11-13T08:08:30.797Z",
   "events": [
     {
       "id": "1198e099-a275-5d32-9d24-94a3b1ff4b0b",
@@ -9,24 +9,6 @@
       "allDay": true,
       "start": "2026-11-05",
       "end": "2026-11-06"
-    },
-    {
-      "id": "47fc3ea5-3413-53e1-93dd-b4f3836f1d4b",
-      "title": "Gr. K-5 11:45am Dismissal",
-      "source": "district",
-      "location": null,
-      "allDay": false,
-      "start": "2026-11-05T11:45:00-05:00",
-      "end": "2026-11-05T12:45:00-05:00"
-    },
-    {
-      "id": "d8872199-4f30-5c96-91c3-491fc0ce6f81",
-      "title": "Music Night I",
-      "source": "school",
-      "location": "Room 309",
-      "allDay": false,
-      "start": "2026-11-05T19:00:00-05:00",
-      "end": "2026-11-05T21:00:00-05:00"
     },
     {
       "id": "56252046-e67b-5ac7-92cf-326e25cf2908",
