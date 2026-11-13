@@ -8,6 +8,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
 const MAP_IMAGE = require('../../../assets/images/school-map.png');
@@ -24,7 +25,6 @@ const MAP_IMAGE_HEIGHT = resolvedMapImage.height;
 const MIN_SCALE = 1;
 const MAX_SCALE = 6;
 const ZOOM_SCALE = 2.5;
-const TAB_CLEARANCE = 100;
 
 const clamp = (value: number, min: number, max: number) => {
   'worklet';
@@ -37,6 +37,7 @@ export default function SchoolMapFull() {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
+  const bottomClearance = useTabBarClearance();
 
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -134,7 +135,7 @@ export default function SchoolMapFull() {
       </View>
 
       <View
-        style={styles.stage}
+        style={[styles.stage, { paddingBottom: bottomClearance }]}
         onLayout={(e) => {
           const { width, height } = e.nativeEvent.layout;
           setStageSize({ width, height });
@@ -152,7 +153,10 @@ export default function SchoolMapFull() {
           </Animated.View>
         </GestureDetector>
 
-        <Animated.View style={[styles.overlayHint, hintStyle]} pointerEvents="none">
+        <Animated.View
+          style={[styles.overlayHint, { bottom: bottomClearance + Spacing.md }, hintStyle]}
+          pointerEvents="none"
+        >
           <Text style={styles.mapHint}>Double tap or pinch to zoom</Text>
         </Animated.View>
       </View>
@@ -194,7 +198,6 @@ const createStyles = (colors: typeof Colors.light) =>
       alignItems: 'center',
       paddingHorizontal: Spacing.sm,
       paddingTop: Spacing.md,
-      paddingBottom: TAB_CLEARANCE,
     },
     mapContent: {
       justifyContent: 'center',
@@ -209,7 +212,6 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     overlayHint: {
       position: 'absolute',
-      bottom: TAB_CLEARANCE + Spacing.md,
       backgroundColor: colors.shadow,
       paddingHorizontal: Spacing.md,
       paddingVertical: Spacing.xs + 2,

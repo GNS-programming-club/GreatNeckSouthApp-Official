@@ -26,6 +26,7 @@ const ENABLED_STORAGE_KEY = 'eveningReminderEnabled';
 const SCHEDULE_STORAGE_KEY = 'userSchedule_v1';
 const ANDROID_CHANNEL_ID = 'reminders';
 const PLANNING_WINDOW_DAYS = 14;
+const REMINDER_IDENTIFIER_PREFIX = 'evening-reminder-';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -50,6 +51,16 @@ async function readFirstPeriod(letter: DayLetter): Promise<string | null> {
   }
 }
 
+async function cancelEveningReminders(): Promise<void> {
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+
+  await Promise.all(
+    scheduled
+      .filter((request) => request.identifier.startsWith(REMINDER_IDENTIFIER_PREFIX))
+      .map((request) => Notifications.cancelScheduledNotificationAsync(request.identifier))
+  );
+}
+
 async function scheduleEveningReminders(
   letters: DayLetters,
   isStale: () => boolean
@@ -60,7 +71,7 @@ async function scheduleEveningReminders(
     return;
   }
 
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  await cancelEveningReminders();
 
   if (isStale()) {
     return;
@@ -76,7 +87,7 @@ async function scheduleEveningReminders(
   await Promise.all(
     reminders.map((reminder) =>
       Notifications.scheduleNotificationAsync({
-        identifier: `evening-reminder-${reminder.schoolDate}`,
+        identifier: `${REMINDER_IDENTIFIER_PREFIX}${reminder.schoolDate}`,
         content: { title: reminder.title, body: reminder.body },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DATE,
@@ -149,7 +160,7 @@ export function RemindersProvider({ children }: { children: React.ReactNode }) {
       }
     } else {
       isEnabledRef.current = false;
-      await Notifications.cancelAllScheduledNotificationsAsync().catch(() => undefined);
+      await cancelEveningReminders().catch(() => undefined);
     }
 
     isEnabledRef.current = enabled;

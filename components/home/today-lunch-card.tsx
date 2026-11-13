@@ -4,15 +4,15 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { getMenuItemsForDay, getParsedMenuForMonth } from '@/api/daily-menu';
 import Card from '@/components/ui/card';
-import { useToday } from '@/hooks/use-today';
 import Section from '@/components/ui/section';
 import { Colors, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { useTodayIso } from '@/hooks/use-today-iso';
 
 const MAX_ITEMS = 4;
 
 export function useTodayLunch() {
-  const today = useToday();
+  const todayIso = useTodayIso();
   const [items, setItems] = useState<string[] | null>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -20,9 +20,7 @@ export function useTodayLunch() {
     let cancelled = false;
 
     const loadLunch = async () => {
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      const day = today.getDate();
+      const [year, month, day] = todayIso.split('-').map(Number);
 
       setItems(null);
 
@@ -52,7 +50,7 @@ export function useTodayLunch() {
     return () => {
       cancelled = true;
     };
-  }, [today]);
+  }, [todayIso]);
 
   return { items, hasError };
 }

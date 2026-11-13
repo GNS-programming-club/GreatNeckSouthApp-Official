@@ -149,7 +149,7 @@ export default function Bus() {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.replace('/tools')}
+            onPress={() => router.back()}
             activeOpacity={0.8}
             accessibilityRole="button"
             accessibilityLabel="Back"

@@ -35,7 +35,7 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  const { calendar, dayLetters } = useSchoolData();
+  const { calendar, dayLetters, status } = useSchoolData();
 
   const isoDate = toIsoDate(date);
   const headline = `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`;
@@ -50,7 +50,8 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
   const events = useMemo(() => calendar?.events ?? [], [calendar]);
   const dayEvents = useMemo(() => eventsOnDate(events, isoDate), [events, isoDate]);
   const dayHolidays = useMemo(() => holidaysOnDate(events, isoDate), [events, isoDate]);
-  const eventsFallback = calendar ? 'No events posted' : "Couldn't load school events";
+  const unavailableText = status === 'loading' ? 'Loading…' : "Couldn't load school events";
+  const eventsFallback = calendar ? 'No events posted' : unavailableText;
 
   return (
     <Card>
