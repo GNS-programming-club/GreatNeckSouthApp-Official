@@ -87,36 +87,21 @@ export default function SettingsPage() {
               />
             </View>
 
-            <View style={styles.row}>
-              <View style={styles.rowLeft}>
-                <Text style={styles.rowTitle}>Lunch Menu Updates</Text>
-                <Text style={styles.rowSubtitle}>Get notified when today’s menu changes</Text>
-              </View>
-              <Switch
-                value={false}
-                onValueChange={() => {}}
-                trackColor={{ false: colors.border, true: `${colors.primary}66` }}
-                thumbColor={colors.mutedText}
-                disabled
-              />
-            </View>
-
-            <View style={styles.row}>
+            <View style={[styles.row, styles.rowLast]}>
               <View style={styles.rowLeft}>
                 <Text style={styles.rowTitle}>Event Reminders</Text>
-                <Text style={styles.rowSubtitle}>Reminders for club events and school events</Text>
+                <Text style={styles.rowSubtitle}>
+                  {reminders.isPermissionDenied
+                    ? 'Turn on notifications for this app in your phone settings'
+                    : 'Before school, see what the school has on today'}
+                </Text>
               </View>
               <Switch
-                value={false}
-                onValueChange={() => {}}
-                trackColor={{ false: colors.border, true: `${colors.primary}66` }}
-                thumbColor={colors.mutedText}
-                disabled
+                value={reminders.isEventRemindersEnabled}
+                onValueChange={reminders.setEventRemindersEnabled}
+                trackColor={{ false: colors.border, true: colors.primary }}
+                accessibilityLabel="Event reminders"
               />
-            </View>
-
-            <View style={[styles.row, styles.rowLast]}>
-              <Text style={styles.helperText}>Notification settings coming soon</Text>
             </View>
           </View>
         </View>
@@ -233,10 +218,5 @@ const createStyles = (colors: typeof Colors.light) =>
       fontWeight: '500',
       color: colors.mutedText,
       lineHeight: 18,
-    },
-    helperText: {
-      ...Type.label,
-      fontWeight: '500',
-      color: colors.mutedText,
     },
   });

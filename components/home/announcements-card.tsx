@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
 import { Colors, Spacing, Type } from '@/constants/theme';
@@ -20,6 +20,7 @@ export default function AnnouncementsCard() {
   const items = announcements?.items ?? [];
   const visibleItems = isExpanded ? items : items.slice(0, COLLAPSED_COUNT);
   const hiddenCount = items.length - COLLAPSED_COUNT;
+  const deckUrl = announcements?.deckUrl ?? null;
 
   return (
     <Card style={styles.card}>
@@ -39,9 +40,13 @@ export default function AnnouncementsCard() {
           {visibleItems.map((item) => (
             <View key={item.id} style={styles.itemRow}>
               <View style={styles.dot} />
-              <Text style={styles.itemText} numberOfLines={isExpanded ? undefined : 3}>
-                {item.text}
-              </Text>
+              <View style={styles.itemBody}>
+                {item.club ? <Text style={styles.club}>{item.club}</Text> : null}
+                {item.title ? <Text style={styles.itemTitle}>{item.title}</Text> : null}
+                <Text style={styles.itemText} numberOfLines={isExpanded ? undefined : 3}>
+                  {item.text}
+                </Text>
+              </View>
             </View>
           ))}
         </View>
@@ -60,7 +65,22 @@ export default function AnnouncementsCard() {
       ) : null}
 
       {announcements ? (
-        <Text style={styles.footer}>{formatUpdatedAgo(announcements.generatedAt, new Date())}</Text>
+        <View style={styles.footerRow}>
+          <Text style={styles.footer}>
+            {formatUpdatedAgo(announcements.generatedAt, new Date())}
+          </Text>
+          {deckUrl ? (
+            <TouchableOpacity
+              onPress={() => Linking.openURL(deckUrl)}
+              hitSlop={8}
+              accessibilityRole="link"
+              style={styles.deckLink}
+            >
+              <Text style={styles.toggle}>Open full deck</Text>
+              <Feather name="external-link" size={14} color={colors.primary} />
+            </TouchableOpacity>
+          ) : null}
+        </View>
       ) : null}
     </Card>
   );
@@ -97,8 +117,23 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       backgroundColor: colors.primary,
       marginTop: 7,
     },
-    itemText: {
+    itemBody: {
       flex: 1,
+      gap: Spacing.xs,
+    },
+    club: {
+      color: colors.primary,
+      fontSize: Type.caption.fontSize,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+    },
+    itemTitle: {
+      color: colors.text,
+      fontSize: Type.body.fontSize,
+      fontWeight: '700',
+    },
+    itemText: {
       color: colors.text,
       fontSize: Type.body.fontSize,
       fontWeight: Type.body.fontWeight,
@@ -112,6 +147,17 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       color: colors.primary,
       fontSize: Type.label.fontSize,
       fontWeight: '700',
+    },
+    footerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: Spacing.md,
+    },
+    deckLink: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing.xs,
     },
     footer: {
       color: colors.mutedText,
