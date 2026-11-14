@@ -1,42 +1,6 @@
 {
-  "generatedAt": "2026-11-13T08:08:30.797Z",
+  "generatedAt": "2026-11-14T11:36:47.795Z",
   "events": [
-    {
-      "id": "1198e099-a275-5d32-9d24-94a3b1ff4b0b",
-      "title": "Gr. 12 Photo Make-ups by Appt. (thru 11/6)",
-      "source": "school",
-      "location": "Library Makerspace",
-      "allDay": true,
-      "start": "2026-11-05",
-      "end": "2026-11-06"
-    },
-    {
-      "id": "56252046-e67b-5ac7-92cf-326e25cf2908",
-      "title": "FIRST QUARTER MARKING PERIOD ENDS",
-      "source": "district",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-06",
-      "end": "2026-11-06"
-    },
-    {
-      "id": "a4304a2e-0e6f-5eb9-a0de-bdf6c94620c6",
-      "title": "HS Winter Sports Registration Deadline",
-      "source": "district",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-06",
-      "end": "2026-11-06"
-    },
-    {
-      "id": "d8501b83-34e8-597b-9e53-8c95562ac3e7",
-      "title": "Blood Drive",
-      "source": "school",
-      "location": "West Gym",
-      "allDay": true,
-      "start": "2026-11-06",
-      "end": "2026-11-06"
-    },
     {
       "id": "61f8067b-9671-512a-aa2f-1b4b79fee391",
       "title": "HS SAT",
