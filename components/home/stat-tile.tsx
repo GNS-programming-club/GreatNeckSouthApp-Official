@@ -2,7 +2,16 @@ import Feather from '@expo/vector-icons/Feather';
 import React, { useMemo } from 'react';
 import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
+import {
+  Colors,
+  Elevation,
+  FontWeight,
+  IconSize,
+  Radius,
+  Spacing,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type StatTileProps = {
@@ -34,7 +43,7 @@ export default function StatTile({
   const content = (
     <>
       <View style={styles.labelRow}>
-        {icon ? <Feather name={icon} size={18} color={iconColor} /> : null}
+        {icon ? <Feather name={icon} size={IconSize.md} color={iconColor} /> : null}
         <Text style={styles.label}>{label}</Text>
       </View>
       <View style={styles.body}>{children}</View>
@@ -77,9 +86,9 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     label: {
       color: colors.mutedText,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     body: {
       gap: Spacing.xs,

@@ -8,14 +8,10 @@ import MonthCalendar from '@/components/calendar/month-calendar';
 import { useMonthMenu } from '@/components/calendar/use-month-menu';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
-import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, Elevation, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
 import { useDayStatus } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
-
-const ON_HERO = '#FFFFFF';
-const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
-const PILL_BG = 'rgba(255,255,255,0.18)';
 
 const MONTHS_SHORT = [
   'Jan',
@@ -139,7 +135,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     hero: {
       ...Elevation.raised,
       shadowColor: colors.shadow,
-      backgroundColor: colors.primary,
+      backgroundColor: colors.primaryFill,
       borderRadius: Radius.lg,
       borderCurve: 'continuous',
       paddingVertical: Spacing.xl,
@@ -149,17 +145,17 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     heroPill: {
       alignSelf: 'flex-start',
-      backgroundColor: PILL_BG,
+      backgroundColor: colors.onPrimarySoft,
       borderRadius: Radius.pill,
       paddingVertical: Spacing.xs + 1,
       paddingHorizontal: Spacing.md,
     },
     heroPillText: {
-      color: ON_HERO,
+      color: colors.primaryText,
       fontSize: Type.caption.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     heroRow: {
       flexDirection: 'row',
@@ -167,26 +163,23 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       gap: Spacing.lg,
     },
     heroLetter: {
-      color: ON_HERO,
-      fontSize: 56,
-      fontWeight: '800',
-      letterSpacing: -1.5,
-      lineHeight: 58,
+      color: colors.primaryText,
+      ...Type.hero,
     },
     heroMeta: {
       flex: 1,
       gap: Spacing.xs,
     },
     heroMetaLabel: {
-      color: ON_HERO_MUTED,
+      color: colors.onPrimaryMuted,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     heroDate: {
-      color: ON_HERO,
+      color: colors.primaryText,
       fontSize: Type.heading.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
   });

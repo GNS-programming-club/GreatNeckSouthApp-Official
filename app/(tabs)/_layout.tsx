@@ -15,7 +15,7 @@ export default function TabLayout() {
         <Tabs
           tabBar={(props: any) => <TabBar {...props} />}
           screenOptions={{
-            tabBarActiveTintColor: Colors[actualTheme].tint,
+            tabBarActiveTintColor: Colors[actualTheme].primary,
             headerShown: false,
           }}
         >

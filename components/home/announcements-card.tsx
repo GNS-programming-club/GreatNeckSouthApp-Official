@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, IconSize, Spacing, Tracking, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { formatUpdatedAgo } from '@/lib/school-data';
@@ -25,7 +25,7 @@ export default function AnnouncementsCard() {
   return (
     <Card style={styles.card}>
       <View style={styles.labelRow}>
-        <Feather name="message-square" size={18} color={colors.primary} />
+        <Feather name="message-square" size={IconSize.md} color={colors.primary} />
         <Text style={styles.label}>Announcements</Text>
       </View>
 
@@ -77,7 +77,7 @@ export default function AnnouncementsCard() {
               style={styles.deckLink}
             >
               <Text style={styles.toggle}>Open full deck</Text>
-              <Feather name="external-link" size={14} color={colors.primary} />
+              <Feather name="external-link" size={IconSize.sm} color={colors.primary} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -124,14 +124,14 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     club: {
       color: colors.primary,
       fontSize: Type.caption.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     itemTitle: {
       color: colors.text,
       fontSize: Type.body.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
     itemText: {
       color: colors.text,
@@ -141,12 +141,12 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     muted: {
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     toggle: {
       color: colors.primary,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
     footerRow: {
       flexDirection: 'row',
@@ -162,6 +162,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     footer: {
       color: colors.mutedText,
       fontSize: Type.caption.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
   });

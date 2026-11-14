@@ -12,7 +12,7 @@ import { useTodayLunch } from '@/components/home/today-lunch-card';
 import { WeekStrip } from '@/components/home/week-strip';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useDayStatus, useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
@@ -21,11 +21,11 @@ import { fromIsoDate, nextSchoolDay, toIsoDate } from '@/lib/day-letters';
 const STORAGE_KEY = 'userSchedule_v1';
 
 function greetingForHour(hour: number) {
-  if (hour < 12) return 'Good morning';
+  if (hour < 12) return 'Good morning!';
 
-  if (hour < 18) return 'Good afternoon';
+  if (hour < 18) return 'Good afternoon!';
 
-  return 'Good evening';
+  return 'Good evening!';
 }
 
 export default function HomeScreen() {
@@ -170,7 +170,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     dateSubtitle: {
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     row: {
       flexDirection: 'row',
@@ -182,7 +182,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     tileMuted: {
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     lunchList: {
       gap: Spacing.xs,
@@ -190,18 +190,15 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     lunchItem: {
       color: colors.text,
       fontSize: Type.body.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
     dayGlyph: {
       color: colors.text,
-      fontSize: 56,
-      fontWeight: '800',
-      letterSpacing: -1.5,
-      lineHeight: 58,
+      ...Type.hero,
     },
     daySub: {
       color: colors.mutedText,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
   });

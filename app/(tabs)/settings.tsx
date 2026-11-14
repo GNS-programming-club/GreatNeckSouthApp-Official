@@ -4,7 +4,7 @@ import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, IconSize, LineHeight, Radius, Spacing, Type } from '@/constants/theme';
 import { useReminders } from '@/contexts/reminders-context';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -59,7 +59,9 @@ export default function SettingsPage() {
                     <Text style={styles.rowSubtitle}>{option.subtitle}</Text>
                   </View>
 
-                  {selected ? <Feather name="check" size={20} color={colors.primary} /> : null}
+                  {selected ? (
+                    <Feather name="check" size={IconSize.lg} color={colors.primary} />
+                  ) : null}
                 </TouchableOpacity>
               );
             })}
@@ -113,9 +115,7 @@ export default function SettingsPage() {
             <View style={[styles.row, styles.rowLast]}>
               <View style={styles.rowLeft}>
                 <Text style={styles.rowTitle}>Great Neck South Programming Club</Text>
-                <Text style={styles.rowSubtitle}>
-                  Built with care, coffee, and love. Have a great day.
-                </Text>
+                <Text style={styles.rowSubtitle}>Built with care, coffee, and love &lt;3</Text>
               </View>
             </View>
           </View>
@@ -136,7 +136,7 @@ function SectionHeading({ icon, title, colors, styles }: SectionHeadingProps) {
   return (
     <View style={styles.sectionHeader}>
       <View style={styles.sectionIcon}>
-        <Feather name={icon} size={18} color={colors.primary} />
+        <Feather name={icon} size={IconSize.md} color={colors.primary} />
       </View>
       <Text style={styles.sectionTitle}>{title}</Text>
     </View>
@@ -207,7 +207,7 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     rowTitle: {
       ...Type.body,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       color: colors.text,
     },
     rowTitleSelected: {
@@ -215,8 +215,8 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     rowSubtitle: {
       ...Type.label,
-      fontWeight: '500',
+      fontWeight: FontWeight.medium,
       color: colors.mutedText,
-      lineHeight: 18,
+      lineHeight: LineHeight.compact,
     },
   });

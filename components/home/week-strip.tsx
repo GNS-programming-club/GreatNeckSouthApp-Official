@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { Colors, Radius, Type } from '@/constants/theme';
+import { Colors, Spacing, FontWeight, IconSize, Radius, Tracking, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
@@ -64,7 +64,7 @@ export function WeekStrip() {
           hitSlop={10}
           style={styles.navButton}
         >
-          <Feather name="chevron-left" size={18} color={colors.mutedText} />
+          <Feather name="chevron-left" size={IconSize.md} color={colors.mutedText} />
         </TouchableOpacity>
 
         <Text style={styles.monthLabel}>{monthLabel}</Text>
@@ -74,7 +74,7 @@ export function WeekStrip() {
           hitSlop={10}
           style={styles.navButton}
         >
-          <Feather name="chevron-right" size={18} color={colors.mutedText} />
+          <Feather name="chevron-right" size={IconSize.md} color={colors.mutedText} />
         </TouchableOpacity>
       </View>
 
@@ -112,7 +112,7 @@ export function WeekStrip() {
 const createStyles = (colors: (typeof Colors)['light']) =>
   StyleSheet.create({
     card: {
-      gap: 14,
+      gap: Spacing.md,
     },
     header: {
       flexDirection: 'row',
@@ -120,13 +120,13 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       justifyContent: 'space-between',
     },
     navButton: {
-      padding: 4,
+      padding: Spacing.xs,
     },
     monthLabel: {
       color: colors.text,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
-      letterSpacing: 0.3,
+      fontWeight: FontWeight.bold,
+      letterSpacing: Tracking.wide,
     },
     week: {
       flexDirection: 'row',
@@ -135,12 +135,11 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     day: {
       flex: 1,
       alignItems: 'center',
-      gap: 6,
+      gap: Spacing.xs,
     },
     weekdayLabel: {
       color: colors.mutedText,
-      fontSize: 11,
-      fontWeight: '600',
+      ...Type.micro,
     },
     dateCircle: {
       width: 40,
@@ -151,20 +150,20 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       justifyContent: 'center',
     },
     dateCircleToday: {
-      backgroundColor: colors.primary,
+      backgroundColor: colors.primaryFill,
     },
     dateText: {
       color: colors.text,
-      fontSize: 14,
-      fontWeight: '600',
+      fontSize: Type.body.fontSize,
+      fontWeight: FontWeight.semibold,
     },
     dateTextToday: {
       color: colors.primaryText,
     },
     letter: {
       color: colors.mutedText,
-      fontSize: 10,
-      fontWeight: '700',
+      fontSize: Type.micro.fontSize,
+      fontWeight: FontWeight.bold,
     },
     letterToday: {
       color: colors.primary,

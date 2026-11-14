@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { Colors, Radius, Type } from '@/constants/theme';
+import { Colors, IconSize, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type ToolTileProps = {
@@ -22,7 +22,7 @@ export default function ToolTile({ icon, label, meta, onPress, full = false }: T
   return (
     <Card onPress={onPress} style={[styles.tile, full ? styles.full : styles.half]}>
       <View style={styles.iconWrap}>
-        <Feather name={icon} size={22} color={colors.primary} />
+        <Feather name={icon} size={IconSize.xl} color={colors.primary} />
       </View>
       <View style={styles.textWrap}>
         <Text style={styles.label}>{label}</Text>
@@ -54,7 +54,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       justifyContent: 'center',
     },
     textWrap: {
-      gap: 2,
+      gap: Spacing.xxs,
     },
     label: {
       color: colors.text,

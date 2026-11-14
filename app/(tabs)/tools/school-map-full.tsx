@@ -1,13 +1,12 @@
-import Feather from '@expo/vector-icons/Feather';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Image as RNImage, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image as RNImage, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import PageHeader from '@/components/tools/page-header';
+import { Colors, FontWeight, Radius, Spacing, Type } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -36,7 +35,6 @@ export default function SchoolMapFull() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const router = useRouter();
   const bottomClearance = useTabBarClearance();
 
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
@@ -121,18 +119,7 @@ export default function SchoolMapFull() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-        >
-          <Feather name="chevron-left" size={24} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Full Map</Text>
-      </View>
+      <PageHeader title="Full Map" />
 
       <View
         style={[styles.stage, { paddingBottom: bottomClearance }]}
@@ -170,26 +157,6 @@ const createStyles = (colors: typeof Colors.light) =>
       flex: 1,
       backgroundColor: colors.background,
     },
-    header: {
-      paddingHorizontal: Spacing.lg,
-      paddingTop: Spacing.xl,
-      paddingBottom: Spacing.lg,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      backgroundColor: colors.background,
-    },
-    backButton: {
-      alignSelf: 'flex-start',
-      height: 36,
-      width: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    title: {
-      marginTop: Spacing.sm,
-      ...Type.display,
-      color: colors.text,
-    },
     stage: {
       flex: 1,
       overflow: 'hidden',
@@ -215,11 +182,11 @@ const createStyles = (colors: typeof Colors.light) =>
       backgroundColor: colors.shadow,
       paddingHorizontal: Spacing.md,
       paddingVertical: Spacing.xs + 2,
-      borderRadius: 999,
+      borderRadius: Radius.pill,
     },
     mapHint: {
       color: colors.primaryText,
       ...Type.caption,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
   });

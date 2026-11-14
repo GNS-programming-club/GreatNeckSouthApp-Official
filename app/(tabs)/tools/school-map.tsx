@@ -5,10 +5,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
+import PageHeader from '@/components/tools/page-header';
 import DirectoryList from '@/components/tools/directory-list';
 import Card from '@/components/ui/card';
 import Section from '@/components/ui/section';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, IconSize, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import mapData from '@/assets/data/map-rooms.json';
 
@@ -84,7 +85,7 @@ function EntryRow({ entry }: { entry: Entry }) {
         {entry.dept}
       </Text>
       <View style={styles.rowAreaWrap}>
-        <Feather name="map-pin" size={12} color={colors.mutedText} />
+        <Feather name="map-pin" size={IconSize.sm} color={colors.mutedText} />
         <Text style={styles.rowArea} numberOfLines={1}>
           {entry.area}
         </Text>
@@ -107,7 +108,7 @@ function EntryDetailBody({ entry, onViewMap }: { entry: Entry; onViewMap: () => 
 
       <Section title="Where to find it">
         <View style={styles.rowAreaWrap}>
-          <Feather name="map-pin" size={14} color={colors.primary} />
+          <Feather name="map-pin" size={IconSize.sm} color={colors.primary} />
           <Text style={styles.bodyText}>{entry.area}</Text>
         </View>
       </Section>
@@ -121,7 +122,7 @@ function EntryDetailBody({ entry, onViewMap }: { entry: Entry; onViewMap: () => 
       </Section>
 
       <TouchableOpacity style={styles.mapButton} onPress={onViewMap} activeOpacity={0.85}>
-        <Feather name="map" size={18} color={colors.primaryText} />
+        <Feather name="map" size={IconSize.md} color={colors.primaryText} />
         <Text style={styles.mapButtonText}>View on full map</Text>
       </TouchableOpacity>
     </View>
@@ -142,31 +143,20 @@ export default function SchoolMap() {
   const listHeader = (
     <TouchableOpacity style={styles.mapCard} onPress={openFullMap} activeOpacity={0.85}>
       <View style={styles.mapCardIcon}>
-        <Feather name="map" size={20} color={colors.primary} />
+        <Feather name="map" size={IconSize.lg} color={colors.primary} />
       </View>
       <View style={styles.mapCardText}>
         <Text style={styles.mapCardTitle}>View full map</Text>
         <Text style={styles.mapCardSub}>See the whole building schematic</Text>
       </View>
-      <Feather name="chevron-right" size={20} color={colors.mutedText} />
+      <Feather name="chevron-right" size={IconSize.lg} color={colors.mutedText} />
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <View style={styles.flex}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-          >
-            <Feather name="chevron-left" size={24} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Find a Room</Text>
-        </View>
+        <PageHeader title="Find a Room" />
 
         <DirectoryList<Entry>
           data={ENTRIES}
@@ -207,25 +197,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     flex: {
       flex: 1,
     },
-    header: {
-      paddingHorizontal: Spacing.lg,
-      paddingTop: Spacing.xl,
-      paddingBottom: Spacing.lg,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-    },
-    backButton: {
-      width: 36,
-      height: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignSelf: 'flex-start',
-    },
-    headerTitle: {
-      marginTop: Spacing.sm,
-      ...Type.display,
-      color: colors.text,
-    },
     mapCard: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -248,7 +219,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     mapCardText: {
       flex: 1,
-      gap: 2,
+      gap: Spacing.xxs,
     },
     mapCardTitle: {
       ...Type.heading,
@@ -256,7 +227,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     mapCardSub: {
       ...Type.label,
-      fontWeight: '500',
+      fontWeight: FontWeight.medium,
       color: colors.mutedText,
     },
     rowTop: {
@@ -272,23 +243,23 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     rowSub: {
       ...Type.body,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
       color: colors.mutedText,
     },
     levelPill: {
       paddingHorizontal: Spacing.sm + 2,
-      paddingVertical: 3,
+      paddingVertical: Spacing.xs,
       borderRadius: Radius.pill,
       backgroundColor: colors.accentSoft,
     },
     levelText: {
       ...Type.caption,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       color: colors.primary,
     },
     rowDept: {
       ...Type.label,
-      fontWeight: '500',
+      fontWeight: FontWeight.medium,
       color: colors.mutedText,
     },
     rowAreaWrap: {
@@ -299,7 +270,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     rowArea: {
       flex: 1,
       ...Type.label,
-      fontWeight: '500',
+      fontWeight: FontWeight.medium,
       color: colors.mutedText,
     },
     detailBody: {
@@ -311,7 +282,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     detailSub: {
       ...Type.heading,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
       color: colors.mutedText,
     },
     bodyText: {
@@ -327,11 +298,11 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       paddingVertical: Spacing.md,
       borderRadius: Radius.md,
       borderCurve: 'continuous',
-      backgroundColor: colors.primary,
+      backgroundColor: colors.primaryFill,
     },
     mapButtonText: {
       ...Type.body,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       color: colors.primaryText,
     },
   });

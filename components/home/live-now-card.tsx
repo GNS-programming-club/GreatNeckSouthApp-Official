@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, Elevation, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useLivePeriod } from '@/hooks/use-live-period';
 import { fromIsoDate, type DayLetter, type DayStatus } from '@/lib/day-letters';
@@ -12,11 +12,6 @@ type LiveNowCardProps = {
   todayStatus: DayStatus;
   nextSchoolDay: { date: string; letter: DayLetter } | null;
 };
-
-const ON_HERO = '#FFFFFF';
-const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
-const PILL_BG = 'rgba(255,255,255,0.18)';
-const TRACK = 'rgba(255,255,255,0.28)';
 
 function nextSchoolDayLabel(nextSchoolDay: LiveNowCardProps['nextSchoolDay']): string | null {
   if (!nextSchoolDay) {
@@ -121,7 +116,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     field: {
       ...Elevation.raised,
       shadowColor: colors.shadow,
-      backgroundColor: colors.primary,
+      backgroundColor: colors.primaryFill,
       borderRadius: Radius.lg,
       borderCurve: 'continuous',
       paddingVertical: Spacing.xl,
@@ -131,21 +126,21 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     pill: {
       alignSelf: 'flex-start',
-      backgroundColor: PILL_BG,
+      backgroundColor: colors.onPrimarySoft,
       borderRadius: Radius.pill,
       paddingVertical: Spacing.xs + 1,
       paddingHorizontal: Spacing.md,
     },
     pillText: {
-      color: ON_HERO,
+      color: colors.primaryText,
       fontSize: Type.caption.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     pillTextSoft: {
-      color: ON_HERO_MUTED,
-      fontWeight: '600',
+      color: colors.onPrimaryMuted,
+      fontWeight: FontWeight.semibold,
     },
     numeralRow: {
       flexDirection: 'row',
@@ -153,22 +148,20 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       gap: Spacing.sm,
     },
     numeral: {
-      color: ON_HERO,
-      fontSize: 64,
-      fontWeight: '800',
-      letterSpacing: -1.5,
+      color: colors.primaryText,
+      ...Type.hero,
     },
     numeralLabel: {
-      color: ON_HERO_MUTED,
+      color: colors.onPrimaryMuted,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     range: {
-      color: ON_HERO_MUTED,
+      color: colors.onPrimaryMuted,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     rangeRow: {
       flexDirection: 'row',
@@ -176,35 +169,35 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       gap: Spacing.sm,
     },
     rangeCourse: {
-      color: ON_HERO,
+      color: colors.primaryText,
       fontSize: Type.body.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
     rangeDivider: {
       width: 1,
       height: 13,
-      backgroundColor: TRACK,
+      backgroundColor: colors.onPrimaryTrack,
     },
     track: {
       height: 6,
       borderRadius: Radius.pill,
-      backgroundColor: TRACK,
+      backgroundColor: colors.onPrimaryTrack,
       overflow: 'hidden',
     },
     fill: {
       height: 6,
       borderRadius: Radius.pill,
-      backgroundColor: ON_HERO,
+      backgroundColor: colors.primaryText,
     },
     between: {
-      color: ON_HERO_MUTED,
+      color: colors.onPrimaryMuted,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
     doneText: {
-      color: ON_HERO,
+      color: colors.primaryText,
       fontSize: Type.title.fontSize,
-      fontWeight: '800',
-      letterSpacing: -0.5,
+      fontWeight: FontWeight.heavy,
+      letterSpacing: Tracking.tight,
     },
   });

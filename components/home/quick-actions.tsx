@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import Card from '@/components/ui/card';
 import Section from '@/components/ui/section';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, IconSize, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type QuickAction = {
@@ -36,7 +36,7 @@ export function QuickActions() {
             onPress={() => router.push(action.path as any)}
             style={styles.tile}
           >
-            <Feather name={action.icon} size={22} color={colors.primary} />
+            <Feather name={action.icon} size={IconSize.xl} color={colors.primary} />
             <Text style={styles.label}>{action.label}</Text>
           </Card>
         ))}

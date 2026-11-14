@@ -8,17 +8,15 @@ export const Colors = {
     surface: '#F4F6F9',
     surfaceAlt: '#EBEEF3',
     border: '#E2E6EC',
-    primary: '#2563EB',
+    primary: '#2158DA',
+    primaryFill: '#1D4ED8',
     primaryText: '#FFFFFF',
-    accent: '#2563EB',
+    onPrimaryMuted: 'rgba(255,255,255,0.78)',
+    onPrimarySoft: 'rgba(0,0,0,0.2)',
+    onPrimaryTrack: 'rgba(0,0,0,0.2)',
+    onPrimaryHairline: 'rgba(255,255,255,0.35)',
     accentSoft: '#E8EEFF',
-    icon: '#5B6472',
-    tint: '#2563EB',
-    tabIconDefault: '#9AA3B2',
-    tabIconSelected: '#2563EB',
     shadow: 'rgba(10,11,13,0.12)',
-    successText: '#2563EB',
-    warnText: '#5B6472',
   },
   dark: {
     text: '#F5F7FA',
@@ -28,20 +26,19 @@ export const Colors = {
     surfaceAlt: '#1C1F26',
     border: '#23262E',
     primary: '#3B82F6',
+    primaryFill: '#1D4ED8',
     primaryText: '#FFFFFF',
-    accent: '#3B82F6',
+    onPrimaryMuted: 'rgba(255,255,255,0.78)',
+    onPrimarySoft: 'rgba(0,0,0,0.2)',
+    onPrimaryTrack: 'rgba(0,0,0,0.2)',
+    onPrimaryHairline: 'rgba(255,255,255,0.35)',
     accentSoft: '#0D1B3A',
-    icon: '#8A93A3',
-    tint: '#3B82F6',
-    tabIconDefault: '#5B6472',
-    tabIconSelected: '#3B82F6',
     shadow: 'rgba(0,0,0,0.6)',
-    successText: '#3B82F6',
-    warnText: '#8A93A3',
   },
 };
 
 export const Spacing = {
+  xxs: 2,
   xs: 4,
   sm: 8,
   md: 12,
@@ -55,25 +52,66 @@ export const Radius = {
   md: 14,
   lg: 16,
   xl: 20,
+  xxl: 24,
   pill: 999,
+} as const;
+
+export const FontWeight = {
+  medium: '500',
+  semibold: '600',
+  bold: '700',
+  heavy: '800',
+} as const;
+
+export const Tracking = {
+  hero: -1.5,
+  tight: -0.5,
+  snug: 0.2,
+  wide: 0.3,
+  uppercase: 0.6,
+} as const;
+
+export const LineHeight = {
+  compact: 18,
+  relaxed: 22,
+} as const;
+
+export const IconSize = {
+  sm: 14,
+  md: 18,
+  lg: 20,
+  xl: 24,
+} as const;
+
+export const Opacity = {
+  faint: 0.28,
+  dim: 0.45,
 } as const;
 
 type TypeRole = {
   fontSize: number;
-  fontWeight: '400' | '500' | '600' | '700' | '800';
+  fontWeight: (typeof FontWeight)[keyof typeof FontWeight];
   letterSpacing?: number;
+  lineHeight?: number;
 };
 
 export const Type: Record<
-  'display' | 'title' | 'heading' | 'body' | 'label' | 'caption',
+  'hero' | 'display' | 'title' | 'heading' | 'body' | 'label' | 'caption' | 'micro',
   TypeRole
 > = {
-  display: { fontSize: 28, fontWeight: '800', letterSpacing: 0.3 },
-  title: { fontSize: 22, fontWeight: '700', letterSpacing: 0.2 },
-  heading: { fontSize: 18, fontWeight: '700', letterSpacing: 0.2 },
-  body: { fontSize: 15, fontWeight: '500' },
-  label: { fontSize: 13, fontWeight: '600' },
-  caption: { fontSize: 12, fontWeight: '600' },
+  hero: {
+    fontSize: 56,
+    fontWeight: FontWeight.heavy,
+    letterSpacing: Tracking.hero,
+    lineHeight: 58,
+  },
+  display: { fontSize: 28, fontWeight: FontWeight.heavy, letterSpacing: Tracking.wide },
+  title: { fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: Tracking.snug },
+  heading: { fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: Tracking.snug },
+  body: { fontSize: 15, fontWeight: FontWeight.medium },
+  label: { fontSize: 13, fontWeight: FontWeight.semibold },
+  caption: { fontSize: 12, fontWeight: FontWeight.semibold },
+  micro: { fontSize: 11, fontWeight: FontWeight.semibold },
 };
 
 type ElevationStyle = {

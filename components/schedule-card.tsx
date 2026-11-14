@@ -652,7 +652,7 @@ function createStyles(colors: typeof Colors.light) {
       backgroundColor: 'transparent',
     },
     clearAllText: {
-      color: colors.accent,
+      color: colors.primary,
       fontWeight: '600',
     },
     pickerContainer: {
@@ -769,7 +769,7 @@ function createStyles(colors: typeof Colors.light) {
       borderColor: colors.border,
     },
     clearText: {
-      color: colors.accent,
+      color: colors.primary,
       fontWeight: '600',
     },
   });

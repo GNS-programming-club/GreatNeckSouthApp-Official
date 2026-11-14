@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { formatEventTime, type CalendarEvent } from '@/lib/school-data';
 
@@ -32,21 +32,21 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       width: 64,
       color: colors.primary,
       fontSize: Type.caption.fontSize,
-      fontWeight: '700',
-      marginTop: 2,
+      fontWeight: FontWeight.bold,
+      marginTop: Spacing.xxs,
     },
     details: {
       flex: 1,
-      gap: 2,
+      gap: Spacing.xxs,
     },
     title: {
       color: colors.text,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     location: {
       color: colors.mutedText,
       fontSize: Type.caption.fontSize,
-      fontWeight: '500',
+      fontWeight: FontWeight.medium,
     },
   });

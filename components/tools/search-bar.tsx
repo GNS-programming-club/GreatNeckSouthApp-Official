@@ -2,7 +2,7 @@ import Feather from '@expo/vector-icons/Feather';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, IconSize, Radius, Spacing, Tracking, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type SearchBarProps = {
@@ -25,7 +25,7 @@ export default function SearchBar({
   return (
     <View style={styles.wrap}>
       <View style={styles.field}>
-        <Feather name="search" size={18} color={colors.mutedText} />
+        <Feather name="search" size={IconSize.md} color={colors.mutedText} />
         <TextInput
           style={styles.input}
           value={value}
@@ -37,7 +37,7 @@ export default function SearchBar({
         />
         {value.length > 0 ? (
           <TouchableOpacity onPress={() => onChangeText('')} hitSlop={10}>
-            <Feather name="x" size={18} color={colors.mutedText} />
+            <Feather name="x" size={IconSize.md} color={colors.mutedText} />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -78,7 +78,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       color: colors.mutedText,
       fontSize: Type.caption.fontSize,
       fontWeight: Type.caption.fontWeight,
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
       paddingLeft: Spacing.xs,
     },
   });

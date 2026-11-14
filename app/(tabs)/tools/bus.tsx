@@ -1,15 +1,14 @@
-import Feather from '@expo/vector-icons/Feather';
-import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
-import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SectionList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Card from '@/components/ui/card';
+import PageHeader from '@/components/tools/page-header';
 import Pill from '@/components/ui/pill';
 import Section from '@/components/ui/section';
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
 import SearchBar from '@/components/tools/search-bar';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Spacing, Tracking, Type } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -92,8 +91,6 @@ export default function Bus() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
-
-  const router = useRouter();
   const bottomClearance = useTabBarClearance();
   const detailRef = useRef<DetailSheetHandle>(null);
   const [query, setQuery] = useState('');
@@ -146,18 +143,7 @@ export default function Bus() {
       edges={['top', 'left', 'right']}
     >
       <View style={{ flex: 1 }}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-          >
-            <Feather name="arrow-left" size={25} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={[styles.pageTitle, { color: colors.text }]}>Bus Routes</Text>
-        </View>
+        <PageHeader title="Bus Routes" />
 
         <SectionList
           sections={sections}
@@ -195,7 +181,9 @@ export default function Bus() {
               >
                 <Text style={[styles.routeTitle, { color: colors.text }]}>
                   {busLabel ? (
-                    <Text style={{ color: colors.primary, fontWeight: '800' }}>{busLabel}</Text>
+                    <Text style={{ color: colors.primary, fontWeight: FontWeight.heavy }}>
+                      {busLabel}
+                    </Text>
                   ) : null}
                   {busLabel ? separator : ''}
                   {rest}
@@ -224,34 +212,15 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     safeArea: {
       flex: 1,
     },
-    header: {
-      paddingHorizontal: Spacing.lg,
-      paddingTop: Spacing.lg,
-      paddingBottom: Spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      marginBottom: Spacing.md,
-    },
-    backButton: {
-      alignSelf: 'flex-start',
-      height: 36,
-      width: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    pageTitle: {
-      marginTop: Spacing.sm,
-      fontSize: Type.title.fontSize,
-      fontWeight: '800',
-    },
     listContent: {
       paddingHorizontal: Spacing.lg,
+      paddingTop: Spacing.lg,
       gap: Spacing.md,
     },
     sectionHeader: {
       fontSize: Type.heading.fontSize,
-      fontWeight: '700',
-      letterSpacing: 0.2,
+      fontWeight: FontWeight.bold,
+      letterSpacing: Tracking.snug,
       marginTop: Spacing.sm,
       marginBottom: Spacing.xs,
     },
@@ -260,7 +229,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     routeTitle: {
       fontSize: Type.heading.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
     cardMeta: {
       flexDirection: 'row',
@@ -276,7 +245,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     sheetTitle: {
       fontSize: Type.title.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       color: colors.text,
     },
     sheetMetaRow: {
@@ -306,7 +275,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     stopTime: {
       width: 64,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       fontSize: Type.body.fontSize,
     },
     stopLocation: {

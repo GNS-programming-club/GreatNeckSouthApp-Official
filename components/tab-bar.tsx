@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/theme';
+import { Colors, Elevation, IconSize, Radius, Spacing, Type } from '@/constants/theme';
 import { useTabBar } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import Feather from '@expo/vector-icons/Feather';
@@ -36,10 +36,11 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab }: B
       style={[
         styles.bar,
         {
-          bottom: Math.max(insets.bottom + 8, 16),
+          bottom: Math.max(insets.bottom + Spacing.sm, Spacing.lg),
           backgroundColor: colors.surface,
           borderColor: colors.border,
-          marginBottom: insets.bottom ? 8 : 12,
+          shadowColor: colors.shadow,
+          marginBottom: insets.bottom ? Spacing.sm : Spacing.md,
         },
       ]}
     >
@@ -149,8 +150,8 @@ function TabBarButton({
     });
   };
 
-  const iconColor = isFocused ? colors.background : colors.icon;
-  const textColor = isFocused ? colors.background : colors.icon;
+  const iconColor = isFocused ? colors.background : colors.mutedText;
+  const textColor = isFocused ? colors.background : colors.mutedText;
 
   return (
     <PlatformPressable
@@ -175,38 +176,31 @@ function TabBarButton({
 function getIcon(routeName: string, color: string) {
   switch (routeName) {
     case 'index':
-      return <Feather name="home" size={20} color={color} />;
+      return <Feather name="home" size={IconSize.lg} color={color} />;
     case 'calendar':
-      return <Feather name="calendar" size={20} color={color} />;
+      return <Feather name="calendar" size={IconSize.lg} color={color} />;
     case 'tools':
-      return <Feather name="tool" size={20} color={color} />;
+      return <Feather name="tool" size={IconSize.lg} color={color} />;
     case 'settings':
-      return <Feather name="settings" size={20} color={color} />;
+      return <Feather name="settings" size={IconSize.lg} color={color} />;
   }
 }
 const styles = StyleSheet.create({
   bar: {
     position: 'absolute',
-    bottom: 16,
-    left: 12,
-    right: 12,
+    bottom: Spacing.lg,
+    left: Spacing.md,
+    right: Spacing.md,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 24,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: Radius.xxl,
     borderCurve: 'continuous',
     borderWidth: 1,
-    gap: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
+    gap: Spacing.xs,
+    ...Elevation.floating,
     overflow: 'visible',
     zIndex: 1000,
   },
@@ -216,16 +210,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    borderRadius: 10,
+    borderRadius: Radius.sm,
     paddingVertical: 0,
     paddingHorizontal: 0,
   },
 
   barItemFocused: {
     flexDirection: 'column',
-    fontWeight: '600',
-    fontSize: 11,
-    marginTop: 2,
+    ...Type.micro,
+    marginTop: Spacing.xxs,
   },
 
   importIcon: {
@@ -238,10 +231,10 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     borderCurve: 'continuous',
-    paddingVertical: 8,
-    paddingHorizontal: 6,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
     minHeight: 40,
   },
 });

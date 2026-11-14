@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import EventRow from '@/components/calendar/event-row';
 import Card from '@/components/ui/card';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { dayStatusFor, toIsoDate } from '@/lib/day-letters';
@@ -148,9 +148,9 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     letterText: {
       color: colors.primary,
       fontSize: Type.caption.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     group: {
       gap: Spacing.sm,
@@ -159,9 +159,9 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     groupLabel: {
       color: colors.mutedText,
       fontSize: Type.caption.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     itemList: {
       gap: Spacing.sm,
@@ -187,7 +187,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     emptyText: {
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
-      fontWeight: '500',
+      fontWeight: FontWeight.medium,
     },
     divider: {
       height: StyleSheet.hairlineWidth,

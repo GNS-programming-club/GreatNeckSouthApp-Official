@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import SearchBar from '@/components/tools/search-bar';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -83,7 +83,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     empty: {
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
       textAlign: 'center',
       paddingVertical: Spacing.xxl,
     },

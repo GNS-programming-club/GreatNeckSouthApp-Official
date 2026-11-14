@@ -1,15 +1,24 @@
 import Feather from '@expo/vector-icons/Feather';
-import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Card from '@/components/ui/card';
+import PageHeader from '@/components/tools/page-header';
 import Pill from '@/components/ui/pill';
 import Section from '@/components/ui/section';
 import DetailSheet, { DetailSheetHandle } from '@/components/tools/detail-sheet';
 import DirectoryList from '@/components/tools/directory-list';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import {
+  Colors,
+  FontWeight,
+  IconSize,
+  LineHeight,
+  Radius,
+  Spacing,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import coursesData from '@/assets/data/courses.json';
 
@@ -121,7 +130,7 @@ function FilterChip({
       style={[
         chipStyles.chip,
         {
-          backgroundColor: selected ? colors.primary : colors.surfaceAlt,
+          backgroundColor: selected ? colors.primaryFill : colors.surfaceAlt,
           borderColor: selected ? colors.primary : colors.border,
         },
       ]}
@@ -149,7 +158,13 @@ const chipStyles = StyleSheet.create({
 function CourseRow({ course, colors }: { course: Course; colors: ThemeColors }) {
   return (
     <Card elevation="raised">
-      <Text style={{ fontSize: Type.label.fontSize, fontWeight: '800', color: colors.primary }}>
+      <Text
+        style={{
+          fontSize: Type.label.fontSize,
+          fontWeight: FontWeight.heavy,
+          color: colors.primary,
+        }}
+      >
         {course.code}
       </Text>
       <Text
@@ -183,7 +198,13 @@ function CourseDetailBody({ course, colors }: { course: Course; colors: ThemeCol
         >
           {course.title}
         </Text>
-        <Text style={{ fontSize: Type.label.fontSize, fontWeight: '800', color: colors.primary }}>
+        <Text
+          style={{
+            fontSize: Type.label.fontSize,
+            fontWeight: FontWeight.heavy,
+            color: colors.primary,
+          }}
+        >
           {course.code}
         </Text>
         <View
@@ -210,7 +231,7 @@ function CourseDetailBody({ course, colors }: { course: Course; colors: ThemeCol
             fontSize: Type.body.fontSize,
             fontWeight: Type.body.fontWeight,
             color: colors.mutedText,
-            lineHeight: 22,
+            lineHeight: LineHeight.relaxed,
           }}
         >
           {course.description}
@@ -224,7 +245,7 @@ function CourseDetailBody({ course, colors }: { course: Course; colors: ThemeCol
               fontSize: Type.body.fontSize,
               fontWeight: Type.body.fontWeight,
               color: colors.mutedText,
-              lineHeight: 22,
+              lineHeight: LineHeight.relaxed,
             }}
           >
             {course.prerequisite}
@@ -239,7 +260,7 @@ function CourseDetailBody({ course, colors }: { course: Course; colors: ThemeCol
               fontSize: Type.body.fontSize,
               fontWeight: Type.body.fontWeight,
               color: colors.mutedText,
-              lineHeight: 22,
+              lineHeight: LineHeight.relaxed,
             }}
           >
             {course.additional_notes}
@@ -267,7 +288,7 @@ function FilterBar({
         alignItems: 'center',
         gap: Spacing.sm,
         alignSelf: 'flex-start',
-        backgroundColor: activeCount > 0 ? colors.primary : colors.surfaceAlt,
+        backgroundColor: activeCount > 0 ? colors.primaryFill : colors.surfaceAlt,
         borderRadius: Radius.pill,
         borderWidth: 1,
         borderColor: activeCount > 0 ? colors.primary : colors.border,
@@ -277,8 +298,8 @@ function FilterBar({
     >
       <Feather
         name="sliders"
-        size={14}
-        color={activeCount > 0 ? colors.primaryText : colors.icon}
+        size={IconSize.sm}
+        color={activeCount > 0 ? colors.primaryText : colors.mutedText}
       />
       <Text
         style={{
@@ -332,10 +353,10 @@ function FilterControls({
 
   const sectionLabel = {
     fontSize: Type.caption.fontSize,
-    fontWeight: '700' as const,
+    fontWeight: FontWeight.bold,
     color: colors.mutedText,
     textTransform: 'uppercase' as const,
-    letterSpacing: 0.6,
+    letterSpacing: Tracking.uppercase,
     marginBottom: Spacing.sm,
   };
 
@@ -483,7 +504,11 @@ function FilterControls({
           }}
         >
           <Text
-            style={{ fontSize: Type.body.fontSize, fontWeight: '600', color: colors.mutedText }}
+            style={{
+              fontSize: Type.body.fontSize,
+              fontWeight: FontWeight.semibold,
+              color: colors.mutedText,
+            }}
           >
             Reset
           </Text>
@@ -494,12 +519,16 @@ function FilterControls({
             flex: 1,
             paddingVertical: Spacing.md,
             borderRadius: Radius.lg,
-            backgroundColor: colors.primary,
+            backgroundColor: colors.primaryFill,
             alignItems: 'center',
           }}
         >
           <Text
-            style={{ fontSize: Type.body.fontSize, fontWeight: '700', color: colors.primaryText }}
+            style={{
+              fontSize: Type.body.fontSize,
+              fontWeight: FontWeight.bold,
+              color: colors.primaryText,
+            }}
           >
             Done
           </Text>
@@ -512,7 +541,6 @@ function FilterControls({
 export default function Courses() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const router = useRouter();
 
   const [filters, setFilters] = useState<FilterOptions>(DEFAULT_FILTERS);
   const [selected, setSelected] = useState<Course | null>(null);
@@ -528,43 +556,7 @@ export default function Courses() {
       style={{ flex: 1, backgroundColor: colors.background }}
       edges={['top', 'left', 'right']}
     >
-      <View
-        style={{
-          paddingHorizontal: Spacing.lg,
-          paddingTop: Spacing.xl,
-          paddingBottom: Spacing.lg,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-          backgroundColor: colors.background,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          style={{
-            alignSelf: 'flex-start',
-            width: 36,
-            height: 36,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Feather name="chevron-left" size={25} color={colors.text} />
-        </TouchableOpacity>
-        <Text
-          style={{
-            marginTop: Spacing.sm,
-            fontSize: Type.display.fontSize,
-            fontWeight: Type.display.fontWeight,
-            letterSpacing: Type.display.letterSpacing,
-            color: colors.text,
-          }}
-        >
-          Courses
-        </Text>
-      </View>
+      <PageHeader title="Courses" />
 
       <View style={{ flex: 1 }}>
         <DirectoryList<Course>

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type PillTone = 'neutral' | 'success' | 'warn';
@@ -18,10 +18,10 @@ export default function Pill({ label, value, tone = 'neutral' }: PillProps) {
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   const toneColor =
-    tone === 'success' ? colors.successText : tone === 'warn' ? colors.warnText : colors.mutedText;
+    tone === 'success' ? colors.primary : tone === 'warn' ? colors.mutedText : colors.mutedText;
 
   return (
-    <View style={styles.pill}>
+    <View style={[styles.pill, tone === 'success' && styles.pillSuccess]}>
       <Text style={[styles.label, { color: toneColor }]}>{label}</Text>
       {value ? <Text style={styles.value}>{value}</Text> : null}
     </View>
@@ -41,6 +41,9 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       paddingVertical: Spacing.xs + 2,
       paddingHorizontal: Spacing.md,
     },
+    pillSuccess: {
+      backgroundColor: colors.accentSoft,
+    },
     label: {
       fontSize: Type.caption.fontSize,
       fontWeight: Type.caption.fontWeight,
@@ -48,6 +51,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     value: {
       color: colors.text,
       fontSize: Type.label.fontSize,
-      fontWeight: '800',
+      fontWeight: FontWeight.heavy,
     },
   });

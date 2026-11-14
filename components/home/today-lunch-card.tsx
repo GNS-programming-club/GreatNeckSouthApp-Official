@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getMenuItemsForDay, getParsedMenuForMonth } from '@/api/daily-menu';
 import Card from '@/components/ui/card';
 import Section from '@/components/ui/section';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
 
@@ -129,6 +129,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       marginTop: Spacing.xs,
       color: colors.mutedText,
       fontSize: Type.label.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
   });

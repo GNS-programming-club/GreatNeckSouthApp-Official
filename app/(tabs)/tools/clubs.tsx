@@ -1,14 +1,13 @@
-import Feather from '@expo/vector-icons/Feather';
-import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Card from '@/components/ui/card';
+import PageHeader from '@/components/tools/page-header';
 import Section from '@/components/ui/section';
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
 import DirectoryList from '@/components/tools/directory-list';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import clubsData from '@/assets/data/club.json';
 
@@ -77,7 +76,6 @@ function ClubDetailBody({ club }: { club: Club }) {
 }
 
 export default function Clubs() {
-  const router = useRouter();
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -88,18 +86,7 @@ export default function Clubs() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <View style={styles.flex}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-          >
-            <Feather name="chevron-left" size={24} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Clubs</Text>
-        </View>
+        <PageHeader title="Clubs" />
 
         <DirectoryList<Club>
           data={clubs}
@@ -129,27 +116,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     flex: {
       flex: 1,
-    },
-    header: {
-      paddingHorizontal: Spacing.lg,
-      paddingTop: Spacing.xl,
-      paddingBottom: Spacing.lg,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-    },
-    backButton: {
-      width: 36,
-      height: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignSelf: 'flex-start',
-    },
-    headerTitle: {
-      marginTop: Spacing.sm,
-      fontSize: Type.title.fontSize,
-      fontWeight: Type.title.fontWeight,
-      letterSpacing: Type.title.letterSpacing,
-      color: colors.text,
     },
     rowTitle: {
       fontSize: Type.heading.fontSize,
@@ -185,7 +151,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     codeText: {
       fontSize: Type.body.fontSize,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
       color: colors.primary,
       backgroundColor: colors.accentSoft,
       paddingHorizontal: Spacing.md,

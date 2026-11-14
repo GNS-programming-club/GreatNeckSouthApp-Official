@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import EventRow from '@/components/calendar/event-row';
 import Card from '@/components/ui/card';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, IconSize, Spacing, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { fromIsoDate } from '@/lib/day-letters';
@@ -42,7 +42,7 @@ export default function EventsCard({ todayIso }: { todayIso: string }) {
       onPress={() => router.push({ pathname: '/calendar', params: { date: todayIso } })}
     >
       <View style={styles.labelRow}>
-        <Feather name="flag" size={18} color={colors.primary} />
+        <Feather name="flag" size={IconSize.md} color={colors.primary} />
         <Text style={styles.label}>Today&apos;s events</Text>
       </View>
 
@@ -90,16 +90,16 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     empty: {
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     next: {
       color: colors.text,
       fontSize: Type.body.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     footer: {
       color: colors.mutedText,
       fontSize: Type.caption.fontSize,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
   });

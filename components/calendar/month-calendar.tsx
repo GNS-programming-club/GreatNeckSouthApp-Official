@@ -46,7 +46,7 @@ export default function MonthCalendar({
     () => ({
       calendarBackground: colors.surface,
       backgroundColor: colors.surface,
-      selectedDayBackgroundColor: colors.primary,
+      selectedDayBackgroundColor: colors.primaryFill,
       selectedDayTextColor: colors.primaryText,
       todayTextColor: colors.primary,
       arrowColor: colors.primary,

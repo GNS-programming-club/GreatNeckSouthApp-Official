@@ -1,21 +1,23 @@
-import Feather from '@expo/vector-icons/Feather';
-import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import Screen from '@/components/ui/screen';
+import PageHeader from '@/components/tools/page-header';
 import Stagger from '@/components/ui/stagger';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import {
+  Colors,
+  Elevation,
+  FontWeight,
+  Opacity,
+  Radius,
+  Spacing,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { parseClockToSeconds, useNowSeconds } from '@/hooks/use-live-period';
 
 const scheduleData = require('../../../assets/data/schedule.json');
-
-const ON_HERO = '#FFFFFF';
-const ON_HERO_MUTED = 'rgba(255,255,255,0.78)';
-const PILL_BG = 'rgba(255,255,255,0.18)';
-const TRACK = 'rgba(255,255,255,0.28)';
-const HAIRLINE = 'rgba(255,255,255,0.35)';
 
 interface Period {
   id: string;
@@ -41,26 +43,12 @@ const SchedulePage = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const router = useRouter();
   const nowSecondsET = useNowSeconds();
 
   const schedule = scheduleData as ScheduleData;
   const periods: Period[] = schedule.periods;
 
-  const header = (
-    <View style={styles.header}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => router.back()}
-        activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel="Back"
-      >
-        <Feather name="chevron-left" size={26} color={colors.text} />
-      </TouchableOpacity>
-      <Text style={styles.title}>Schedule</Text>
-    </View>
-  );
+  const header = <PageHeader title="Schedule" />;
 
   return (
     <Screen scroll header={header}>
@@ -179,26 +167,6 @@ const TIME_WIDTH = 74;
 
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
-    header: {
-      paddingHorizontal: Spacing.lg,
-      paddingTop: Spacing.lg,
-      paddingBottom: Spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      backgroundColor: colors.background,
-    },
-    backButton: {
-      alignSelf: 'flex-start',
-      width: 36,
-      height: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: Spacing.sm,
-    },
-    title: {
-      ...Type.display,
-      color: colors.text,
-    },
     summaryRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -245,11 +213,11 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     segIdle: {
       backgroundColor: colors.mutedText,
-      opacity: 0.28,
+      opacity: Opacity.faint,
     },
     segDone: {
       backgroundColor: colors.mutedText,
-      opacity: 0.45,
+      opacity: Opacity.dim,
     },
     dot: {
       width: NODE_SIZE,
@@ -290,37 +258,34 @@ const createStyles = (colors: typeof Colors.light) =>
     itemSub: {
       ...Type.caption,
       color: colors.mutedText,
-      marginTop: 2,
+      marginTop: Spacing.xxs,
       marginLeft: TIME_WIDTH + Spacing.md,
     },
     itemMuted: {
       color: colors.mutedText,
     },
     activeCard: {
-      backgroundColor: colors.primary,
+      backgroundColor: colors.primaryFill,
       borderRadius: Radius.lg,
       borderCurve: 'continuous',
       paddingVertical: Spacing.lg,
       paddingHorizontal: Spacing.lg,
       gap: Spacing.md,
+      ...Elevation.raised,
       shadowColor: colors.shadow,
-      shadowOpacity: 0.08,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 4,
     },
     activePill: {
       alignSelf: 'flex-start',
-      backgroundColor: PILL_BG,
+      backgroundColor: colors.onPrimarySoft,
       borderRadius: Radius.pill,
       paddingVertical: Spacing.xs,
       paddingHorizontal: Spacing.md,
     },
     activePillText: {
-      color: ON_HERO,
+      color: colors.primaryText,
       ...Type.caption,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     numeralRow: {
       flexDirection: 'row',
@@ -328,16 +293,14 @@ const createStyles = (colors: typeof Colors.light) =>
       gap: Spacing.sm,
     },
     numeral: {
-      color: ON_HERO,
-      fontSize: 52,
-      fontWeight: '800',
-      letterSpacing: -1.5,
+      color: colors.primaryText,
+      ...Type.hero,
     },
     numeralLabel: {
-      color: ON_HERO_MUTED,
+      color: colors.onPrimaryMuted,
       ...Type.label,
       textTransform: 'uppercase',
-      letterSpacing: 0.6,
+      letterSpacing: Tracking.uppercase,
     },
     metaRow: {
       flexDirection: 'row',
@@ -345,30 +308,30 @@ const createStyles = (colors: typeof Colors.light) =>
       gap: Spacing.sm,
     },
     metaName: {
-      color: ON_HERO,
+      color: colors.primaryText,
       ...Type.body,
-      fontWeight: '700',
+      fontWeight: FontWeight.bold,
     },
     metaDivider: {
       width: 1,
       height: 13,
-      backgroundColor: HAIRLINE,
+      backgroundColor: colors.onPrimaryHairline,
     },
     metaRange: {
-      color: ON_HERO_MUTED,
+      color: colors.onPrimaryMuted,
       ...Type.body,
-      fontWeight: '600',
+      fontWeight: FontWeight.semibold,
     },
     track: {
       height: 6,
       borderRadius: Radius.pill,
-      backgroundColor: TRACK,
+      backgroundColor: colors.onPrimaryTrack,
       overflow: 'hidden',
     },
     fill: {
       height: 6,
       borderRadius: Radius.pill,
-      backgroundColor: ON_HERO,
+      backgroundColor: colors.primaryText,
     },
   });
 
