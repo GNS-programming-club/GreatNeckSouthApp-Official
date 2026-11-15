@@ -82,7 +82,7 @@ const SchedulePage = () => {
           </View>
         </View>
 
-        <Stagger delay={60} duration={360} translateY={10}>
+        <Stagger>
           {periods.map((period, index) => {
             const startSeconds = parseClockToSeconds(period.start);
             const endSeconds = parseClockToSeconds(period.end);

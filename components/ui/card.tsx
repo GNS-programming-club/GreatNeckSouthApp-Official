@@ -7,11 +7,10 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { Colors, Elevation, Radius, Spacing } from '@/constants/theme';
+import { Colors, Elevation, Motion, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 const PRESSED_SCALE = 0.97;
-const PRESS_SPRING = { stiffness: 550, mass: 0.5, damping: 50 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -76,7 +75,7 @@ function PressableCard({
   const pressScale = useSharedValue(1);
 
   const animateScaleTo = (target: number) => {
-    pressScale.set(reduceMotion ? target : withSpring(target, PRESS_SPRING));
+    pressScale.set(reduceMotion ? target : withSpring(target, Motion.pressSpring));
   };
 
   const scaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: pressScale.get() }] }));

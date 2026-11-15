@@ -2,11 +2,18 @@ import { Image } from 'expo-image';
 import React, { useMemo, useState } from 'react';
 import { Image as RNImage, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+
+import { quickTiming } from '@/constants/motion';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PageHeader from '@/components/tools/page-header';
-import { Colors, FontWeight, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Motion, Radius, Spacing, Type } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -62,10 +69,10 @@ export default function SchoolMapFull() {
       savedScale.value = scale.value;
 
       if (scale.value <= MIN_SCALE) {
-        scale.value = withTiming(MIN_SCALE);
+        scale.value = withSpring(MIN_SCALE, Motion.settleSpring);
         savedScale.value = MIN_SCALE;
-        translateX.value = withTiming(0);
-        translateY.value = withTiming(0);
+        translateX.value = withSpring(0, Motion.settleSpring);
+        translateY.value = withSpring(0, Motion.settleSpring);
         savedTranslateX.value = 0;
         savedTranslateY.value = 0;
       }
@@ -88,14 +95,14 @@ export default function SchoolMapFull() {
     .maxDuration(250)
     .onEnd(() => {
       if (scale.value > MIN_SCALE) {
-        scale.value = withTiming(MIN_SCALE);
+        scale.value = withSpring(MIN_SCALE, Motion.settleSpring);
         savedScale.value = MIN_SCALE;
-        translateX.value = withTiming(0);
-        translateY.value = withTiming(0);
+        translateX.value = withSpring(0, Motion.settleSpring);
+        translateY.value = withSpring(0, Motion.settleSpring);
         savedTranslateX.value = 0;
         savedTranslateY.value = 0;
       } else {
-        scale.value = withTiming(ZOOM_SCALE);
+        scale.value = withSpring(ZOOM_SCALE, Motion.settleSpring);
         savedScale.value = ZOOM_SCALE;
       }
     });
@@ -114,7 +121,7 @@ export default function SchoolMapFull() {
   }));
 
   const hintStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(scale.value > MIN_SCALE ? 0 : 1),
+    opacity: withTiming(scale.value > MIN_SCALE ? 0 : 1, quickTiming),
   }));
 
   return (

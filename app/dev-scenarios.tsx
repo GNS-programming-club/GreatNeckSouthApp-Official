@@ -10,6 +10,7 @@ import Card from '@/components/ui/card';
 import Section from '@/components/ui/section';
 import SegmentedControl, { type SegmentOption } from '@/components/ui/segmented-control';
 import { useToast } from '@/components/ui/toast';
+import { DEV_TOOLS_ENABLED } from '@/constants/flags';
 import { Colors, FontWeight, IconSize, Spacing, Tracking, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -48,7 +49,7 @@ const scenarios = buildScenarios(periodBounds);
 
 const MANUAL_CHECKS = [
   'Empty search: type "zzz" into Bus, Clubs or Courses.',
-  'Accordion: tap any course card in Courses.',
+  'Course details: tap any course card in Courses to open its sheet.',
   'Sliding switch: Courses filter sheet, Sort By row.',
   'Press scale: hold any card on Home.',
   'Loading pulse: open Home with the network off, then turn it on.',
@@ -99,7 +100,7 @@ export default function DevScenarios() {
   useClockVersion();
   const isOverridden = appClock.isOverridden();
 
-  if (!__DEV__) {
+  if (!DEV_TOOLS_ENABLED) {
     return <Redirect href="/" />;
   }
 

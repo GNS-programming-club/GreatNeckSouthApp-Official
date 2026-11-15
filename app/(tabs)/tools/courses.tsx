@@ -3,7 +3,6 @@ import React, { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import Accordion from '@/components/ui/accordion';
 import Card from '@/components/ui/card';
 import PageHeader, { useHeaderCollapse } from '@/components/tools/page-header';
 import Pill from '@/components/ui/pill';
@@ -161,54 +160,69 @@ function hasText(value: string) {
   return value.trim().length > 0;
 }
 
-function CourseRow({ course, colors }: { course: Course; colors: ThemeColors }) {
+function CourseRow({
+  course,
+  colors,
+  onPress,
+}: {
+  course: Course;
+  colors: ThemeColors;
+  onPress: () => void;
+}) {
   const styles = useMemo(() => createCourseStyles(colors), [colors]);
-  const hasExtraPills = course.grade_levels.length > 1 || !!course.level || course.repeatable;
 
   return (
-    <Card elevation="raised">
-      <Accordion
-        trigger={
-          <>
-            <Text style={styles.code}>{course.code}</Text>
-            <Text style={styles.title}>{course.title}</Text>
-            <View style={styles.pillRow}>
-              <Pill label={`${course.credits} cr`} />
-              {course.grade_levels.length > 0 && <Pill label={`Gr ${course.grade_levels[0]}`} />}
-              {course.ap_flag && <Pill label="AP" tone="success" />}
-            </View>
-          </>
-        }
-      >
-        <View style={styles.details}>
-          {hasExtraPills ? (
-            <View style={styles.pillRow}>
-              {course.grade_levels.length > 1 && (
-                <Pill label={`Grades ${course.grade_levels.join(', ')}`} />
-              )}
-              {course.level ? <Pill label={course.level} /> : null}
-              {course.repeatable && <Pill label="Repeatable" />}
-            </View>
-          ) : null}
-
-          <Section title="Description">
-            <Text style={styles.bodyText}>{course.description}</Text>
-          </Section>
-
-          {!!course.prerequisite && hasText(course.prerequisite) && (
-            <Section title="Prerequisite">
-              <Text style={styles.bodyText}>{course.prerequisite}</Text>
-            </Section>
-          )}
-
-          {!!course.additional_notes && hasText(course.additional_notes) && (
-            <Section title="Notes">
-              <Text style={styles.bodyText}>{course.additional_notes}</Text>
-            </Section>
-          )}
-        </View>
-      </Accordion>
+    <Card
+      elevation="raised"
+      onPress={onPress}
+      accessibilityLabel={`${course.code} ${course.title}`}
+    >
+      <Text style={styles.code}>{course.code}</Text>
+      <Text style={styles.title}>{course.title}</Text>
+      <View style={styles.pillRow}>
+        <Pill label={`${course.credits} cr`} />
+        {course.grade_levels.length > 0 && <Pill label={`Gr ${course.grade_levels[0]}`} />}
+        {course.ap_flag && <Pill label="AP" tone="success" />}
+      </View>
     </Card>
+  );
+}
+
+function CourseDetailBody({ course, colors }: { course: Course; colors: ThemeColors }) {
+  const styles = useMemo(() => createCourseStyles(colors), [colors]);
+
+  return (
+    <View style={styles.detailBody}>
+      <View style={styles.detailHeading}>
+        <Text style={styles.detailTitle}>{course.title}</Text>
+        <Text style={styles.code}>{course.code}</Text>
+        <View style={[styles.pillRow, styles.detailPillRow]}>
+          <Pill label={`${course.credits} credit${course.credits === 1 ? '' : 's'}`} />
+          {course.grade_levels.length > 0 && (
+            <Pill label={`Grades ${course.grade_levels.join(', ')}`} />
+          )}
+          {course.level ? <Pill label={course.level} /> : null}
+          {course.ap_flag && <Pill label="AP Course" tone="success" />}
+          {course.repeatable && <Pill label="Repeatable" />}
+        </View>
+      </View>
+
+      <Section title="Description">
+        <Text style={styles.bodyText}>{course.description}</Text>
+      </Section>
+
+      {!!course.prerequisite && hasText(course.prerequisite) && (
+        <Section title="Prerequisite">
+          <Text style={styles.bodyText}>{course.prerequisite}</Text>
+        </Section>
+      )}
+
+      {!!course.additional_notes && hasText(course.additional_notes) && (
+        <Section title="Notes">
+          <Text style={styles.bodyText}>{course.additional_notes}</Text>
+        </Section>
+      )}
+    </View>
   );
 }
 
@@ -229,9 +243,19 @@ const createCourseStyles = (colors: ThemeColors) =>
       flexWrap: 'wrap',
       gap: Spacing.sm,
     },
-    details: {
-      gap: Spacing.lg,
-      paddingTop: Spacing.lg,
+    detailBody: {
+      gap: Spacing.xl,
+    },
+    detailHeading: {
+      gap: Spacing.sm,
+    },
+    detailTitle: {
+      fontSize: Type.title.fontSize,
+      fontWeight: Type.title.fontWeight,
+      color: colors.text,
+    },
+    detailPillRow: {
+      paddingTop: Spacing.xs,
     },
     bodyText: {
       fontSize: Type.body.fontSize,
@@ -509,8 +533,10 @@ export default function Courses() {
   const colors = Colors[actualTheme];
 
   const [filters, setFilters] = useState<FilterOptions>(DEFAULT_FILTERS);
+  const [selected, setSelected] = useState<Course | null>(null);
   const collapse = useHeaderCollapse();
 
+  const detailRef = useRef<DetailSheetHandle>(null);
   const filterRef = useRef<DetailSheetHandle>(null);
 
   const visible = useMemo(() => applyFilters(allCourses, filters), [filters]);
@@ -528,7 +554,16 @@ export default function Courses() {
           data={visible}
           keyExtractor={(c) => c.id}
           searchKeys={(c) => [c.code, c.title, c.dept, c.description]}
-          renderRow={(c) => <CourseRow course={c} colors={colors} />}
+          renderRow={(c) => (
+            <CourseRow
+              course={c}
+              colors={colors}
+              onPress={() => {
+                setSelected(c);
+                detailRef.current?.present();
+              }}
+            />
+          )}
           title="Courses"
           collapse={collapse}
           placeholder="Search courses, codes, departments…"
@@ -542,6 +577,10 @@ export default function Courses() {
             />
           }
         />
+
+        <DetailSheet ref={detailRef}>
+          {selected ? <CourseDetailBody course={selected} colors={colors} /> : null}
+        </DetailSheet>
 
         <DetailSheet ref={filterRef}>
           <FilterControls

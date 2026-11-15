@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useDeferredValue, useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
@@ -7,6 +7,7 @@ import SearchBar from '@/components/tools/search-bar';
 import EmptyState from '@/components/ui/empty-state';
 import { Spacing } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
+import { buildSearchIndex, filterSearchIndex } from '@/lib/search-index';
 
 type DirectoryListProps<T> = {
   data: T[];
@@ -39,15 +40,12 @@ export default function DirectoryList<T>({
   const bottomClearance = useTabBarClearance();
   const showsLargeTitle = Boolean(title && collapse);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-
-    if (!q) {
-      return data;
-    }
-
-    return data.filter((item) => searchKeys(item).some((s) => s.toLowerCase().includes(q)));
-  }, [data, query, searchKeys]);
+  const deferredQuery = useDeferredValue(query);
+  const searchIndex = useMemo(() => buildSearchIndex(data, searchKeys), [data, searchKeys]);
+  const filtered = useMemo(
+    () => filterSearchIndex(searchIndex, deferredQuery),
+    [searchIndex, deferredQuery]
+  );
 
   return (
     <Animated.FlatList

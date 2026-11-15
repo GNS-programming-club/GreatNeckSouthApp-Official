@@ -7,7 +7,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { Colors, Elevation, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, Elevation, Motion, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 export type SegmentOption<Value extends string> = {
@@ -22,7 +22,6 @@ type SegmentedControlProps<Value extends string> = {
 };
 
 const TRACK_INSET = Spacing.xs;
-const PILL_SPRING = { damping: 22, stiffness: 260, mass: 0.9 };
 
 export default function SegmentedControl<Value extends string>({
   options,
@@ -44,7 +43,7 @@ export default function SegmentedControl<Value extends string>({
   useEffect(() => {
     const target = activeIndex * segmentWidth;
 
-    pillOffset.value = reduceMotion ? target : withSpring(target, PILL_SPRING);
+    pillOffset.value = reduceMotion ? target : withSpring(target, Motion.settleSpring);
   }, [activeIndex, segmentWidth, pillOffset, reduceMotion]);
 
   const pillStyle = useAnimatedStyle(() => ({

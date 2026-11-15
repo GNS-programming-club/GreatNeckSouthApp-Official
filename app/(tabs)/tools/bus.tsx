@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useDeferredValue, useMemo, useRef, useState } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +14,7 @@ import { Colors, FontWeight, Spacing, Tracking, Type } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import { appClock } from '@/lib/clock';
+import { buildSearchIndex, filterSearchIndex } from '@/lib/search-index';
 
 import busData from '@/assets/data/bus.json';
 
@@ -65,6 +66,12 @@ const parseRouteTitle = (title: string) => {
 
 const routes = busData as BusRoute[];
 
+const routeSearchIndex = buildSearchIndex(routes, (route) => [
+  route.title,
+  route.vehicle,
+  ...route.stops.map((stop) => stop.location),
+]);
+
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList<BusRoute, RouteSection>);
 
 function StopsBody({ route }: { route: BusRoute }) {
@@ -102,16 +109,12 @@ export default function Bus() {
   const [selected, setSelected] = useState<BusRoute | null>(null);
   const collapse = useHeaderCollapse();
 
-  const filtered = useMemo(() => {
-    if (!query) return routes;
-    const term = query.toLowerCase();
-    return routes.filter(
-      (r) =>
-        r.title.toLowerCase().includes(term) ||
-        r.vehicle.toLowerCase().includes(term) ||
-        r.stops.some((s) => s.location.toLowerCase().includes(term))
-    );
-  }, [query]);
+  const deferredQuery = useDeferredValue(query);
+
+  const filtered = useMemo(
+    () => filterSearchIndex(routeSearchIndex, deferredQuery),
+    [deferredQuery]
+  );
 
   const sections = useMemo<RouteSection[]>(() => {
     const now = appClock.now();

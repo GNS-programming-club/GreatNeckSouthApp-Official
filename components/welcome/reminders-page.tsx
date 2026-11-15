@@ -29,8 +29,8 @@ export default function RemindersPage({ width, isActive, statusMessage }: Remind
       </RiseIn>
       <RiseIn isActive={isActive} order={2}>
         <Text style={styles.description}>
-          On days with a school event, get one heads-up that morning: at 7 AM on school days, 10 AM
-          otherwise.
+          On days with a school event, receive one heads-up that morning: you will be alerted at 7
+          AM on school days and 10 AM otherwise.
         </Text>
       </RiseIn>
       {statusMessage ? (

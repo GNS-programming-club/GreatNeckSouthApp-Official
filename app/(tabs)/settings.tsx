@@ -6,6 +6,7 @@ import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { useToast } from '@/components/ui/toast';
+import { DEV_TOOLS_ENABLED } from '@/constants/flags';
 import { Colors, FontWeight, IconSize, LineHeight, Radius, Spacing, Type } from '@/constants/theme';
 import { useReminders } from '@/contexts/reminders-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -32,6 +33,7 @@ export default function SettingsPage() {
   const toast = useToast();
   const router = useRouter();
   const isAwaitingEventRemindersOn = useRef(false);
+  const isAwaitingDayLetterRemindersOn = useRef(false);
 
   useEffect(() => {
     if (reminders.isEventRemindersEnabled && isAwaitingEventRemindersOn.current) {
@@ -39,6 +41,18 @@ export default function SettingsPage() {
       toast.show('Event reminders on', 'bell');
     }
   }, [reminders.isEventRemindersEnabled, toast]);
+
+  useEffect(() => {
+    if (reminders.isEnabled && isAwaitingDayLetterRemindersOn.current) {
+      isAwaitingDayLetterRemindersOn.current = false;
+      toast.show('Day letter reminders on', 'bell');
+    }
+  }, [reminders.isEnabled, toast]);
+
+  const handleDayLetterRemindersChange = (enabled: boolean) => {
+    isAwaitingDayLetterRemindersOn.current = enabled;
+    reminders.setEnabled(enabled);
+  };
 
   const handleEventRemindersChange = (enabled: boolean) => {
     isAwaitingEventRemindersOn.current = enabled;
@@ -95,12 +109,12 @@ export default function SettingsPage() {
                 <Text style={styles.rowSubtitle}>
                   {reminders.isPermissionDenied
                     ? 'Turn on notifications for this app in your phone settings'
-                    : 'At 8 PM, see whether tomorrow is an A or B day'}
+                    : 'At 8 PM, get notified on whether tomorrow is an A or B day'}
                 </Text>
               </View>
               <Switch
                 value={reminders.isEnabled}
-                onValueChange={reminders.setEnabled}
+                onValueChange={handleDayLetterRemindersChange}
                 trackColor={{ false: colors.border, true: colors.primary }}
                 accessibilityLabel="Day letter reminder"
               />
@@ -112,7 +126,7 @@ export default function SettingsPage() {
                 <Text style={styles.rowSubtitle}>
                   {reminders.isPermissionDenied
                     ? 'Turn on notifications for this app in your phone settings'
-                    : 'Before school, see what the school has on today'}
+                    : "Before school, get notified about the day's highlight events"}
                 </Text>
               </View>
               <Switch
@@ -138,7 +152,7 @@ export default function SettingsPage() {
           </View>
         </View>
 
-        {__DEV__ ? (
+        {DEV_TOOLS_ENABLED ? (
           <View style={styles.section}>
             <SectionHeading icon="tool" title="Developer" colors={colors} styles={styles} />
 

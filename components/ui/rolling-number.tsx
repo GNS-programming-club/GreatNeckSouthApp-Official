@@ -10,6 +10,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+import { easeOut } from '@/constants/motion';
+import { Motion } from '@/constants/theme';
 import { digitColumns, glyphOffset, nearestRollTarget } from '@/components/ui/rolling-number-math';
 
 type RollingNumberProps = {
@@ -22,9 +24,6 @@ const SLIDE_FRACTION = 0.6;
 const SCALE_MIN = 0.6;
 const DEFAULT_FONT_SIZE = 14;
 const LINE_HEIGHT_RATIO = 1.2;
-const ROLL_SPRING = { damping: 18, stiffness: 220, mass: 1 };
-const COLUMN_FADE_IN_MS = 220;
-const COLUMN_FADE_OUT_MS = 160;
 
 function RollingNumber({ value, style }: RollingNumberProps) {
   const flatStyle = StyleSheet.flatten(style) ?? {};
@@ -62,7 +61,7 @@ const DigitColumn = memo(function DigitColumn({ digit, lineHeight, textStyle }: 
   useEffect(() => {
     const target = nearestRollTarget(position.value, digit);
 
-    position.value = reduceMotion ? target : withSpring(target, ROLL_SPRING);
+    position.value = reduceMotion ? target : withSpring(target, Motion.settleSpring);
   }, [digit, position, reduceMotion]);
 
   const columnStyle = useMemo(() => ({ height: lineHeight }), [lineHeight]);
@@ -74,8 +73,8 @@ const DigitColumn = memo(function DigitColumn({ digit, lineHeight, textStyle }: 
   return (
     <Animated.View
       style={[styles.column, columnStyle]}
-      entering={FadeIn.duration(COLUMN_FADE_IN_MS)}
-      exiting={FadeOut.duration(COLUMN_FADE_OUT_MS)}
+      entering={FadeIn.duration(Motion.duration.quick).easing(easeOut)}
+      exiting={FadeOut.duration(Motion.duration.quick).easing(easeOut)}
     >
       <Text style={[glyphTextStyle, styles.sizer]}>0</Text>
       {GLYPHS.map((glyph) => (

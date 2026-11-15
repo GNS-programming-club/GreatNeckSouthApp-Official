@@ -27,12 +27,12 @@ const FEATURES: Feature[] = [
   {
     icon: 'coffee',
     title: 'Lunch menu',
-    description: "Today's cafeteria menu before you get in line.",
+    description: "Catch a glimpse of today's cafeteria menu.",
   },
   {
     icon: 'calendar',
     title: 'School calendar',
-    description: 'Upcoming events, with a morning alert on the day they happen.',
+    description: "Receive a morning alert about a day's important events.",
   },
 ];
 

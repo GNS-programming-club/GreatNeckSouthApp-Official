@@ -2,13 +2,13 @@ import Feather from '@expo/vector-icons/Feather';
 import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
-  Easing,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
+import { baseTiming } from '@/constants/motion';
 import { Colors, IconSize, LineHeight, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -20,7 +20,6 @@ type EmptyStateProps = {
 
 const ICON_CIRCLE_SIZE = 64;
 const MESSAGE_MAX_WIDTH = 280;
-const ENTER_DURATION_MS = 420;
 const ENTER_SCALE_FROM = 0.92;
 const ENTER_RISE_FROM = 8;
 
@@ -32,9 +31,7 @@ export default function EmptyState({ icon, title, message }: EmptyStateProps) {
   const appearance = useSharedValue(reduceMotion ? 1 : 0);
 
   useEffect(() => {
-    appearance.value = reduceMotion
-      ? 1
-      : withTiming(1, { duration: ENTER_DURATION_MS, easing: Easing.out(Easing.cubic) });
+    appearance.value = reduceMotion ? 1 : withTiming(1, baseTiming);
   }, [appearance, reduceMotion]);
 
   const iconStyle = useAnimatedStyle(() => ({

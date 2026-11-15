@@ -4,19 +4,31 @@ import { AccessibilityInfo, Platform, StyleSheet, Text, View } from 'react-nativ
 import Animated, { FadeInDown, FadeOutDown, ReduceMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colors, Elevation, FontWeight, IconSize, Radius, Spacing, Type } from '@/constants/theme';
+import { easeOut } from '@/constants/motion';
+import {
+  Colors,
+  Elevation,
+  FontWeight,
+  IconSize,
+  Motion,
+  Radius,
+  Spacing,
+  Type,
+} from '@/constants/theme';
 import { tabBarBottomOffset } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 
 const VISIBLE_DURATION_MS = 2500;
-const EXIT_DURATION_MS = 200;
 const TAB_BAR_HEIGHT_ESTIMATE = 72;
 
 const ENTER_ANIMATION = FadeInDown.springify()
-  .damping(32)
-  .stiffness(170)
+  .damping(Motion.settleSpring.damping)
+  .stiffness(Motion.settleSpring.stiffness)
+  .mass(Motion.settleSpring.mass)
   .reduceMotion(ReduceMotion.System);
-const EXIT_ANIMATION = FadeOutDown.duration(EXIT_DURATION_MS).reduceMotion(ReduceMotion.System);
+const EXIT_ANIMATION = FadeOutDown.duration(Motion.duration.quick)
+  .easing(easeOut)
+  .reduceMotion(ReduceMotion.System);
 
 type FeatherName = React.ComponentProps<typeof Feather>['name'];
 

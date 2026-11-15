@@ -88,6 +88,15 @@ export const Opacity = {
   dim: 0.45,
 } as const;
 
+export const Motion = {
+  duration: { quick: 220, base: 320 },
+  easeOutCurve: [0.32, 0.72, 0, 1],
+  staggerStep: 50,
+  riseDistance: Spacing.md,
+  pressSpring: { stiffness: 439, damping: 42, mass: 1 },
+  settleSpring: { stiffness: 158, damping: 25, mass: 1 },
+} as const;
+
 type TypeRole = {
   fontSize: number;
   fontWeight: (typeof FontWeight)[keyof typeof FontWeight];

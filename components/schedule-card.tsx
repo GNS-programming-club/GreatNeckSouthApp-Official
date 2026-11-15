@@ -2,11 +2,11 @@ import { Colors } from '@/constants/theme';
 import { useDayStatus } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { toIsoDate } from '@/lib/day-letters';
+import { buildSearchIndex, filterSearchIndex } from '@/lib/search-index';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import {
-  Animated,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -20,6 +20,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StaggerItem } from '@/components/ui/stagger';
 import courses from '../assets/data/coursesHomepage.json';
 
 interface Course {
@@ -29,7 +30,15 @@ interface Course {
   title: string;
 }
 
+const courseSearchIndex = buildSearchIndex(courses as Course[], (course) => [
+  course.title,
+  course.id,
+  course.dept,
+  course.code,
+]);
+
 const STORAGE_KEY = 'userSchedule_v1';
+const LIST_ENTRANCE_ITEM_COUNT = 14;
 
 function formatMinutes(totalMinutes: number) {
   const h = Math.floor(totalMinutes / 60);
@@ -91,10 +100,7 @@ export default function ScheduleCard({
   const [searchQuery, setSearchQuery] = useState('');
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [nowMinutes, setNowMinutes] = useState(() => nowMinutesLocal());
-  const [listItemAnims] = useState(() => Array.from({ length: 14 }, () => new Animated.Value(0)));
-  const hasAnimatedOnce = useRef(false);
-  const [rowAnims] = useState(() => Array.from({ length: periods }, () => new Animated.Value(0)));
-  const hasRowAnimatedOnce = useRef(false);
+  const [hasShownListEntrance, setHasShownListEntrance] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -136,63 +142,7 @@ export default function ScheduleCard({
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (!modalVisible) return;
-
-    if (hasAnimatedOnce.current) {
-      listItemAnims.forEach((anim) => {
-        anim.stopAnimation();
-        anim.setValue(1);
-      });
-      return;
-    }
-    hasAnimatedOnce.current = true;
-
-    listItemAnims.forEach((anim) => {
-      anim.stopAnimation();
-      anim.setValue(0);
-    });
-
-    const sequence = Animated.stagger(
-      90,
-      listItemAnims.map((anim) =>
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 420,
-          useNativeDriver: true,
-        })
-      )
-    );
-
-    sequence.start();
-    return () => sequence.stop();
-  }, [listItemAnims, modalVisible]);
-
   const times = useMemo(() => computePeriodTimes(periods), [periods]);
-
-  useEffect(() => {
-    if (hasRowAnimatedOnce.current) return;
-    hasRowAnimatedOnce.current = true;
-
-    rowAnims.forEach((anim) => {
-      anim.stopAnimation();
-      anim.setValue(0);
-    });
-
-    const sequence = Animated.stagger(
-      70,
-      rowAnims.map((anim) =>
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 380,
-          useNativeDriver: true,
-        })
-      )
-    );
-
-    sequence.start();
-    return () => sequence.stop();
-  }, [rowAnims]);
 
   const activePeriodIndex = useMemo(() => {
     for (let i = 0; i < times.length; i++) {
@@ -226,8 +176,14 @@ export default function ScheduleCard({
 
   function closePicker() {
     setModalVisible(false);
+    setHasShownListEntrance(true);
     setSelectedPeriod(null);
     setSearchQuery('');
+  }
+
+  function searchCourses(query: string) {
+    setSearchQuery(query);
+    setHasShownListEntrance(true);
   }
 
   function assignCourseToPeriod(courseId: string) {
@@ -249,16 +205,11 @@ export default function ScheduleCard({
     setSchedule(next);
   }
 
-  const filtered = (courses as Course[]).filter((c) => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return true;
-    return (
-      c.title.toLowerCase().includes(q) ||
-      (c.id && c.id.toLowerCase().includes(q)) ||
-      (c.dept && c.dept.toLowerCase().includes(q)) ||
-      (c.code && c.code.toString().toLowerCase().includes(q))
-    );
-  });
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+  const filtered = useMemo(
+    () => filterSearchIndex(courseSearchIndex, deferredSearchQuery),
+    [deferredSearchQuery]
+  );
 
   function getCourse(courseId: string | null) {
     if (!courseId) return null;
@@ -286,22 +237,8 @@ export default function ScheduleCard({
             const courseId = schedule[idx];
             const course = getCourse(courseId);
             const isActive = activePeriodIndex === idx;
-            const anim = rowAnims[idx];
             return (
-              <Animated.View
-                key={idx}
-                style={{
-                  opacity: anim,
-                  transform: [
-                    {
-                      translateY: anim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [10, 0],
-                      }),
-                    },
-                  ],
-                }}
-              >
+              <StaggerItem key={idx} index={idx}>
                 <Pressable
                   onPress={() => openPickerFor(idx)}
                   onLongPress={() => removeCourseFromPeriod(idx)}
@@ -348,7 +285,7 @@ export default function ScheduleCard({
                     )}
                   </View>
                 </Pressable>
-              </Animated.View>
+              </StaggerItem>
             );
           })}
         </View>
@@ -395,7 +332,7 @@ export default function ScheduleCard({
                 placeholder="Search courses..."
                 placeholderTextColor={colors.mutedText}
                 value={searchQuery}
-                onChangeText={setSearchQuery}
+                onChangeText={searchCourses}
                 style={styles.searchInput}
                 autoCorrect={false}
                 autoCapitalize="none"
@@ -409,7 +346,6 @@ export default function ScheduleCard({
               keyExtractor={(item) => item.id}
               contentContainerStyle={styles.courseList}
               renderItem={({ item, index }) => {
-                const anim = listItemAnims[index];
                 const row = (
                   <Pressable style={styles.courseRow} onPress={() => assignCourseToPeriod(item.id)}>
                     <View style={styles.courseRowInner}>
@@ -425,24 +361,12 @@ export default function ScheduleCard({
                   </Pressable>
                 );
 
-                if (!anim) return row;
+                if (index >= LIST_ENTRANCE_ITEM_COUNT) return row;
 
                 return (
-                  <Animated.View
-                    style={{
-                      opacity: anim,
-                      transform: [
-                        {
-                          translateY: anim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [10, 0],
-                          }),
-                        },
-                      ],
-                    }}
-                  >
+                  <StaggerItem index={index} skipEntrance={hasShownListEntrance}>
                     {row}
-                  </Animated.View>
+                  </StaggerItem>
                 );
               }}
             />

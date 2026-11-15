@@ -1,4 +1,5 @@
-import { Colors, Elevation, IconSize, Radius, Spacing, Type } from '@/constants/theme';
+import { baseTiming } from '@/constants/motion';
+import { Colors, Elevation, IconSize, Motion, Radius, Spacing, Type } from '@/constants/theme';
 import { useTabBar } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import Feather from '@expo/vector-icons/Feather';
@@ -7,7 +8,6 @@ import type { BottomTabBarProps } from 'expo-router/tabs';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
-  Easing,
   interpolate,
   interpolateColor,
   useAnimatedStyle,
@@ -97,15 +97,8 @@ function TabBarButton({
   const opacity = useSharedValue(isFocused ? 1 : 0);
 
   useEffect(() => {
-    scale.value = withSpring(isFocused ? 1 : 0.95, {
-      damping: 15,
-      stiffness: 150,
-      mass: 0.5,
-    });
-    opacity.value = withTiming(isFocused ? 1 : 0, {
-      duration: 250,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-    });
+    scale.value = withSpring(isFocused ? 1 : 0.95, Motion.settleSpring);
+    opacity.value = withTiming(isFocused ? 1 : 0, baseTiming);
   }, [isFocused, opacity, scale]);
 
   const animatedButtonStyle = useAnimatedStyle(() => {

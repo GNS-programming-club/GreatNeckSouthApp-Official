@@ -2,13 +2,13 @@ import Feather from '@expo/vector-icons/Feather';
 import React, { useEffect, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
-  Easing,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
+import { baseTiming } from '@/constants/motion';
 import { Colors, IconSize, Spacing } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -17,9 +17,6 @@ type AccordionProps = {
   children: React.ReactNode;
   defaultExpanded?: boolean;
 };
-
-const TOGGLE_DURATION_MS = 220;
-const TOGGLE_EASING = Easing.out(Easing.cubic);
 
 export default function Accordion({ trigger, children, defaultExpanded = false }: AccordionProps) {
   const { actualTheme } = useTheme();
@@ -32,9 +29,7 @@ export default function Accordion({ trigger, children, defaultExpanded = false }
   useEffect(() => {
     const target = expanded ? 1 : 0;
 
-    openness.value = reduceMotion
-      ? target
-      : withTiming(target, { duration: TOGGLE_DURATION_MS, easing: TOGGLE_EASING });
+    openness.value = reduceMotion ? target : withTiming(target, baseTiming);
   }, [expanded, openness, reduceMotion]);
 
   const onContentLayout = (event: LayoutChangeEvent) => {

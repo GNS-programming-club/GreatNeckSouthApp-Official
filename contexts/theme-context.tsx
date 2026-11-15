@@ -1,27 +1,55 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { Text, useColorScheme as useDeviceColorScheme } from 'react-native';
 
+import { ThemeCrossfade, type ThemeCrossfadeHandle } from '@/components/theme-crossfade';
 import { Colors } from '@/constants/theme';
 
 type ThemeMode = 'light' | 'dark' | 'auto';
 
+type ResolvedTheme = 'light' | 'dark';
+
 interface ThemeContextType {
   themeMode: ThemeMode;
-  actualTheme: 'light' | 'dark';
+  actualTheme: ResolvedTheme;
   setThemeMode: (mode: ThemeMode) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 let baseTextDefaultStyle: unknown = undefined;
+let appliedTextTheme: ResolvedTheme | undefined = undefined;
+
+const resolveTheme = (mode: ThemeMode, deviceColorScheme: string | null | undefined) =>
+  mode === 'auto' ? (deviceColorScheme === 'dark' ? 'dark' : 'light') : mode;
+
+const applyDefaultTextColor = (theme: ResolvedTheme) => {
+  if (appliedTextTheme === theme) {
+    return;
+  }
+
+  const themedText = Text as typeof Text & { defaultProps?: { style?: unknown } };
+
+  if (baseTextDefaultStyle === undefined) {
+    baseTextDefaultStyle = themedText.defaultProps?.style;
+  }
+
+  const base = baseTextDefaultStyle;
+  const baseArray = Array.isArray(base) ? base : base ? [base] : [];
+
+  themedText.defaultProps = themedText.defaultProps ?? {};
+  themedText.defaultProps.style = [{ color: Colors[theme].text }, ...baseArray];
+  appliedTextTheme = theme;
+};
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const deviceColorScheme = useDeviceColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
+  const crossfadeRef = useRef<ThemeCrossfadeHandle>(null);
 
-  const actualTheme: 'light' | 'dark' =
-    themeMode === 'auto' ? (deviceColorScheme === 'dark' ? 'dark' : 'light') : themeMode;
+  const actualTheme: ResolvedTheme = resolveTheme(themeMode, deviceColorScheme);
+
+  applyDefaultTextColor(actualTheme);
 
   useEffect(() => {
     const loadThemePreference = async () => {
@@ -38,32 +66,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     loadThemePreference();
   }, []);
 
-  useEffect(() => {
-    const themedText = Text as typeof Text & { defaultProps?: { style?: unknown } };
+  const setThemeMode = (mode: ThemeMode) => {
+    const applyMode = () => setThemeModeState(mode);
+    const crossfade = crossfadeRef.current;
 
-    if (baseTextDefaultStyle === undefined) {
-      baseTextDefaultStyle = themedText.defaultProps?.style;
+    if (crossfade && resolveTheme(mode, deviceColorScheme) !== actualTheme) {
+      crossfade.crossfadeInto(applyMode);
+    } else {
+      applyMode();
     }
 
-    const base = baseTextDefaultStyle;
-    const baseArray = Array.isArray(base) ? base : base ? [base] : [];
-
-    themedText.defaultProps = themedText.defaultProps ?? {};
-    themedText.defaultProps.style = [{ color: Colors[actualTheme].text }, ...baseArray];
-  }, [actualTheme]);
-
-  const setThemeMode = async (mode: ThemeMode) => {
-    try {
-      await AsyncStorage.setItem('themeMode', mode);
-      setThemeModeState(mode);
-    } catch (error) {
+    AsyncStorage.setItem('themeMode', mode).catch((error) => {
       console.error('Error saving theme preference:', error);
-    }
+    });
   };
 
   return (
     <ThemeContext.Provider value={{ themeMode, actualTheme, setThemeMode }}>
-      {children}
+      <ThemeCrossfade ref={crossfadeRef}>{children}</ThemeCrossfade>
     </ThemeContext.Provider>
   );
 }

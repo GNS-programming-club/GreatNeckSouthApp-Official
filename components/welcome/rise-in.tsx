@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import Animated, {
-  Easing,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -8,11 +7,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Spacing } from '@/constants/theme';
-
-const RISE_DURATION_MS = 520;
-const RISE_STEP_DELAY_MS = 90;
-const RISE_DISTANCE = Spacing.md;
+import { baseTiming } from '@/constants/motion';
+import { Motion } from '@/constants/theme';
 
 type RiseInProps = {
   children: React.ReactNode;
@@ -30,18 +26,13 @@ export default function RiseIn({ children, isActive, order }: RiseInProps) {
     }
 
     progress.set(
-      reduceMotion
-        ? 1
-        : withDelay(
-            order * RISE_STEP_DELAY_MS,
-            withTiming(1, { duration: RISE_DURATION_MS, easing: Easing.out(Easing.cubic) })
-          )
+      reduceMotion ? 1 : withDelay(order * Motion.staggerStep, withTiming(1, baseTiming))
     );
   }, [isActive, order, progress, reduceMotion]);
 
   const riseStyle = useAnimatedStyle(() => ({
     opacity: progress.get(),
-    transform: [{ translateY: (1 - progress.get()) * RISE_DISTANCE }],
+    transform: [{ translateY: (1 - progress.get()) * Motion.riseDistance }],
   }));
 
   return <Animated.View style={riseStyle}>{children}</Animated.View>;

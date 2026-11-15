@@ -1,65 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { Animated } from 'react-native';
+import React, { useEffect } from 'react';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
 
-type StaggerProps = {
+import { baseTiming } from '@/constants/motion';
+import { Motion } from '@/constants/theme';
+
+type StaggerItemProps = {
   children: React.ReactNode;
-  delay?: number;
-  duration?: number;
-  translateY?: number;
+  index: number;
+  skipEntrance?: boolean;
 };
 
-export default function Stagger({
-  children,
-  delay = 90,
-  duration = 420,
-  translateY = 10,
-}: StaggerProps) {
-  const items = React.Children.toArray(children);
-  const [anims] = useState(() => items.map(() => new Animated.Value(0)));
+export function StaggerItem({ children, index, skipEntrance = false }: StaggerItemProps) {
+  const reduceMotion = useReducedMotion();
+  const startsVisible = reduceMotion || skipEntrance;
+  const progress = useSharedValue(startsVisible ? 1 : 0);
 
   useEffect(() => {
-    anims.forEach((value) => value.setValue(0));
+    if (startsVisible) {
+      return;
+    }
 
-    const sequence = Animated.stagger(
-      delay,
-      anims.map((value) =>
-        Animated.timing(value, {
-          toValue: 1,
-          duration,
-          useNativeDriver: true,
-        })
-      )
-    );
+    progress.set(withDelay(index * Motion.staggerStep, withTiming(1, baseTiming)));
+  }, [index, progress, startsVisible]);
 
-    sequence.start();
+  const riseStyle = useAnimatedStyle(() => ({
+    opacity: progress.get(),
+    transform: [{ translateY: (1 - progress.get()) * Motion.riseDistance }],
+  }));
 
-    return () => sequence.stop();
-  }, [anims, delay, duration]);
+  return <Animated.View style={riseStyle}>{children}</Animated.View>;
+}
 
+export default function Stagger({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {items.map((child, index) => {
-        const value = anims[index];
-
-        return (
-          <Animated.View
-            key={index}
-            style={{
-              opacity: value,
-              transform: [
-                {
-                  translateY: value.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [translateY, 0],
-                  }),
-                },
-              ],
-            }}
-          >
-            {child}
-          </Animated.View>
-        );
-      })}
+      {React.Children.toArray(children).map((child, index) => (
+        <StaggerItem key={index} index={index}>
+          {child}
+        </StaggerItem>
+      ))}
     </>
   );
 }

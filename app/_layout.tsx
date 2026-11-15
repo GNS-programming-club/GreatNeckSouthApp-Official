@@ -1,8 +1,7 @@
 import { ToastProvider } from '@/components/ui/toast';
 import { RemindersProvider } from '@/contexts/reminders-context';
 import { SchoolDataProvider } from '@/contexts/school-data-context';
-import { ThemeProvider as AppThemeProvider } from '@/contexts/theme-context';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ThemeProvider as AppThemeProvider, useTheme } from '@/contexts/theme-context';
 import {
   DarkTheme,
   DefaultTheme,
@@ -20,10 +19,24 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const navTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+function ThemedNavigation() {
+  const { actualTheme } = useTheme();
+  const navigationTheme = actualTheme === 'dark' ? DarkTheme : DefaultTheme;
 
+  return (
+    <NavigationThemeProvider value={navigationTheme}>
+      <BottomSheetModalProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+      </BottomSheetModalProvider>
+      <StatusBar style={actualTheme === 'dark' ? 'light' : 'dark'} />
+    </NavigationThemeProvider>
+  );
+}
+
+export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AppThemeProvider>
@@ -31,18 +44,7 @@ export default function RootLayout() {
           <RemindersProvider>
             <SafeAreaProvider>
               <ToastProvider>
-                <NavigationThemeProvider value={navTheme}>
-                  <BottomSheetModalProvider>
-                    <Stack>
-                      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                      <Stack.Screen
-                        name="modal"
-                        options={{ presentation: 'modal', title: 'Modal' }}
-                      />
-                    </Stack>
-                  </BottomSheetModalProvider>
-                  <StatusBar style="auto" />
-                </NavigationThemeProvider>
+                <ThemedNavigation />
               </ToastProvider>
             </SafeAreaProvider>
           </RemindersProvider>
