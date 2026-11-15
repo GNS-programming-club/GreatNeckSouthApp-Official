@@ -1,3 +1,4 @@
+import { ToastProvider } from '@/components/ui/toast';
 import { RemindersProvider } from '@/contexts/reminders-context';
 import { SchoolDataProvider } from '@/contexts/school-data-context';
 import { ThemeProvider as AppThemeProvider } from '@/contexts/theme-context';
@@ -29,18 +30,20 @@ export default function RootLayout() {
         <SchoolDataProvider>
           <RemindersProvider>
             <SafeAreaProvider>
-              <NavigationThemeProvider value={navTheme}>
-                <BottomSheetModalProvider>
-                  <Stack>
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen
-                      name="modal"
-                      options={{ presentation: 'modal', title: 'Modal' }}
-                    />
-                  </Stack>
-                </BottomSheetModalProvider>
-                <StatusBar style="auto" />
-              </NavigationThemeProvider>
+              <ToastProvider>
+                <NavigationThemeProvider value={navTheme}>
+                  <BottomSheetModalProvider>
+                    <Stack>
+                      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                      <Stack.Screen
+                        name="modal"
+                        options={{ presentation: 'modal', title: 'Modal' }}
+                      />
+                    </Stack>
+                  </BottomSheetModalProvider>
+                  <StatusBar style="auto" />
+                </NavigationThemeProvider>
+              </ToastProvider>
             </SafeAreaProvider>
           </RemindersProvider>
         </SchoolDataProvider>

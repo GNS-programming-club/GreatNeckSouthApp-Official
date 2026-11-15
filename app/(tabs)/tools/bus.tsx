@@ -1,9 +1,11 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Card from '@/components/ui/card';
-import PageHeader from '@/components/tools/page-header';
+import EmptyState from '@/components/ui/empty-state';
+import PageHeader, { PageLargeTitle, useHeaderCollapse } from '@/components/tools/page-header';
 import Pill from '@/components/ui/pill';
 import Section from '@/components/ui/section';
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
@@ -62,6 +64,8 @@ const parseRouteTitle = (title: string) => {
 
 const routes = busData as BusRoute[];
 
+const AnimatedSectionList = Animated.createAnimatedComponent(SectionList<BusRoute, RouteSection>);
+
 function StopsBody({ route }: { route: BusRoute }) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
@@ -95,6 +99,7 @@ export default function Bus() {
   const detailRef = useRef<DetailSheetHandle>(null);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<BusRoute | null>(null);
+  const collapse = useHeaderCollapse();
 
   const filtered = useMemo(() => {
     if (!query) return routes;
@@ -143,20 +148,32 @@ export default function Bus() {
       edges={['top', 'left', 'right']}
     >
       <View style={{ flex: 1 }}>
-        <PageHeader title="Bus Routes" />
+        <PageHeader title="Bus Routes" collapse={collapse} />
 
-        <SectionList
+        <AnimatedSectionList
           sections={sections}
+          onScroll={collapse.onScroll}
+          scrollEventThrottle={16}
           keyExtractor={(r) => r.id}
           stickySectionHeadersEnabled={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[styles.listContent, { paddingBottom: bottomClearance }]}
           ListHeaderComponent={
-            <SearchBar
-              value={query}
-              onChangeText={setQuery}
-              placeholder="Search routes, vehicle, or stop"
-              resultCount={query.length > 0 ? filteredCount : undefined}
+            <View style={styles.listHeader}>
+              <PageLargeTitle title="Bus Routes" collapse={collapse} />
+              <SearchBar
+                value={query}
+                onChangeText={setQuery}
+                placeholder="Search routes, vehicle, or stop"
+                resultCount={query.length > 0 ? filteredCount : undefined}
+              />
+            </View>
+          }
+          ListEmptyComponent={
+            <EmptyState
+              icon="search"
+              title="No routes match"
+              message="Try a bus number, vehicle, or stop name."
             />
           }
           renderSectionHeader={({ section }) => (
@@ -214,8 +231,10 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     listContent: {
       paddingHorizontal: Spacing.lg,
-      paddingTop: Spacing.lg,
       gap: Spacing.md,
+    },
+    listHeader: {
+      gap: Spacing.lg,
     },
     sectionHeader: {
       fontSize: Type.heading.fontSize,

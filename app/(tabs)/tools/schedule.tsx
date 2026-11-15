@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import Screen from '@/components/ui/screen';
-import PageHeader from '@/components/tools/page-header';
+import PageHeader, { PageLargeTitle, useHeaderCollapse } from '@/components/tools/page-header';
+import RollingNumber from '@/components/ui/rolling-number';
 import Stagger from '@/components/ui/stagger';
 import {
   Colors,
@@ -14,6 +16,7 @@ import {
   Tracking,
   Type,
 } from '@/constants/theme';
+import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import { parseClockToSeconds, useNowSeconds } from '@/hooks/use-live-period';
 
@@ -44,120 +47,131 @@ const SchedulePage = () => {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const nowSecondsET = useNowSeconds();
+  const collapse = useHeaderCollapse();
+  const bottomClearance = { paddingBottom: useTabBarClearance() };
 
   const schedule = scheduleData as ScheduleData;
   const periods: Period[] = schedule.periods;
 
-  const header = <PageHeader title="Schedule" />;
-
   return (
-    <Screen scroll header={header}>
-      <View style={styles.summaryRow}>
-        <View style={styles.summaryCol}>
-          <Text style={styles.statValue}>{periods.length}</Text>
-          <Text style={styles.statLabel}>Periods</Text>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <PageHeader title="Schedule" collapse={collapse} />
+      <Animated.ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, bottomClearance]}
+        onScroll={collapse.onScroll}
+        scrollEventThrottle={16}
+      >
+        <PageLargeTitle title="Schedule" collapse={collapse} />
+        <View style={styles.summaryRow}>
+          <View style={styles.summaryCol}>
+            <Text style={styles.statValue}>{periods.length}</Text>
+            <Text style={styles.statLabel}>Periods</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          <View style={styles.summaryCol}>
+            <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
+              {withoutMeridiem(schedule.totalSchoolDay)}
+            </Text>
+            <Text style={styles.statLabel}>School day</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          <View style={styles.summaryCol}>
+            <Text style={styles.statValue}>{schedule.totalDuration}</Text>
+            <Text style={styles.statLabel}>In class</Text>
+          </View>
         </View>
-        <View style={styles.summaryDivider} />
-        <View style={styles.summaryCol}>
-          <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
-            {withoutMeridiem(schedule.totalSchoolDay)}
-          </Text>
-          <Text style={styles.statLabel}>School day</Text>
-        </View>
-        <View style={styles.summaryDivider} />
-        <View style={styles.summaryCol}>
-          <Text style={styles.statValue}>{schedule.totalDuration}</Text>
-          <Text style={styles.statLabel}>In class</Text>
-        </View>
-      </View>
 
-      <Stagger delay={60} duration={360} translateY={10}>
-        {periods.map((period, index) => {
-          const startSeconds = parseClockToSeconds(period.start);
-          const endSeconds = parseClockToSeconds(period.end);
-          const isValidRange =
-            startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
-          const isActive =
-            isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
-          const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
-          const state: PeriodState = isActive ? 'active' : isCompleted ? 'done' : 'upcoming';
-          const progress =
-            isValidRange && isActive
-              ? Math.min(
-                  1,
-                  Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!))
-                )
-              : 0;
-          const minutesLeft =
-            isActive && endSeconds !== null
-              ? Math.max(1, Math.ceil((endSeconds - nowSecondsET) / 60))
-              : 0;
+        <Stagger delay={60} duration={360} translateY={10}>
+          {periods.map((period, index) => {
+            const startSeconds = parseClockToSeconds(period.start);
+            const endSeconds = parseClockToSeconds(period.end);
+            const isValidRange =
+              startSeconds !== null && endSeconds !== null && endSeconds > startSeconds;
+            const isActive =
+              isValidRange && nowSecondsET >= startSeconds! && nowSecondsET < endSeconds!;
+            const isCompleted = isValidRange && nowSecondsET >= endSeconds!;
+            const state: PeriodState = isActive ? 'active' : isCompleted ? 'done' : 'upcoming';
+            const progress =
+              isValidRange && isActive
+                ? Math.min(
+                    1,
+                    Math.max(0, (nowSecondsET - startSeconds!) / (endSeconds! - startSeconds!))
+                  )
+                : 0;
+            const minutesLeft =
+              isActive && endSeconds !== null
+                ? Math.max(1, Math.ceil((endSeconds - nowSecondsET) / 60))
+                : 0;
 
-          const isFirst = index === 0;
-          const isLast = index === periods.length - 1;
-          const segColor = state === 'done' ? styles.segDone : styles.segIdle;
+            const isFirst = index === 0;
+            const isLast = index === periods.length - 1;
+            const segColor = state === 'done' ? styles.segDone : styles.segIdle;
 
-          return (
-            <View key={period.id} style={styles.row}>
-              <View style={styles.rail}>
-                <View style={[styles.seg, isFirst ? styles.segHidden : segColor]} />
-                <View
-                  style={[
-                    styles.dot,
-                    state === 'done' && styles.dotDone,
-                    state === 'active' && styles.dotActive,
-                    state === 'upcoming' && styles.dotUpcoming,
-                  ]}
-                />
-                <View style={[styles.seg, isLast ? styles.segHidden : segColor]} />
-              </View>
+            return (
+              <View key={period.id} style={styles.row}>
+                <View style={styles.rail}>
+                  <View style={[styles.seg, isFirst ? styles.segHidden : segColor]} />
+                  <View
+                    style={[
+                      styles.dot,
+                      state === 'done' && styles.dotDone,
+                      state === 'active' && styles.dotActive,
+                      state === 'upcoming' && styles.dotUpcoming,
+                    ]}
+                  />
+                  <View style={[styles.seg, isLast ? styles.segHidden : segColor]} />
+                </View>
 
-              {isActive ? (
-                <View style={styles.content}>
-                  <View style={styles.activeCard}>
-                    <View style={styles.activePill}>
-                      <Text style={styles.activePillText}>NOW</Text>
+                {isActive ? (
+                  <View style={styles.content}>
+                    <View style={styles.activeCard}>
+                      <View style={styles.activePill}>
+                        <Text style={styles.activePillText}>NOW</Text>
+                      </View>
+
+                      <View style={styles.numeralRow}>
+                        <RollingNumber value={minutesLeft} style={styles.numeral} />
+                        <Text style={styles.numeralLabel}>min left</Text>
+                      </View>
+
+                      <View style={styles.metaRow}>
+                        <Text style={styles.metaName}>{period.period}</Text>
+                        <View style={styles.metaDivider} />
+                        <Text style={styles.metaRange}>
+                          {period.start} → {period.end}
+                        </Text>
+                      </View>
+
+                      <View style={styles.track}>
+                        <View style={[styles.fill, { width: `${Math.round(progress * 100)}%` }]} />
+                      </View>
                     </View>
-
-                    <View style={styles.numeralRow}>
-                      <Text style={styles.numeral}>{minutesLeft}</Text>
-                      <Text style={styles.numeralLabel}>min left</Text>
-                    </View>
-
-                    <View style={styles.metaRow}>
-                      <Text style={styles.metaName}>{period.period}</Text>
-                      <View style={styles.metaDivider} />
-                      <Text style={styles.metaRange}>
-                        {period.start} → {period.end}
+                  </View>
+                ) : (
+                  <View style={styles.content}>
+                    <View style={styles.itemHead}>
+                      <Text
+                        style={[styles.itemTime, state === 'done' && styles.itemMuted]}
+                        numberOfLines={1}
+                      >
+                        {period.start}
+                      </Text>
+                      <Text style={[styles.itemName, state === 'done' && styles.itemMuted]}>
+                        {period.period}
                       </Text>
                     </View>
-
-                    <View style={styles.track}>
-                      <View style={[styles.fill, { width: `${Math.round(progress * 100)}%` }]} />
-                    </View>
-                  </View>
-                </View>
-              ) : (
-                <View style={styles.content}>
-                  <View style={styles.itemHead}>
-                    <Text
-                      style={[styles.itemTime, state === 'done' && styles.itemMuted]}
-                      numberOfLines={1}
-                    >
-                      {period.start}
-                    </Text>
-                    <Text style={[styles.itemName, state === 'done' && styles.itemMuted]}>
-                      {period.period}
+                    <Text style={styles.itemSub}>
+                      {state === 'done' ? 'Done' : period.duration}
                     </Text>
                   </View>
-                  <Text style={styles.itemSub}>{state === 'done' ? 'Done' : period.duration}</Text>
-                </View>
-              )}
-            </View>
-          );
-        })}
-      </Stagger>
-    </Screen>
+                )}
+              </View>
+            );
+          })}
+        </Stagger>
+      </Animated.ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -167,6 +181,17 @@ const TIME_WIDTH = 74;
 
 const createStyles = (colors: typeof Colors.light) =>
   StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: Spacing.lg,
+      gap: Spacing.lg,
+    },
     summaryRow: {
       flexDirection: 'row',
       alignItems: 'center',

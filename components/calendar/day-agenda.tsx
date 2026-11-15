@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import EventRow from '@/components/calendar/event-row';
 import Card from '@/components/ui/card';
+import EmptyState from '@/components/ui/empty-state';
 import { Colors, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -51,7 +52,6 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
   const dayEvents = useMemo(() => eventsOnDate(events, isoDate), [events, isoDate]);
   const dayHolidays = useMemo(() => holidaysOnDate(events, isoDate), [events, isoDate]);
   const unavailableText = status === 'loading' ? 'Loading…' : "Couldn't load school events";
-  const eventsFallback = calendar ? 'No events posted' : unavailableText;
 
   return (
     <Card>
@@ -90,8 +90,10 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
 
       <View style={styles.group}>
         <Text style={styles.groupLabel}>Events</Text>
-        {dayEvents.length === 0 ? (
-          <Text style={styles.emptyText}>{eventsFallback}</Text>
+        {dayEvents.length === 0 && calendar ? (
+          <EmptyState icon="calendar" title="No events" message="Nothing is posted for this day." />
+        ) : dayEvents.length === 0 ? (
+          <Text style={styles.emptyText}>{unavailableText}</Text>
         ) : (
           <View style={styles.itemList}>
             {dayEvents.map((event) => (
@@ -106,7 +108,7 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
       <View style={styles.group}>
         <Text style={styles.groupLabel}>Holidays</Text>
         {dayHolidays.length === 0 ? (
-          <Text style={styles.emptyText}>{calendar ? 'No holidays' : eventsFallback}</Text>
+          <Text style={styles.emptyText}>{calendar ? 'No holidays' : unavailableText}</Text>
         ) : (
           <View style={styles.itemList}>
             {dayHolidays.map((holiday) => (

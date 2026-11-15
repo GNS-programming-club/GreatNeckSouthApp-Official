@@ -3,9 +3,11 @@ import React, { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import Accordion from '@/components/ui/accordion';
 import Card from '@/components/ui/card';
-import PageHeader from '@/components/tools/page-header';
+import PageHeader, { useHeaderCollapse } from '@/components/tools/page-header';
 import Pill from '@/components/ui/pill';
+import SegmentedControl, { type SegmentOption } from '@/components/ui/segmented-control';
 import Section from '@/components/ui/section';
 import DetailSheet, { DetailSheetHandle } from '@/components/tools/detail-sheet';
 import DirectoryList from '@/components/tools/directory-list';
@@ -155,121 +157,89 @@ const chipStyles = StyleSheet.create({
   },
 });
 
+function hasText(value: string) {
+  return value.trim().length > 0;
+}
+
 function CourseRow({ course, colors }: { course: Course; colors: ThemeColors }) {
+  const styles = useMemo(() => createCourseStyles(colors), [colors]);
+  const hasExtraPills = course.grade_levels.length > 1 || !!course.level || course.repeatable;
+
   return (
     <Card elevation="raised">
-      <Text
-        style={{
-          fontSize: Type.label.fontSize,
-          fontWeight: FontWeight.heavy,
-          color: colors.primary,
-        }}
+      <Accordion
+        trigger={
+          <>
+            <Text style={styles.code}>{course.code}</Text>
+            <Text style={styles.title}>{course.title}</Text>
+            <View style={styles.pillRow}>
+              <Pill label={`${course.credits} cr`} />
+              {course.grade_levels.length > 0 && <Pill label={`Gr ${course.grade_levels[0]}`} />}
+              {course.ap_flag && <Pill label="AP" tone="success" />}
+            </View>
+          </>
+        }
       >
-        {course.code}
-      </Text>
-      <Text
-        style={{
-          fontSize: Type.heading.fontSize,
-          fontWeight: Type.heading.fontWeight,
-          color: colors.text,
-        }}
-      >
-        {course.title}
-      </Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
-        <Pill label={`${course.credits} cr`} />
-        {course.grade_levels.length > 0 && <Pill label={`Gr ${course.grade_levels[0]}`} />}
-        {course.ap_flag && <Pill label="AP" tone="success" />}
-      </View>
+        <View style={styles.details}>
+          {hasExtraPills ? (
+            <View style={styles.pillRow}>
+              {course.grade_levels.length > 1 && (
+                <Pill label={`Grades ${course.grade_levels.join(', ')}`} />
+              )}
+              {course.level ? <Pill label={course.level} /> : null}
+              {course.repeatable && <Pill label="Repeatable" />}
+            </View>
+          ) : null}
+
+          <Section title="Description">
+            <Text style={styles.bodyText}>{course.description}</Text>
+          </Section>
+
+          {!!course.prerequisite && hasText(course.prerequisite) && (
+            <Section title="Prerequisite">
+              <Text style={styles.bodyText}>{course.prerequisite}</Text>
+            </Section>
+          )}
+
+          {!!course.additional_notes && hasText(course.additional_notes) && (
+            <Section title="Notes">
+              <Text style={styles.bodyText}>{course.additional_notes}</Text>
+            </Section>
+          )}
+        </View>
+      </Accordion>
     </Card>
   );
 }
 
-function CourseDetailBody({ course, colors }: { course: Course; colors: ThemeColors }) {
-  return (
-    <View style={{ gap: Spacing.xl }}>
-      <View style={{ gap: Spacing.sm }}>
-        <Text
-          style={{
-            fontSize: Type.title.fontSize,
-            fontWeight: Type.title.fontWeight,
-            color: colors.text,
-          }}
-        >
-          {course.title}
-        </Text>
-        <Text
-          style={{
-            fontSize: Type.label.fontSize,
-            fontWeight: FontWeight.heavy,
-            color: colors.primary,
-          }}
-        >
-          {course.code}
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            gap: Spacing.sm,
-            paddingTop: Spacing.xs,
-          }}
-        >
-          <Pill label={`${course.credits} credit${course.credits === 1 ? '' : 's'}`} />
-          {course.grade_levels.length > 0 && (
-            <Pill label={`Grades ${course.grade_levels.join(', ')}`} />
-          )}
-          {course.level ? <Pill label={course.level} /> : null}
-          {course.ap_flag && <Pill label="AP Course" tone="success" />}
-          {course.repeatable && <Pill label="Repeatable" />}
-        </View>
-      </View>
-
-      <Section title="Description">
-        <Text
-          style={{
-            fontSize: Type.body.fontSize,
-            fontWeight: Type.body.fontWeight,
-            color: colors.mutedText,
-            lineHeight: LineHeight.relaxed,
-          }}
-        >
-          {course.description}
-        </Text>
-      </Section>
-
-      {!!course.prerequisite && course.prerequisite.trim().length > 0 && (
-        <Section title="Prerequisite">
-          <Text
-            style={{
-              fontSize: Type.body.fontSize,
-              fontWeight: Type.body.fontWeight,
-              color: colors.mutedText,
-              lineHeight: LineHeight.relaxed,
-            }}
-          >
-            {course.prerequisite}
-          </Text>
-        </Section>
-      )}
-
-      {!!course.additional_notes && course.additional_notes.trim().length > 0 && (
-        <Section title="Notes">
-          <Text
-            style={{
-              fontSize: Type.body.fontSize,
-              fontWeight: Type.body.fontWeight,
-              color: colors.mutedText,
-              lineHeight: LineHeight.relaxed,
-            }}
-          >
-            {course.additional_notes}
-          </Text>
-        </Section>
-      )}
-    </View>
-  );
-}
+const createCourseStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    code: {
+      fontSize: Type.label.fontSize,
+      fontWeight: FontWeight.heavy,
+      color: colors.primary,
+    },
+    title: {
+      fontSize: Type.heading.fontSize,
+      fontWeight: Type.heading.fontWeight,
+      color: colors.text,
+    },
+    pillRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: Spacing.sm,
+    },
+    details: {
+      gap: Spacing.lg,
+      paddingTop: Spacing.lg,
+    },
+    bodyText: {
+      fontSize: Type.body.fontSize,
+      fontWeight: Type.body.fontWeight,
+      color: colors.mutedText,
+      lineHeight: LineHeight.relaxed,
+    },
+  });
 
 function FilterBar({
   activeCount,
@@ -344,7 +314,7 @@ function FilterControls({
     return set.sort((a, b) => Number(a) - Number(b));
   }, []);
 
-  const sortOptions: { value: FilterOptions['sortBy']; label: string }[] = [
+  const sortOptions: SegmentOption<FilterOptions['sortBy']>[] = [
     { value: 'code', label: 'Code' },
     { value: 'title', label: 'Title' },
     { value: 'dept', label: 'Dept' },
@@ -373,16 +343,12 @@ function FilterControls({
         <View
           style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
         >
-          <View style={[chipRow, { flex: 1 }]}>
-            {sortOptions.map((o) => (
-              <FilterChip
-                key={o.value}
-                label={o.label}
-                selected={filters.sortBy === o.value}
-                onPress={() => onChange({ ...filters, sortBy: o.value })}
-                colors={colors}
-              />
-            ))}
+          <View style={{ flex: 1 }}>
+            <SegmentedControl
+              options={sortOptions}
+              value={filters.sortBy}
+              onChange={(sortBy) => onChange({ ...filters, sortBy })}
+            />
           </View>
           <TouchableOpacity
             onPress={() =>
@@ -543,9 +509,8 @@ export default function Courses() {
   const colors = Colors[actualTheme];
 
   const [filters, setFilters] = useState<FilterOptions>(DEFAULT_FILTERS);
-  const [selected, setSelected] = useState<Course | null>(null);
+  const collapse = useHeaderCollapse();
 
-  const detailRef = useRef<DetailSheetHandle>(null);
   const filterRef = useRef<DetailSheetHandle>(null);
 
   const visible = useMemo(() => applyFilters(allCourses, filters), [filters]);
@@ -556,7 +521,7 @@ export default function Courses() {
       style={{ flex: 1, backgroundColor: colors.background }}
       edges={['top', 'left', 'right']}
     >
-      <PageHeader title="Courses" />
+      <PageHeader title="Courses" collapse={collapse} />
 
       <View style={{ flex: 1 }}>
         <DirectoryList<Course>
@@ -564,12 +529,11 @@ export default function Courses() {
           keyExtractor={(c) => c.id}
           searchKeys={(c) => [c.code, c.title, c.dept, c.description]}
           renderRow={(c) => <CourseRow course={c} colors={colors} />}
-          onItemPress={(c) => {
-            setSelected(c);
-            detailRef.current?.present();
-          }}
+          title="Courses"
+          collapse={collapse}
           placeholder="Search courses, codes, departments…"
           emptyLabel="No courses match"
+          emptyMessage="Try a different search or loosen your filters."
           header={
             <FilterBar
               activeCount={activeCount}
@@ -578,10 +542,6 @@ export default function Courses() {
             />
           }
         />
-
-        <DetailSheet ref={detailRef}>
-          {selected ? <CourseDetailBody course={selected} colors={colors} /> : null}
-        </DetailSheet>
 
         <DetailSheet ref={filterRef}>
           <FilterControls

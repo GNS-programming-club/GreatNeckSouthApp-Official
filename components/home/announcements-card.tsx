@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
+import Shimmer from '@/components/ui/shimmer';
 import { Colors, FontWeight, IconSize, Spacing, Tracking, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -29,10 +30,14 @@ export default function AnnouncementsCard() {
         <Text style={styles.label}>Announcements</Text>
       </View>
 
-      {!announcements ? (
-        <Text style={styles.muted}>
-          {status === 'loading' ? 'Loading…' : "Couldn't load announcements"}
-        </Text>
+      {!announcements && status === 'loading' ? (
+        <View style={styles.list} accessible accessibilityLabel="Loading announcements">
+          <Shimmer style={styles.skeletonWide} />
+          <Shimmer style={styles.skeletonMid} />
+          <Shimmer style={styles.skeletonNarrow} />
+        </View>
+      ) : !announcements ? (
+        <Text style={styles.muted}>Couldn&apos;t load announcements</Text>
       ) : items.length === 0 ? (
         <Text style={styles.muted}>No announcements right now</Text>
       ) : (
@@ -142,6 +147,15 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       color: colors.mutedText,
       fontSize: Type.body.fontSize,
       fontWeight: FontWeight.semibold,
+    },
+    skeletonWide: {
+      width: '88%',
+    },
+    skeletonMid: {
+      width: '72%',
+    },
+    skeletonNarrow: {
+      width: '54%',
     },
     toggle: {
       color: colors.primary,

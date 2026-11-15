@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
-import PageHeader from '@/components/tools/page-header';
+import PageHeader, { useHeaderCollapse } from '@/components/tools/page-header';
 import DirectoryList from '@/components/tools/directory-list';
 import Card from '@/components/ui/card';
 import Section from '@/components/ui/section';
@@ -136,6 +136,7 @@ export default function SchoolMap() {
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   const detailRef = useRef<DetailSheetHandle>(null);
+  const collapse = useHeaderCollapse();
   const [selected, setSelected] = useState<Entry | null>(null);
 
   const openFullMap = () => router.push('/tools/school-map-full');
@@ -156,7 +157,7 @@ export default function SchoolMap() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <View style={styles.flex}>
-        <PageHeader title="Find a Room" />
+        <PageHeader title="Find a Room" collapse={collapse} />
 
         <DirectoryList<Entry>
           data={ENTRIES}
@@ -167,6 +168,8 @@ export default function SchoolMap() {
             setSelected(e);
             detailRef.current?.present();
           }}
+          title="Find a Room"
+          collapse={collapse}
           placeholder="Search a room or place"
           header={listHeader}
           emptyLabel="No rooms match that search"

@@ -1,17 +1,37 @@
 import React, { useMemo } from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 import { Colors, Elevation, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+
+const PRESSED_SCALE = 0.97;
+const PRESS_SPRING = { stiffness: 550, mass: 0.5, damping: 50 };
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type CardProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   elevation?: keyof typeof Elevation;
   onPress?: () => void;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 };
 
-export default function Card({ children, style, elevation = 'raised', onPress }: CardProps) {
+export default function Card({
+  children,
+  style,
+  elevation = 'raised',
+  onPress,
+  accessibilityLabel,
+  accessibilityHint,
+}: CardProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -23,17 +43,57 @@ export default function Card({ children, style, elevation = 'raised', onPress }:
 
   if (onPress) {
     return (
-      <TouchableOpacity
-        activeOpacity={0.85}
+      <PressableCard
         onPress={onPress}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         style={[styles.card, elevationStyle, style]}
       >
         {children}
-      </TouchableOpacity>
+      </PressableCard>
     );
   }
 
   return <View style={[styles.card, elevationStyle, style]}>{children}</View>;
+}
+
+type PressableCardProps = {
+  children: React.ReactNode;
+  style: StyleProp<ViewStyle>;
+  onPress: () => void;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+};
+
+function PressableCard({
+  children,
+  style,
+  onPress,
+  accessibilityLabel,
+  accessibilityHint,
+}: PressableCardProps) {
+  const reduceMotion = useReducedMotion();
+  const pressScale = useSharedValue(1);
+
+  const animateScaleTo = (target: number) => {
+    pressScale.set(reduceMotion ? target : withSpring(target, PRESS_SPRING));
+  };
+
+  const scaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: pressScale.get() }] }));
+
+  return (
+    <AnimatedPressable
+      onPress={onPress}
+      onPressIn={() => animateScaleTo(PRESSED_SCALE)}
+      onPressOut={() => animateScaleTo(1)}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      style={[style, scaleStyle]}
+    >
+      {children}
+    </AnimatedPressable>
+  );
 }
 
 const createStyles = (colors: (typeof Colors)['light']) =>

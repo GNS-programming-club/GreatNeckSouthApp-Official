@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import RollingNumber from '@/components/ui/rolling-number';
 import { Colors, Elevation, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useLivePeriod } from '@/hooks/use-live-period';
@@ -70,7 +71,7 @@ export default function LiveNowCard({
       {live ? (
         <>
           <View style={styles.numeralRow}>
-            <Text style={styles.numeral}>{live.minutesToBell}</Text>
+            <RollingNumber value={live.minutesToBell} style={styles.numeral} />
             <Text style={styles.numeralLabel}>min to {isCurrent ? 'bell' : 'start'}</Text>
           </View>
 

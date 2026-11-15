@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Card from '@/components/ui/card';
-import PageHeader from '@/components/tools/page-header';
+import PageHeader, { useHeaderCollapse } from '@/components/tools/page-header';
 import Section from '@/components/ui/section';
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
 import DirectoryList from '@/components/tools/directory-list';
@@ -81,12 +81,13 @@ export default function Clubs() {
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   const detailRef = useRef<DetailSheetHandle>(null);
+  const collapse = useHeaderCollapse();
   const [selected, setSelected] = useState<Club | null>(null);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <View style={styles.flex}>
-        <PageHeader title="Clubs" />
+        <PageHeader title="Clubs" collapse={collapse} />
 
         <DirectoryList<Club>
           data={clubs}
@@ -97,6 +98,8 @@ export default function Clubs() {
             setSelected(c);
             detailRef.current?.present();
           }}
+          title="Clubs"
+          collapse={collapse}
           placeholder="Search clubs"
         />
 

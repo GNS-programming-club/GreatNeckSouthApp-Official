@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -12,6 +12,7 @@ import { useTodayLunch } from '@/components/home/today-lunch-card';
 import { WeekStrip } from '@/components/home/week-strip';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
+import { useOnboardingStatus } from '@/components/welcome/use-onboarding-status';
 import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useDayStatus, useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -33,6 +34,7 @@ export default function HomeScreen() {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
+  const onboardingStatus = useOnboardingStatus();
 
   const [loadedSchedule, setLoadedSchedule] = useState<{
     letter: string;
@@ -87,6 +89,14 @@ export default function HomeScreen() {
   const periodCount = todaySchedule
     ? todaySchedule.filter((entry) => entry != null && entry !== '').length
     : 0;
+
+  if (onboardingStatus === 'loading') {
+    return null;
+  }
+
+  if (onboardingStatus === 'pending') {
+    return <Redirect href="/welcome" />;
+  }
 
   return (
     <Screen>

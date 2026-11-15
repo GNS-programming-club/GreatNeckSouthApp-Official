@@ -1,20 +1,25 @@
 import React, { useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 
+import { type HeaderCollapse, PageLargeTitle } from '@/components/tools/page-header';
 import SearchBar from '@/components/tools/search-bar';
-import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
+import EmptyState from '@/components/ui/empty-state';
+import { Spacing } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
-import { useTheme } from '@/contexts/theme-context';
 
 type DirectoryListProps<T> = {
   data: T[];
   keyExtractor: (item: T) => string;
   searchKeys: (item: T) => string[];
   renderRow: (item: T) => React.ReactNode;
-  onItemPress: (item: T) => void;
+  onItemPress?: (item: T) => void;
   placeholder: string;
   header?: React.ReactNode;
   emptyLabel?: string;
+  emptyMessage?: string;
+  title?: string;
+  collapse?: HeaderCollapse;
 };
 
 export default function DirectoryList<T>({
@@ -26,12 +31,13 @@ export default function DirectoryList<T>({
   placeholder,
   header,
   emptyLabel = 'Nothing found',
+  emptyMessage = 'Try a different search.',
+  title,
+  collapse,
 }: DirectoryListProps<T>) {
-  const { actualTheme } = useTheme();
-  const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
   const [query, setQuery] = useState('');
   const bottomClearance = useTabBarClearance();
+  const showsLargeTitle = Boolean(title && collapse);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -44,13 +50,20 @@ export default function DirectoryList<T>({
   }, [data, query, searchKeys]);
 
   return (
-    <FlatList
+    <Animated.FlatList
       data={filtered}
       keyExtractor={keyExtractor}
       keyboardShouldPersistTaps="handled"
-      contentContainerStyle={[styles.content, { paddingBottom: bottomClearance }]}
+      onScroll={collapse?.onScroll}
+      scrollEventThrottle={16}
+      contentContainerStyle={[
+        styles.content,
+        showsLargeTitle && styles.contentUnderLargeTitle,
+        { paddingBottom: bottomClearance },
+      ]}
       ListHeaderComponent={
         <View style={styles.headerWrap}>
+          {title && collapse ? <PageLargeTitle title={title} collapse={collapse} /> : null}
           <SearchBar
             value={query}
             onChangeText={setQuery}
@@ -60,31 +73,30 @@ export default function DirectoryList<T>({
           {header}
         </View>
       }
-      ListEmptyComponent={<Text style={styles.empty}>{emptyLabel}</Text>}
-      renderItem={({ item }) => (
-        <TouchableOpacity activeOpacity={0.85} onPress={() => onItemPress(item)}>
-          {renderRow(item)}
-        </TouchableOpacity>
-      )}
+      ListEmptyComponent={<EmptyState icon="search" title={emptyLabel} message={emptyMessage} />}
+      renderItem={({ item }) =>
+        onItemPress ? (
+          <TouchableOpacity activeOpacity={0.85} onPress={() => onItemPress(item)}>
+            {renderRow(item)}
+          </TouchableOpacity>
+        ) : (
+          <>{renderRow(item)}</>
+        )
+      }
     />
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
-  StyleSheet.create({
-    content: {
-      padding: Spacing.lg,
-      gap: Spacing.md,
-    },
-    headerWrap: {
-      gap: Spacing.lg,
-      paddingBottom: Spacing.xs,
-    },
-    empty: {
-      color: colors.mutedText,
-      fontSize: Type.body.fontSize,
-      fontWeight: FontWeight.semibold,
-      textAlign: 'center',
-      paddingVertical: Spacing.xxl,
-    },
-  });
+const styles = StyleSheet.create({
+  content: {
+    padding: Spacing.lg,
+    gap: Spacing.md,
+  },
+  contentUnderLargeTitle: {
+    paddingTop: 0,
+  },
+  headerWrap: {
+    gap: Spacing.lg,
+    paddingBottom: Spacing.xs,
+  },
+});

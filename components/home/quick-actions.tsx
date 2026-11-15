@@ -34,6 +34,7 @@ export function QuickActions() {
           <Card
             key={action.label}
             onPress={() => router.push(action.path as any)}
+            accessibilityLabel={action.label}
             style={styles.tile}
           >
             <Feather name={action.icon} size={IconSize.xl} color={colors.primary} />

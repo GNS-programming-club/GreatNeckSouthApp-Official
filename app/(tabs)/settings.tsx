@@ -1,9 +1,10 @@
 import Feather from '@expo/vector-icons/Feather';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
+import { useToast } from '@/components/ui/toast';
 import { Colors, FontWeight, IconSize, LineHeight, Radius, Spacing, Type } from '@/constants/theme';
 import { useReminders } from '@/contexts/reminders-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -27,6 +28,20 @@ export default function SettingsPage() {
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
   const reminders = useReminders();
+  const toast = useToast();
+  const isAwaitingEventRemindersOn = useRef(false);
+
+  useEffect(() => {
+    if (reminders.isEventRemindersEnabled && isAwaitingEventRemindersOn.current) {
+      isAwaitingEventRemindersOn.current = false;
+      toast.show('Event reminders on', 'bell');
+    }
+  }, [reminders.isEventRemindersEnabled, toast]);
+
+  const handleEventRemindersChange = (enabled: boolean) => {
+    isAwaitingEventRemindersOn.current = enabled;
+    reminders.setEventRemindersEnabled(enabled);
+  };
 
   const header = (
     <View style={styles.header}>
@@ -100,7 +115,7 @@ export default function SettingsPage() {
               </View>
               <Switch
                 value={reminders.isEventRemindersEnabled}
-                onValueChange={reminders.setEventRemindersEnabled}
+                onValueChange={handleEventRemindersChange}
                 trackColor={{ false: colors.border, true: colors.primary }}
                 accessibilityLabel="Event reminders"
               />

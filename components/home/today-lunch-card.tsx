@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getMenuItemsForDay, getParsedMenuForMonth } from '@/api/daily-menu';
 import Card from '@/components/ui/card';
 import Section from '@/components/ui/section';
+import Shimmer from '@/components/ui/shimmer';
 import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
@@ -71,7 +72,11 @@ export default function TodayLunchCard() {
         {hasError ? (
           <Text style={styles.muted}>Lunch menu unavailable</Text>
         ) : items === null ? (
-          <Text style={styles.muted}>Loading lunch…</Text>
+          <View style={styles.list} accessible accessibilityLabel="Loading lunch">
+            <Shimmer style={styles.skeletonWide} />
+            <Shimmer style={styles.skeletonMid} />
+            <Shimmer style={styles.skeletonNarrow} />
+          </View>
         ) : visibleItems.length === 0 ? (
           <Text style={styles.muted}>Lunch menu unavailable</Text>
         ) : (
@@ -124,6 +129,15 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       color: colors.text,
       fontSize: Type.body.fontSize,
       fontWeight: Type.body.fontWeight,
+    },
+    skeletonWide: {
+      width: '82%',
+    },
+    skeletonMid: {
+      width: '64%',
+    },
+    skeletonNarrow: {
+      width: '48%',
     },
     link: {
       marginTop: Spacing.xs,
