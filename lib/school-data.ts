@@ -39,6 +39,12 @@ function isOptionalText(value: unknown): value is string | null | undefined {
   return value === undefined || value === null || typeof value === 'string';
 }
 
+const TRUSTED_DECK_PREFIX = 'https://docs.google.com/';
+
+function toTrustedDeckUrl(value: string | null | undefined): string | null {
+  return value?.startsWith(TRUSTED_DECK_PREFIX) ? value : null;
+}
+
 function toAnnouncement(value: unknown): Announcement | null {
   if (
     !isRecord(value) ||
@@ -75,7 +81,7 @@ export function parseAnnouncementsFile(value: unknown): AnnouncementsFile | null
   const items = value.items.map(toAnnouncement);
 
   return items.every((item) => item !== null)
-    ? { generatedAt: value.generatedAt, deckUrl: value.deckUrl ?? null, items }
+    ? { generatedAt: value.generatedAt, deckUrl: toTrustedDeckUrl(value.deckUrl), items }
     : null;
 }
 

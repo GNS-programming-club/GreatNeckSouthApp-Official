@@ -39,7 +39,7 @@ test('rejects a calendar file whose events are malformed', () => {
 test('accepts a well-formed announcements file', () => {
   const file = {
     generatedAt: 'x',
-    deckUrl: 'https://example.com/deck',
+    deckUrl: 'https://docs.google.com/presentation/d/abc',
     items: [{ id: 'a1', title: 'Photos', text: 'Yearbook photos Friday', club: 'Kite Club' }],
   };
   assert.deepEqual(parseAnnouncementsFile(file), file);
@@ -52,6 +52,34 @@ test('fills in an empty title, club and deck address for a file published before
     deckUrl: null,
     items: [{ id: 'a1', title: null, text: 'Yearbook photos Friday', club: null }],
   });
+});
+
+test('drops a deck address that is not an https Google Slides link', () => {
+  const items = [{ id: 'a1', title: null, text: 'Yearbook photos Friday', club: null }];
+  assert.equal(
+    parseAnnouncementsFile({ generatedAt: 'x', deckUrl: 'tel:5551234', items })?.deckUrl,
+    null
+  );
+  assert.equal(
+    parseAnnouncementsFile({
+      generatedAt: 'x',
+      deckUrl: 'http://docs.google.com/presentation/d/abc',
+      items,
+    })?.deckUrl,
+    null
+  );
+  assert.equal(
+    parseAnnouncementsFile({
+      generatedAt: 'x',
+      deckUrl: 'https://docs.google.com.evil.example/deck',
+      items,
+    })?.deckUrl,
+    null
+  );
+  assert.equal(
+    parseAnnouncementsFile({ generatedAt: 'x', deckUrl: 'not a url', items })?.deckUrl,
+    null
+  );
 });
 
 test('rejects an announcements file whose item title is not text', () => {
