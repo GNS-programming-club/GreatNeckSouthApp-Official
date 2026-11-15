@@ -13,6 +13,7 @@ import SearchBar from '@/components/tools/search-bar';
 import { Colors, FontWeight, Spacing, Tracking, Type } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
+import { appClock } from '@/lib/clock';
 
 import busData from '@/assets/data/bus.json';
 
@@ -113,7 +114,8 @@ export default function Bus() {
   }, [query]);
 
   const sections = useMemo<RouteSection[]>(() => {
-    const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+    const now = appClock.now();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
     const byTime = new Map<string, BusRoute[]>();
 
     filtered.forEach((route) => {

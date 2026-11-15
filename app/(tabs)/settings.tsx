@@ -1,4 +1,5 @@
 import Feather from '@expo/vector-icons/Feather';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
@@ -29,6 +30,7 @@ export default function SettingsPage() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const reminders = useReminders();
   const toast = useToast();
+  const router = useRouter();
   const isAwaitingEventRemindersOn = useRef(false);
 
   useEffect(() => {
@@ -135,6 +137,27 @@ export default function SettingsPage() {
             </View>
           </View>
         </View>
+
+        {__DEV__ ? (
+          <View style={styles.section}>
+            <SectionHeading icon="tool" title="Developer" colors={colors} styles={styles} />
+
+            <View style={styles.card}>
+              <TouchableOpacity
+                style={[styles.row, styles.rowLast]}
+                onPress={() => router.push('/dev-scenarios')}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+              >
+                <View style={styles.rowLeft}>
+                  <Text style={styles.rowTitle}>Test Scenarios</Text>
+                  <Text style={styles.rowSubtitle}>Fake the time, replay first launch</Text>
+                </View>
+                <Feather name="chevron-right" size={IconSize.md} color={colors.mutedText} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
       </Stagger>
     </Screen>
   );

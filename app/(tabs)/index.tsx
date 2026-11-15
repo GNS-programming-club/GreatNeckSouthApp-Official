@@ -16,7 +16,9 @@ import { useOnboardingStatus } from '@/components/welcome/use-onboarding-status'
 import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useDayStatus, useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
+import { useClockVersion } from '@/hooks/use-clock-version';
 import { useTodayIso } from '@/hooks/use-today-iso';
+import { appClock } from '@/lib/clock';
 import { fromIsoDate, nextSchoolDay, toIsoDate } from '@/lib/day-letters';
 
 const STORAGE_KEY = 'userSchedule_v1';
@@ -42,11 +44,9 @@ export default function HomeScreen() {
   } | null>(null);
 
   const todayIso = useTodayIso();
-  const today = useMemo(() => {
-    const now = new Date();
-
-    return todayIso === toIsoDate(now) ? now : fromIsoDate(todayIso);
-  }, [todayIso]);
+  useClockVersion();
+  const now = appClock.now();
+  const today = todayIso === toIsoDate(now) ? now : fromIsoDate(todayIso);
   const todayStatus = useDayStatus(todayIso);
   const { dayLetters } = useSchoolData();
   const upcomingSchoolDay = useMemo(

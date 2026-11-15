@@ -6,6 +6,7 @@ import RollingNumber from '@/components/ui/rolling-number';
 import { Colors, Elevation, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useLivePeriod } from '@/hooks/use-live-period';
+import { appClock } from '@/lib/clock';
 import { fromIsoDate, type DayLetter, type DayStatus } from '@/lib/day-letters';
 
 type LiveNowCardProps = {
@@ -37,7 +38,7 @@ export default function LiveNowCard({
   const router = useRouter();
 
   const { live: livePeriod } = useLivePeriod();
-  const weekday = new Date().getDay();
+  const weekday = appClock.now().getDay();
   const isWeekend = weekday === 0 || weekday === 6;
   const isNoSchool =
     todayStatus.kind === 'no-school' || (todayStatus.kind === 'unknown' && isWeekend);

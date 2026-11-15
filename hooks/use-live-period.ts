@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { appClock } from '@/lib/clock';
+
 interface RawPeriod {
   id: string;
   period: string;
@@ -26,7 +28,7 @@ export function getEasternSeconds(): number {
       hour12: false,
     });
 
-    const parts = formatter.formatToParts(new Date());
+    const parts = formatter.formatToParts(appClock.now());
     const hour = Number(parts.find((p) => p.type === 'hour')?.value);
     const minute = Number(parts.find((p) => p.type === 'minute')?.value);
     const second = Number(parts.find((p) => p.type === 'second')?.value);
@@ -36,7 +38,7 @@ export function getEasternSeconds(): number {
     }
   } catch {}
 
-  const now = new Date();
+  const now = appClock.now();
 
   return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 }
@@ -112,9 +114,14 @@ export function useNowSeconds(): number {
   const [now, setNow] = useState(() => getEasternSeconds());
 
   useEffect(() => {
-    const interval = setInterval(() => setNow(getEasternSeconds()), 1000);
+    const syncNow = () => setNow(getEasternSeconds());
+    const interval = setInterval(syncNow, 1000);
+    const unsubscribeFromClock = appClock.subscribe(syncNow);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      unsubscribeFromClock();
+    };
   }, []);
 
   return now;
