@@ -1,24 +1,6 @@
 {
-  "generatedAt": "2026-11-14T11:36:47.795Z",
+  "generatedAt": "2026-11-15T11:12:02.205Z",
   "events": [
-    {
-      "id": "61f8067b-9671-512a-aa2f-1b4b79fee391",
-      "title": "HS SAT",
-      "source": "district",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-07",
-      "end": "2026-11-07"
-    },
-    {
-      "id": "dc7084ec-712a-5073-b50d-47281d151dda",
-      "title": "SAT",
-      "source": "school",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-07",
-      "end": "2026-11-07"
-    },
     {
       "id": "0192a43b-04e5-553b-a59b-c1eab7cccaaa",
       "title": "Diwali",
