@@ -15,7 +15,7 @@ const ESTIMATED_TAB_BAR_HEIGHT = 72;
 const TabBarContext = createContext<TabBarContextType | undefined>(undefined);
 
 export function tabBarBottomOffset(bottomInset: number) {
-  return Math.max(bottomInset + 8, 16) + (bottomInset ? 8 : 12);
+  return Math.max(bottomInset - Spacing.xs, Spacing.md);
 }
 
 export function TabBarProvider({ children }: { children: React.ReactNode }) {

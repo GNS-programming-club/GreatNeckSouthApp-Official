@@ -1,6 +1,6 @@
 import { baseTiming } from '@/constants/motion';
 import { Colors, Elevation, IconSize, Motion, Radius, Spacing, Type } from '@/constants/theme';
-import { useTabBar } from '@/contexts/tab-bar-context';
+import { tabBarBottomOffset, useTabBar } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import Feather from '@expo/vector-icons/Feather';
 import { PlatformPressable } from 'expo-router/react-navigation';
@@ -36,11 +36,10 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab }: B
       style={[
         styles.bar,
         {
-          bottom: Math.max(insets.bottom + Spacing.sm, Spacing.lg),
+          bottom: tabBarBottomOffset(insets.bottom),
           backgroundColor: colors.surface,
           borderColor: colors.border,
           shadowColor: colors.shadow,
-          marginBottom: insets.bottom ? Spacing.sm : Spacing.md,
         },
       ]}
     >
@@ -182,8 +181,8 @@ const styles = StyleSheet.create({
   bar: {
     position: 'absolute',
     bottom: Spacing.lg,
-    left: Spacing.md,
-    right: Spacing.md,
+    left: Spacing.lg,
+    right: Spacing.lg,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

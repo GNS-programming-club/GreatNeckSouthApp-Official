@@ -52,7 +52,13 @@
         "entrance",
         "front",
         "door"
-      ]
+      ],
+      "box": {
+        "x": 1177,
+        "y": 1395,
+        "width": 323,
+        "height": 110
+      }
     },
     {
       "id": "main-office",
@@ -64,7 +70,13 @@
         "office",
         "main",
         "admin"
-      ]
+      ],
+      "box": {
+        "x": 861,
+        "y": 1464,
+        "width": 106,
+        "height": 75
+      }
     },
     {
       "id": "nurse",
@@ -76,7 +88,13 @@
         "nurse",
         "health",
         "sick"
-      ]
+      ],
+      "box": {
+        "x": 770,
+        "y": 1560,
+        "width": 72,
+        "height": 72
+      }
     },
     {
       "id": "attendance",
@@ -88,7 +106,13 @@
         "attendance",
         "late",
         "absent"
-      ]
+      ],
+      "box": {
+        "x": 845,
+        "y": 1560,
+        "width": 45,
+        "height": 72
+      }
     },
     {
       "id": "guidance",
@@ -100,7 +124,13 @@
         "guidance",
         "counselor",
         "college"
-      ]
+      ],
+      "box": {
+        "x": 894,
+        "y": 1560,
+        "width": 195,
+        "height": 72
+      }
     },
     {
       "id": "principal",
@@ -111,7 +141,13 @@
       "keywords": [
         "principal",
         "726"
-      ]
+      ],
+      "box": {
+        "x": 971,
+        "y": 1464,
+        "width": 46,
+        "height": 75
+      }
     },
     {
       "id": "deans",
@@ -124,7 +160,13 @@
         "discipline",
         "327",
         "328"
-      ]
+      ],
+      "box": {
+        "x": 1171,
+        "y": 1071,
+        "width": 158,
+        "height": 47
+      }
     },
     {
       "id": "library",
@@ -137,7 +179,13 @@
         "books",
         "study",
         "502"
-      ]
+      ],
+      "box": {
+        "x": 897,
+        "y": 554,
+        "width": 172,
+        "height": 185
+      }
     },
     {
       "id": "computer-lab",
@@ -149,7 +197,13 @@
         "computer",
         "lab",
         "tech"
-      ]
+      ],
+      "box": {
+        "x": 1051,
+        "y": 555,
+        "width": 54,
+        "height": 45
+      }
     },
     {
       "id": "auditorium",
@@ -162,7 +216,13 @@
         "theater",
         "show",
         "play"
-      ]
+      ],
+      "box": {
+        "x": 1201,
+        "y": 1134,
+        "width": 211,
+        "height": 152
+      }
     },
     {
       "id": "stage",
@@ -174,7 +234,13 @@
         "stage",
         "theater",
         "drama"
-      ]
+      ],
+      "box": {
+        "x": 1415,
+        "y": 1135,
+        "width": 98,
+        "height": 151
+      }
     },
     {
       "id": "choral-room",
@@ -187,7 +253,13 @@
         "choral",
         "sing",
         "306"
-      ]
+      ],
+      "box": {
+        "x": 1358,
+        "y": 1307,
+        "width": 127,
+        "height": 106
+      }
     },
     {
       "id": "music",
@@ -200,7 +272,13 @@
         "band",
         "orchestra",
         "309"
-      ]
+      ],
+      "box": {
+        "x": 1591,
+        "y": 1307,
+        "width": 95,
+        "height": 106
+      }
     },
     {
       "id": "upper-cafeteria",
@@ -214,7 +292,13 @@
         "food",
         "upper",
         "cafe"
-      ]
+      ],
+      "box": {
+        "x": 1648,
+        "y": 64,
+        "width": 263,
+        "height": 80
+      }
     },
     {
       "id": "lower-cafeteria",
@@ -228,7 +312,13 @@
         "food",
         "lower",
         "cafe"
-      ]
+      ],
+      "box": {
+        "x": 1303,
+        "y": 64,
+        "width": 292,
+        "height": 126
+      }
     },
     {
       "id": "east-gym",
@@ -242,7 +332,13 @@
         "pe",
         "808",
         "sports"
-      ]
+      ],
+      "box": {
+        "x": 104,
+        "y": 904,
+        "width": 213,
+        "height": 345
+      }
     },
     {
       "id": "west-gym",
@@ -256,7 +352,13 @@
         "pe",
         "102",
         "sports"
-      ]
+      ],
+      "box": {
+        "x": 1995,
+        "y": 919,
+        "width": 162,
+        "height": 199
+      }
     },
     {
       "id": "aux-gym-100",
@@ -268,7 +370,13 @@
         "gym",
         "aux",
         "100"
-      ]
+      ],
+      "box": {
+        "x": 2105,
+        "y": 1119,
+        "width": 84,
+        "height": 89
+      }
     },
     {
       "id": "aux-gym-809",
@@ -280,7 +388,13 @@
         "gym",
         "aux",
         "809"
-      ]
+      ],
+      "box": {
+        "x": 73,
+        "y": 1256,
+        "width": 76,
+        "height": 90
+      }
     },
     {
       "id": "weight-room",
@@ -293,7 +407,13 @@
         "fitness",
         "810",
         "gym"
-      ]
+      ],
+      "box": {
+        "x": 40,
+        "y": 1122,
+        "width": 57,
+        "height": 94
+      }
     },
     {
       "id": "wood-shop",
@@ -306,7 +426,13 @@
         "shop",
         "tech",
         "200"
-      ]
+      ],
+      "box": {
+        "x": 1897,
+        "y": 1176,
+        "width": 87,
+        "height": 90
+      }
     },
     {
       "id": "auto-shop",
@@ -319,7 +445,13 @@
         "shop",
         "car",
         "tech"
-      ]
+      ],
+      "box": {
+        "x": 1896,
+        "y": 1376,
+        "width": 88,
+        "height": 60
+      }
     },
     {
       "id": "greenhouse",
@@ -332,7 +464,13 @@
         "plants",
         "641",
         "bio"
-      ]
+      ],
+      "box": {
+        "x": 590,
+        "y": 881,
+        "width": 45,
+        "height": 37
+      }
     },
     {
       "id": "observatory",
@@ -345,7 +483,13 @@
         "stars",
         "telescope",
         "astronomy"
-      ]
+      ],
+      "box": {
+        "x": 634,
+        "y": 966,
+        "width": 30,
+        "height": 46
+      }
     },
     {
       "id": "courtyard",
@@ -357,7 +501,13 @@
         "courtyard",
         "outside",
         "middle"
-      ]
+      ],
+      "box": {
+        "x": 828,
+        "y": 765,
+        "width": 318,
+        "height": 451
+      }
     },
     {
       "id": "school-store",
@@ -370,7 +520,13 @@
         "store",
         "supplies",
         "spirit"
-      ]
+      ],
+      "box": {
+        "x": 980,
+        "y": 1319,
+        "width": 85,
+        "height": 75
+      }
     },
     {
       "id": "study-center",
@@ -383,7 +539,13 @@
         "center",
         "210",
         "quiet"
-      ]
+      ],
+      "box": {
+        "x": 1777,
+        "y": 1016,
+        "width": 62,
+        "height": 102
+      }
     },
     {
       "id": "test-center",
@@ -396,7 +558,13 @@
         "exam",
         "322",
         "makeup"
-      ]
+      ],
+      "box": {
+        "x": 1403,
+        "y": 1073,
+        "width": 80,
+        "height": 45
+      }
     },
     {
       "id": "faculty-lounge",
@@ -409,7 +577,13 @@
         "teacher",
         "lounge",
         "319c"
-      ]
+      ],
+      "box": {
+        "x": 1517,
+        "y": 984,
+        "width": 59,
+        "height": 100
+      }
     }
   ],
   "rooms": [
@@ -417,607 +591,1213 @@
       "id": "room-104f",
       "label": "104F",
       "sub": "",
-      "section": "100s"
+      "section": "100s",
+      "box": {
+        "x": 1942,
+        "y": 919,
+        "width": 50,
+        "height": 45
+      }
     },
     {
       "id": "room-105",
       "label": "105",
       "sub": "",
-      "section": "100s"
+      "section": "100s",
+      "box": {
+        "x": 1896,
+        "y": 1135,
+        "width": 125,
+        "height": 38
+      }
     },
     {
       "id": "room-199",
       "label": "199",
       "sub": "",
-      "section": "100s"
+      "section": "100s",
+      "box": {
+        "x": 1843,
+        "y": 1016,
+        "width": 48,
+        "height": 32
+      }
     },
     {
       "id": "room-199a",
       "label": "199A",
       "sub": "",
-      "section": "100s"
+      "section": "100s",
+      "box": {
+        "x": 1843,
+        "y": 1052,
+        "width": 33,
+        "height": 66
+      }
     },
     {
       "id": "room-206",
       "label": "206",
       "sub": "",
-      "section": "200s"
+      "section": "200s",
+      "box": {
+        "x": 1801,
+        "y": 1332,
+        "width": 75,
+        "height": 104
+      }
     },
     {
       "id": "room-207",
       "label": "207",
       "sub": "",
-      "section": "200s"
+      "section": "200s",
+      "box": {
+        "x": 1897,
+        "y": 1305,
+        "width": 87,
+        "height": 64
+      }
     },
     {
       "id": "room-211",
       "label": "211",
       "sub": "",
-      "section": "200s"
+      "section": "200s",
+      "box": {
+        "x": 1769,
+        "y": 1135,
+        "width": 50,
+        "height": 65
+      }
     },
     {
       "id": "room-212",
       "label": "212",
       "sub": "",
-      "section": "200s"
+      "section": "200s",
+      "box": {
+        "x": 1678,
+        "y": 1052,
+        "width": 97,
+        "height": 66
+      }
     },
     {
       "id": "room-213",
       "label": "213",
       "sub": "",
-      "section": "200s"
+      "section": "200s",
+      "box": {
+        "x": 1656,
+        "y": 1135,
+        "width": 49,
+        "height": 65
+      }
     },
     {
       "id": "room-213a",
       "label": "213A",
       "sub": "",
-      "section": "200s"
+      "section": "200s",
+      "box": {
+        "x": 1708,
+        "y": 1136,
+        "width": 58,
+        "height": 91
+      }
     },
     {
       "id": "room-214",
       "label": "214",
       "sub": "",
-      "section": "200s"
+      "section": "200s",
+      "box": {
+        "x": 1578,
+        "y": 1052,
+        "width": 97,
+        "height": 65
+      }
     },
     {
       "id": "room-313",
       "label": "313",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1531,
+        "y": 1253,
+        "width": 45,
+        "height": 33
+      }
     },
     {
       "id": "room-314",
       "label": "314",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1531,
+        "y": 1214,
+        "width": 45,
+        "height": 33
+      }
     },
     {
       "id": "room-315",
       "label": "315",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1531,
+        "y": 1174,
+        "width": 45,
+        "height": 34
+      }
     },
     {
       "id": "room-316",
       "label": "316",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1531,
+        "y": 1136,
+        "width": 45,
+        "height": 33
+      }
     },
     {
       "id": "room-319a",
       "label": "319A",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1521,
+        "y": 1088,
+        "width": 55,
+        "height": 30
+      }
     },
     {
       "id": "room-319b",
       "label": "319B",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1485,
+        "y": 1089,
+        "width": 25,
+        "height": 29
+      }
     },
     {
       "id": "room-319d",
       "label": "319D",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1496,
+        "y": 1029,
+        "width": 24,
+        "height": 43
+      }
     },
     {
       "id": "room-319e",
       "label": "319E",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1491,
+        "y": 984,
+        "width": 24,
+        "height": 43
+      }
     },
     {
       "id": "room-319f",
       "label": "319F",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1459,
+        "y": 1039,
+        "width": 24,
+        "height": 31
+      }
     },
     {
       "id": "room-319g",
       "label": "319G",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1465,
+        "y": 984,
+        "width": 25,
+        "height": 43
+      }
     },
     {
       "id": "room-319h",
       "label": "319H",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1434,
+        "y": 1039,
+        "width": 22,
+        "height": 31
+      }
     },
     {
       "id": "room-319i",
       "label": "319I",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1441,
+        "y": 984,
+        "width": 23,
+        "height": 43
+      }
     },
     {
       "id": "room-319j",
       "label": "319J",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1403,
+        "y": 1035,
+        "width": 28,
+        "height": 35
+      }
     },
     {
       "id": "room-319k",
       "label": "319K",
       "sub": "",
-      "section": "300s"
+      "section": "300s",
+      "box": {
+        "x": 1404,
+        "y": 984,
+        "width": 28,
+        "height": 45
+      }
     },
     {
       "id": "room-401",
       "label": "401",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1170,
+        "y": 902,
+        "width": 43,
+        "height": 67
+      }
     },
     {
       "id": "room-402",
       "label": "402",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1108,
+        "y": 924,
+        "width": 42,
+        "height": 66
+      }
     },
     {
       "id": "room-403",
       "label": "403",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1170,
+        "y": 833,
+        "width": 43,
+        "height": 67
+      }
     },
     {
       "id": "room-404",
       "label": "404",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1108,
+        "y": 856,
+        "width": 43,
+        "height": 66
+      }
     },
     {
       "id": "room-405",
       "label": "405",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1107,
+        "y": 827,
+        "width": 45,
+        "height": 26
+      }
     },
     {
       "id": "room-406",
       "label": "406",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1107,
+        "y": 758,
+        "width": 45,
+        "height": 67
+      }
     },
     {
       "id": "room-407",
       "label": "407",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1170,
+        "y": 789,
+        "width": 43,
+        "height": 42
+      }
     },
     {
       "id": "room-414",
       "label": "414",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1269,
+        "y": 664,
+        "width": 53,
+        "height": 63
+      }
     },
     {
       "id": "room-416",
       "label": "416",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1269,
+        "y": 595,
+        "width": 53,
+        "height": 67
+      }
     },
     {
       "id": "room-417",
       "label": "417",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1179,
+        "y": 549,
+        "width": 53,
+        "height": 51
+      }
     },
     {
       "id": "room-418",
       "label": "418",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1269,
+        "y": 526,
+        "width": 53,
+        "height": 66
+      }
     },
     {
       "id": "room-419",
       "label": "419",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1179,
+        "y": 496,
+        "width": 53,
+        "height": 51
+      }
     },
     {
       "id": "room-420",
       "label": "420",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1179,
+        "y": 469,
+        "width": 53,
+        "height": 26
+      }
     },
     {
       "id": "room-421",
       "label": "421",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1269,
+        "y": 457,
+        "width": 53,
+        "height": 66
+      }
     },
     {
       "id": "room-423",
       "label": "423",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1179,
+        "y": 416,
+        "width": 53,
+        "height": 51
+      }
     },
     {
       "id": "room-424",
       "label": "424",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1269,
+        "y": 388,
+        "width": 53,
+        "height": 66
+      }
     },
     {
       "id": "room-425",
       "label": "425",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1179,
+        "y": 365,
+        "width": 53,
+        "height": 49
+      }
     },
     {
       "id": "room-430",
       "label": "430",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1501,
+        "y": 857,
+        "width": 43,
+        "height": 65
+      }
     },
     {
       "id": "room-431",
       "label": "431",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1439,
+        "y": 869,
+        "width": 42,
+        "height": 75
+      }
     },
     {
       "id": "room-433",
       "label": "433",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1501,
+        "y": 818,
+        "width": 43,
+        "height": 34
+      }
     },
     {
       "id": "room-434",
       "label": "434",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1439,
+        "y": 791,
+        "width": 42,
+        "height": 75
+      }
     },
     {
       "id": "room-435",
       "label": "435",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1501,
+        "y": 745,
+        "width": 43,
+        "height": 70
+      }
     },
     {
       "id": "room-437",
       "label": "437",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1439,
+        "y": 713,
+        "width": 42,
+        "height": 74
+      }
     },
     {
       "id": "room-441",
       "label": "441",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1600,
+        "y": 619,
+        "width": 52,
+        "height": 62
+      }
     },
     {
       "id": "room-442",
       "label": "442",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1510,
+        "y": 560,
+        "width": 53,
+        "height": 50
+      }
     },
     {
       "id": "room-443",
       "label": "443",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1600,
+        "y": 550,
+        "width": 52,
+        "height": 66
+      }
     },
     {
       "id": "room-445",
       "label": "445",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1510,
+        "y": 507,
+        "width": 53,
+        "height": 49
+      }
     },
     {
       "id": "room-446",
       "label": "446",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1600,
+        "y": 481,
+        "width": 52,
+        "height": 65
+      }
     },
     {
       "id": "room-447",
       "label": "447",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1510,
+        "y": 477,
+        "width": 53,
+        "height": 26
+      }
     },
     {
       "id": "room-448",
       "label": "448",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1510,
+        "y": 424,
+        "width": 53,
+        "height": 49
+      }
     },
     {
       "id": "room-449",
       "label": "449",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1600,
+        "y": 412,
+        "width": 52,
+        "height": 65
+      }
     },
     {
       "id": "room-450",
       "label": "450",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1510,
+        "y": 371,
+        "width": 53,
+        "height": 50
+      }
     },
     {
       "id": "room-451",
       "label": "451",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1600,
+        "y": 343,
+        "width": 52,
+        "height": 66
+      }
     },
     {
       "id": "room-452",
       "label": "452",
       "sub": "",
-      "section": "400s"
+      "section": "400s",
+      "box": {
+        "x": 1510,
+        "y": 320,
+        "width": 53,
+        "height": 48
+      }
     },
     {
       "id": "room-501",
       "label": "501",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 1052,
+        "y": 683,
+        "width": 90,
+        "height": 56
+      }
     },
     {
       "id": "room-502a",
       "label": "502A",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 1071,
+        "y": 657,
+        "width": 34,
+        "height": 24
+      }
     },
     {
       "id": "room-502b",
       "label": "502B",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 1071,
+        "y": 630,
+        "width": 34,
+        "height": 25
+      }
     },
     {
       "id": "room-502c",
       "label": "502C",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 1071,
+        "y": 604,
+        "width": 19,
+        "height": 24
+      }
     },
     {
       "id": "room-502d",
       "label": "502D",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 1051,
+        "y": 555,
+        "width": 54,
+        "height": 45
+      }
     },
     {
       "id": "room-502f",
       "label": "502F",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 897,
+        "y": 555,
+        "width": 55,
+        "height": 45
+      }
     },
     {
       "id": "room-503",
       "label": "503",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 924,
+        "y": 692,
+        "width": 25,
+        "height": 46
+      }
     },
     {
       "id": "room-503a",
       "label": "503A",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 898,
+        "y": 692,
+        "width": 25,
+        "height": 46
+      }
     },
     {
       "id": "room-504",
       "label": "504",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 873,
+        "y": 692,
+        "width": 23,
+        "height": 46
+      }
     },
     {
       "id": "room-505",
       "label": "505",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 847,
+        "y": 692,
+        "width": 23,
+        "height": 46
+      }
     },
     {
       "id": "room-506",
       "label": "506",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 820,
+        "y": 691,
+        "width": 25,
+        "height": 47
+      }
     },
     {
       "id": "room-507",
       "label": "507",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 767,
+        "y": 655,
+        "width": 78,
+        "height": 83
+      }
     },
     {
       "id": "room-508",
       "label": "508",
       "sub": "",
-      "section": "500s"
+      "section": "500s",
+      "box": {
+        "x": 688,
+        "y": 699,
+        "width": 53,
+        "height": 56
+      }
     },
     {
       "id": "room-600",
       "label": "600",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 768,
+        "y": 1181,
+        "width": 54,
+        "height": 38
+      }
     },
     {
       "id": "room-601",
       "label": "601",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 1213,
+        "width": 53,
+        "height": 36
+      }
     },
     {
       "id": "room-602",
       "label": "602",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 768,
+        "y": 1105,
+        "width": 54,
+        "height": 72
+      }
     },
     {
       "id": "room-603",
       "label": "603",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 1139,
+        "width": 53,
+        "height": 70
+      }
     },
     {
       "id": "room-604",
       "label": "604",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 768,
+        "y": 1029,
+        "width": 54,
+        "height": 72
+      }
     },
     {
       "id": "room-605",
       "label": "605",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 1059,
+        "width": 53,
+        "height": 74
+      }
     },
     {
       "id": "room-606",
       "label": "606",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 1029,
+        "width": 53,
+        "height": 26
+      }
     },
     {
       "id": "room-607",
       "label": "607",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 768,
+        "y": 952,
+        "width": 54,
+        "height": 73
+      }
     },
     {
       "id": "room-608",
       "label": "608",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 992,
+        "width": 53,
+        "height": 33
+      }
     },
     {
       "id": "room-609",
       "label": "609",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 768,
+        "y": 876,
+        "width": 54,
+        "height": 72
+      }
     },
     {
       "id": "room-610",
       "label": "610",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 919,
+        "width": 53,
+        "height": 69
+      }
     },
     {
       "id": "room-611",
       "label": "611",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 884,
+        "width": 53,
+        "height": 31
+      }
     },
     {
       "id": "room-612",
       "label": "612",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 768,
+        "y": 835,
+        "width": 54,
+        "height": 37
+      }
     },
     {
       "id": "room-613",
       "label": "613",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 802,
+        "width": 53,
+        "height": 79
+      }
     },
     {
       "id": "room-614",
       "label": "614",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 768,
+        "y": 759,
+        "width": 54,
+        "height": 72
+      }
     },
     {
       "id": "room-615",
       "label": "615",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 688,
+        "y": 760,
+        "width": 53,
+        "height": 38
+      }
     },
     {
       "id": "room-617",
       "label": "617",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 552,
+        "y": 1121,
+        "width": 53,
+        "height": 88
+      }
     },
     {
       "id": "room-620",
       "label": "620",
       "sub": "",
-      "section": "600s"
+      "section": "600s",
+      "box": {
+        "x": 552,
+        "y": 1030,
+        "width": 54,
+        "height": 87
+      }
     },
     {
       "id": "room-700",
       "label": "700",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 1052,
+        "y": 1222,
+        "width": 62,
+        "height": 77
+      }
     },
     {
       "id": "room-701",
       "label": "701",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 1069,
+        "y": 1319,
+        "width": 78,
+        "height": 75
+      }
     },
     {
       "id": "room-702",
       "label": "702",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 926,
+        "y": 1222,
+        "width": 64,
+        "height": 77
+      }
     },
     {
       "id": "room-703",
       "label": "703",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 882,
+        "y": 1222,
+        "width": 40,
+        "height": 77
+      }
     },
     {
       "id": "room-704",
       "label": "704",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 926,
+        "y": 1319,
+        "width": 49,
+        "height": 75
+      }
     },
     {
       "id": "room-705",
       "label": "705",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 825,
+        "y": 1222,
+        "width": 53,
+        "height": 77
+      }
     },
     {
       "id": "room-707a",
       "label": "707A",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 804,
+        "y": 1319,
+        "width": 58,
+        "height": 75
+      }
     },
     {
       "id": "room-707b",
       "label": "707B",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 865,
+        "y": 1319,
+        "width": 58,
+        "height": 75
+      }
     },
     {
       "id": "room-729",
       "label": "729",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 771,
+        "y": 1464,
+        "width": 35,
+        "height": 75
+      }
     },
     {
       "id": "room-731",
       "label": "731",
       "sub": "",
-      "section": "700s"
+      "section": "700s",
+      "box": {
+        "x": 771,
+        "y": 1464,
+        "width": 35,
+        "height": 75
+      }
     },
     {
       "id": "room-800",
       "label": "800",
       "sub": "",
-      "section": "800s"
+      "section": "800s",
+      "box": {
+        "x": 397,
+        "y": 1279,
+        "width": 35,
+        "height": 39
+      }
     }
   ]
 }
