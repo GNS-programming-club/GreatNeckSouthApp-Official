@@ -20,7 +20,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import MapSpotlight from '@/components/map/map-spotlight';
 import type { MapSpotlightTarget, MapViewportValues, ScaleBound } from '@/components/map/map-types';
-import { Colors, Motion, Radius } from '@/constants/theme';
+import { Colors, Motion, Radii, type RadiusScale } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import {
   MAX_SCALE,
@@ -73,7 +73,8 @@ const MapStage = forwardRef<MapStageHandle, MapStageProps>(
   ({ obscured, spotlight, onScaleBoundChange, onGestureStart, onMapTap }, ref) => {
     const { actualTheme } = useTheme();
     const colors = Colors[actualTheme];
-    const styles = useMemo(() => createStyles(colors), [colors]);
+    const radius = Radii[actualTheme];
+    const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
     const reduceMotion = useReducedMotion();
 
     const [frame, setFrame] = useState<MapFrame | null>(null);
@@ -296,7 +297,7 @@ MapStage.displayName = 'MapStage';
 
 export default MapStage;
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     root: {
       ...StyleSheet.absoluteFill,
@@ -309,7 +310,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       alignItems: 'center',
     },
     mapContent: {
-      borderRadius: Radius.sm,
+      borderRadius: radius.sm,
       borderCurve: 'continuous',
       overflow: 'hidden',
     },

@@ -2,7 +2,15 @@ import Feather from '@expo/vector-icons/Feather';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { Colors, IconSize, Radius, Spacing, Tracking, Type } from '@/constants/theme';
+import {
+  Colors,
+  IconSize,
+  Radii,
+  type RadiusScale,
+  Spacing,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type SearchBarProps = {
@@ -20,7 +28,8 @@ export default function SearchBar({
 }: SearchBarProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <View style={styles.wrap}>
@@ -50,7 +59,7 @@ export default function SearchBar({
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     wrap: {
       gap: Spacing.sm,
@@ -60,7 +69,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       alignItems: 'center',
       gap: Spacing.sm,
       backgroundColor: colors.surface,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,

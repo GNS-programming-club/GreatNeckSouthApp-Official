@@ -10,6 +10,8 @@ import {
 
 import { MESH_GRADIENT_SHADER } from '@/components/welcome/mesh-gradient-shader';
 import { useTheme } from '@/contexts/theme-context';
+import { composite, mix, toHex } from '@/lib/color';
+import { THEME_IDS, THEMES, type ThemeId } from '@/lib/theme-catalog';
 
 type RgbFraction = [number, number, number, number];
 
@@ -22,10 +24,23 @@ const NOISE = 0.15;
 const BLUR = 0.4;
 const CONTRAST = 1;
 
-const GRADIENT_HEX = {
+const TUNED_GRADIENT_HEX: Partial<Record<ThemeId, readonly string[]>> = {
   light: ['#FFFFFF', '#306BEC', '#F4F6F9', '#83A6F4'],
   dark: ['#0A0B0D', '#1F51BC', '#14161A', '#173576'],
-} as const;
+};
+
+const SOFTENED_ACCENT_SHARE = 0.4;
+
+function deriveGradientHex(id: ThemeId) {
+  const { background, surface, primaryFill } = THEMES[id].palette;
+
+  return [
+    background,
+    primaryFill,
+    toHex(composite(surface, background)),
+    mix(primaryFill, background, SOFTENED_ACCENT_SHARE),
+  ];
+}
 
 function hexToRgbFraction(hex: string): RgbFraction {
   const channel = (offset: number) => parseInt(hex.slice(offset, offset + 2), 16) / 255;
@@ -33,10 +48,12 @@ function hexToRgbFraction(hex: string): RgbFraction {
   return [channel(1), channel(3), channel(5), 1];
 }
 
-const GRADIENT_COLORS = {
-  light: GRADIENT_HEX.light.map(hexToRgbFraction),
-  dark: GRADIENT_HEX.dark.map(hexToRgbFraction),
-};
+const GRADIENT_COLORS = Object.fromEntries(
+  THEME_IDS.map((id) => [
+    id,
+    (TUNED_GRADIENT_HEX[id] ?? deriveGradientHex(id)).map(hexToRgbFraction),
+  ])
+) as Record<ThemeId, RgbFraction[]>;
 
 export default function WelcomeBackdrop() {
   const { actualTheme } = useTheme();

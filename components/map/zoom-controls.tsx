@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { ScaleBound } from '@/components/map/map-types';
-import { Colors, Elevation, IconSize, Opacity, Radius } from '@/constants/theme';
+import { Colors, Elevation, IconSize, Opacity, Radii, type RadiusScale } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 const BUTTON_SIZE = 44;
@@ -26,7 +26,8 @@ type ZoomButtonProps = {
 function ZoomButton({ icon, label, disabled, position, onPress }: ZoomButtonProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <Pressable
@@ -56,7 +57,8 @@ export default function ZoomControls({
 }: ZoomControlsProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <View style={styles.card}>
@@ -87,11 +89,11 @@ export default function ZoomControls({
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     card: {
       width: BUTTON_SIZE + 2,
-      borderRadius: Radius.md,
+      borderRadius: radius.md,
       borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,
@@ -105,12 +107,12 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       justifyContent: 'center',
     },
     firstButton: {
-      borderTopLeftRadius: Radius.md - 1,
-      borderTopRightRadius: Radius.md - 1,
+      borderTopLeftRadius: Math.max(radius.md - 1, 0),
+      borderTopRightRadius: Math.max(radius.md - 1, 0),
     },
     lastButton: {
-      borderBottomLeftRadius: Radius.md - 1,
-      borderBottomRightRadius: Radius.md - 1,
+      borderBottomLeftRadius: Math.max(radius.md - 1, 0),
+      borderBottomRightRadius: Math.max(radius.md - 1, 0),
     },
     buttonPressed: {
       backgroundColor: colors.surfaceAlt,

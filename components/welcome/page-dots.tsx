@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Colors, Radius, Spacing } from '@/constants/theme';
+import { Colors, Radii, type RadiusScale, Spacing } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type PageDotsProps = {
@@ -12,7 +12,8 @@ type PageDotsProps = {
 export default function PageDots({ pageCount, activeIndex }: PageDotsProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <View
@@ -27,7 +28,7 @@ export default function PageDots({ pageCount, activeIndex }: PageDotsProps) {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     row: {
       flexDirection: 'row',
@@ -36,7 +37,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     dot: {
       width: Spacing.sm,
       height: Spacing.sm,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       borderWidth: 1,
       borderColor: colors.text,
     },

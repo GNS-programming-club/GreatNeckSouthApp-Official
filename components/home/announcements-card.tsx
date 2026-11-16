@@ -4,6 +4,7 @@ import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import Card from '@/components/ui/card';
 import Shimmer from '@/components/ui/shimmer';
+import ListMarker from '@/components/ui/list-marker';
 import { Colors, FontWeight, IconSize, Spacing, Tracking, Type } from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -44,7 +45,7 @@ export default function AnnouncementsCard() {
         <View style={styles.list}>
           {visibleItems.map((item) => (
             <View key={item.id} style={styles.itemRow}>
-              <View style={styles.dot} />
+              <ListMarker style={styles.marker} />
               <View style={styles.itemBody}>
                 {item.club ? <Text style={styles.club}>{item.club}</Text> : null}
                 {item.title ? <Text style={styles.itemTitle}>{item.title}</Text> : null}
@@ -115,11 +116,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       alignItems: 'flex-start',
       gap: Spacing.md,
     },
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: colors.primary,
+    marker: {
       marginTop: 7,
     },
     itemBody: {

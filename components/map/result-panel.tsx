@@ -9,7 +9,8 @@ import {
   Elevation,
   FontWeight,
   IconSize,
-  Radius,
+  Radii,
+  type RadiusScale,
   Spacing,
   Tracking,
   Type,
@@ -35,7 +36,8 @@ function ResultRow({
 }) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <Pressable
@@ -76,7 +78,8 @@ function ResultRow({
 export default function ResultPanel({ results, spotlightId, onSelect }: ResultPanelProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <Animated.View style={styles.panel} entering={FadeIn} exiting={FadeOut}>
@@ -100,13 +103,13 @@ export default function ResultPanel({ results, spotlightId, onSelect }: ResultPa
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     panel: {
       paddingTop: Spacing.md,
       paddingBottom: Spacing.sm,
       paddingHorizontal: Spacing.sm,
-      borderRadius: Radius.xl,
+      borderRadius: radius.xl,
       borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,
@@ -134,7 +137,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       gap: Spacing.xxs,
       paddingHorizontal: Spacing.sm,
       paddingVertical: Spacing.sm,
-      borderRadius: Radius.sm,
+      borderRadius: radius.sm,
       borderCurve: 'continuous',
     },
     rowSpotlit: {

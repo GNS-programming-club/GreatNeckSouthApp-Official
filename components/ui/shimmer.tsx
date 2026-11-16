@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Colors, Opacity, Radius } from '@/constants/theme';
+import { Colors, Opacity, Radii, type RadiusScale } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 const PULSE_DURATION_MS = 750;
@@ -22,7 +22,8 @@ type ShimmerProps = {
 export default function Shimmer({ style }: ShimmerProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const reduceMotion = useReducedMotion();
   const pulseOpacity = useSharedValue(1);
 
@@ -49,11 +50,11 @@ export default function Shimmer({ style }: ShimmerProps) {
   return <Animated.View pointerEvents="none" style={[styles.block, style, pulseStyle]} />;
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     block: {
       height: 12,
-      borderRadius: Radius.sm,
+      borderRadius: radius.sm,
       borderCurve: 'continuous',
       backgroundColor: colors.surfaceAlt,
     },

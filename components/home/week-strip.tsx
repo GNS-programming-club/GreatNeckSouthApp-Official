@@ -4,7 +4,16 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { Colors, Spacing, FontWeight, IconSize, Radius, Tracking, Type } from '@/constants/theme';
+import {
+  Colors,
+  Spacing,
+  FontWeight,
+  IconSize,
+  Radii,
+  type RadiusScale,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
@@ -38,7 +47,8 @@ function stripLabel(day: Date, dayLetters: ReturnType<typeof useSchoolData>['day
 export function WeekStrip() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const router = useRouter();
   const [weekOffset, setWeekOffset] = useState(0);
   const { dayLetters } = useSchoolData();
@@ -109,7 +119,7 @@ export function WeekStrip() {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     card: {
       gap: Spacing.md,
@@ -144,7 +154,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     dateCircle: {
       width: 40,
       height: 34,
-      borderRadius: Radius.md,
+      borderRadius: radius.md,
       borderCurve: 'continuous',
       alignItems: 'center',
       justifyContent: 'center',

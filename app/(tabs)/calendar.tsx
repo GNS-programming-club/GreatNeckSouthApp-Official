@@ -8,7 +8,16 @@ import MonthCalendar from '@/components/calendar/month-calendar';
 import { useMonthMenu } from '@/components/calendar/use-month-menu';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
-import { Colors, Elevation, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
+import {
+  Colors,
+  Elevation,
+  FontWeight,
+  Radii,
+  type RadiusScale,
+  Spacing,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useDayStatus } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
@@ -35,7 +44,8 @@ function parseLocalDate(dateString: string): Date {
 export default function CalendarScreen() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   const params = useLocalSearchParams<{ date?: string }>();
   const paramDate =
@@ -130,13 +140,13 @@ export default function CalendarScreen() {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     hero: {
       ...Elevation.raised,
       shadowColor: colors.shadow,
       backgroundColor: colors.primaryFill,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       borderCurve: 'continuous',
       paddingVertical: Spacing.xl,
       paddingHorizontal: Spacing.xl,
@@ -146,7 +156,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     heroPill: {
       alignSelf: 'flex-start',
       backgroundColor: colors.onPrimarySoft,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       paddingVertical: Spacing.xs + 1,
       paddingHorizontal: Spacing.md,
     },

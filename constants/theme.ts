@@ -1,41 +1,16 @@
 import { Platform } from 'react-native';
 
-export const Colors = {
-  light: {
-    text: '#0A0B0D',
-    mutedText: '#5B6472',
-    background: '#FFFFFF',
-    surface: '#F4F6F9',
-    surfaceAlt: '#EBEEF3',
-    border: '#E2E6EC',
-    primary: '#2158DA',
-    primaryFill: '#1D4ED8',
-    primaryText: '#FFFFFF',
-    onPrimaryMuted: 'rgba(255,255,255,0.78)',
-    onPrimarySoft: 'rgba(0,0,0,0.2)',
-    onPrimaryTrack: 'rgba(0,0,0,0.2)',
-    onPrimaryHairline: 'rgba(255,255,255,0.35)',
-    accentSoft: '#E8EEFF',
-    shadow: 'rgba(10,11,13,0.12)',
-  },
-  dark: {
-    text: '#F5F7FA',
-    mutedText: '#8A93A3',
-    background: '#0A0B0D',
-    surface: '#14161A',
-    surfaceAlt: '#1C1F26',
-    border: '#23262E',
-    primary: '#3B82F6',
-    primaryFill: '#1D4ED8',
-    primaryText: '#FFFFFF',
-    onPrimaryMuted: 'rgba(255,255,255,0.78)',
-    onPrimarySoft: 'rgba(0,0,0,0.2)',
-    onPrimaryTrack: 'rgba(0,0,0,0.2)',
-    onPrimaryHairline: 'rgba(255,255,255,0.35)',
-    accentSoft: '#0D1B3A',
-    shadow: 'rgba(0,0,0,0.6)',
-  },
-};
+import { radiusScaleFor, type RadiusScale } from '@/lib/radius-scale';
+import { THEME_IDS, THEMES, type Palette, type ThemeId, type Traits } from '@/lib/theme-catalog';
+
+export const Colors = Object.fromEntries(THEME_IDS.map((id) => [id, THEMES[id].palette])) as Record<
+  ThemeId,
+  Palette
+>;
+
+export const ThemeTraits = Object.fromEntries(
+  THEME_IDS.map((id) => [id, THEMES[id].traits])
+) as Record<ThemeId, Traits>;
 
 export const Spacing = {
   xxs: 2,
@@ -47,14 +22,11 @@ export const Spacing = {
   xxl: 32,
 } as const;
 
-export const Radius = {
-  sm: 10,
-  md: 14,
-  lg: 16,
-  xl: 20,
-  xxl: 24,
-  pill: 999,
-} as const;
+export { Radius, type RadiusScale } from '@/lib/radius-scale';
+
+export const Radii = Object.fromEntries(
+  THEME_IDS.map((id) => [id, radiusScaleFor(THEMES[id].traits.shape.radius)])
+) as Record<ThemeId, RadiusScale>;
 
 export const FontWeight = {
   medium: '500',

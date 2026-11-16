@@ -9,7 +9,15 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import type { MapSpotlightTarget, MapViewportValues } from '@/components/map/map-types';
-import { Colors, Elevation, FontWeight, Radius, Spacing, Type } from '@/constants/theme';
+import {
+  Colors,
+  Elevation,
+  FontWeight,
+  Radii,
+  type RadiusScale,
+  Spacing,
+  Type,
+} from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { projectBox, type Insets, type MapFrame } from '@/lib/map-viewport';
 
@@ -35,7 +43,8 @@ function clampWorklet(value: number, min: number, max: number) {
 export default function MapSpotlight({ target, frame, obscured, viewport }: MapSpotlightProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const labelSize = useSharedValue({ width: 0, height: 0 });
   const stageWidth = frame.stage.width;
   const stageHeight = frame.stage.height;
@@ -146,7 +155,7 @@ export default function MapSpotlight({ target, frame, obscured, viewport }: MapS
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     scrim: {
       position: 'absolute',
@@ -165,7 +174,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       maxWidth: 280,
       paddingHorizontal: Spacing.md,
       paddingVertical: Spacing.xs + 2,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,

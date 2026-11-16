@@ -20,7 +20,7 @@ import PageDots from '@/components/welcome/page-dots';
 import RemindersPage from '@/components/welcome/reminders-page';
 import { completeOnboarding } from '@/components/welcome/use-onboarding-status';
 import WelcomeBackdrop from '@/components/welcome/welcome-backdrop';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, Radii, type RadiusScale, Spacing, Type } from '@/constants/theme';
 import { useReminders } from '@/contexts/reminders-context';
 import { useTheme } from '@/contexts/theme-context';
 import { describeWelcomeStep } from '@/lib/onboarding';
@@ -31,7 +31,8 @@ const PRESSED_SCALE = 0.98;
 export default function WelcomeScreen() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const router = useRouter();
   const reduceMotion = useReducedMotion();
   const { width } = useWindowDimensions();
@@ -134,7 +135,7 @@ export default function WelcomeScreen() {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -150,7 +151,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     primaryButton: {
       minHeight: Spacing.xxl + Spacing.lg,
-      borderRadius: Radius.md,
+      borderRadius: radius.md,
       borderCurve: 'continuous',
       backgroundColor: colors.text,
       alignItems: 'center',

@@ -1,4 +1,5 @@
 import { ToastProvider } from '@/components/ui/toast';
+import { ThemeTraits } from '@/constants/theme';
 import { RemindersProvider } from '@/contexts/reminders-context';
 import { SchoolDataProvider } from '@/contexts/school-data-context';
 import { ThemeProvider as AppThemeProvider, useTheme } from '@/contexts/theme-context';
@@ -21,7 +22,7 @@ export const unstable_settings = {
 
 function ThemedNavigation() {
   const { actualTheme } = useTheme();
-  const navigationTheme = actualTheme === 'dark' ? DarkTheme : DefaultTheme;
+  const navigationTheme = ThemeTraits[actualTheme].isDark ? DarkTheme : DefaultTheme;
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
@@ -31,7 +32,7 @@ function ThemedNavigation() {
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>
       </BottomSheetModalProvider>
-      <StatusBar style={actualTheme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={ThemeTraits[actualTheme].isDark ? 'light' : 'dark'} />
     </NavigationThemeProvider>
   );
 }

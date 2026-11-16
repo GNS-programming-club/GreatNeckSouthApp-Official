@@ -7,8 +7,9 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { Colors, Elevation, Motion, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, Elevation, Motion, Radii, Spacing, ThemeTraits, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
+import { tickSelection } from '@/lib/haptics';
 
 export type SegmentOption<Value extends string> = {
   value: Value;
@@ -74,7 +75,12 @@ export default function SegmentedControl<Value extends string>({
           <Pressable
             key={option.value}
             style={styles.segment}
-            onPress={() => onChange(option.value)}
+            onPress={() => {
+              if (!isActive) {
+                tickSelection();
+                onChange(option.value);
+              }
+            }}
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}
           >
@@ -96,7 +102,7 @@ const createStyles = (colors: (typeof Colors)['light'], theme: keyof typeof Colo
     track: {
       flexDirection: 'row',
       backgroundColor: colors.surfaceAlt,
-      borderRadius: Radius.md,
+      borderRadius: Radii[theme].md,
       borderCurve: 'continuous',
       padding: TRACK_INSET,
     },
@@ -105,9 +111,9 @@ const createStyles = (colors: (typeof Colors)['light'], theme: keyof typeof Colo
       top: TRACK_INSET,
       bottom: TRACK_INSET,
       left: TRACK_INSET,
-      borderRadius: Radius.md - TRACK_INSET,
+      borderRadius: Math.max(Radii[theme].md - TRACK_INSET, 0),
       borderCurve: 'continuous',
-      backgroundColor: theme === 'light' ? colors.background : colors.surface,
+      backgroundColor: ThemeTraits[theme].isDark ? colors.surface : colors.background,
       ...Elevation.raised,
       shadowColor: colors.shadow,
     },

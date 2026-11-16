@@ -7,7 +7,8 @@ import {
   Elevation,
   FontWeight,
   IconSize,
-  Radius,
+  Radii,
+  type RadiusScale,
   Spacing,
   Tracking,
   Type,
@@ -35,7 +36,8 @@ export default function StatTile({
 }: StatTileProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   const tileBackground = field ?? colors.surface;
   const iconColor = accent ?? colors.primary;
@@ -65,12 +67,12 @@ export default function StatTile({
   return <View style={[styles.tile, { backgroundColor: tileBackground }, style]}>{content}</View>;
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     tile: {
       ...Elevation.raised,
       shadowColor: colors.shadow,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,

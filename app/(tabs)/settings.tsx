@@ -3,32 +3,29 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
+import ThemeDial from '@/components/theme-dial';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
 import { useToast } from '@/components/ui/toast';
 import { DEV_TOOLS_ENABLED } from '@/constants/flags';
-import { Colors, FontWeight, IconSize, LineHeight, Radius, Spacing, Type } from '@/constants/theme';
+import {
+  Colors,
+  FontWeight,
+  IconSize,
+  LineHeight,
+  Radii,
+  type RadiusScale,
+  Spacing,
+  Type,
+} from '@/constants/theme';
 import { useReminders } from '@/contexts/reminders-context';
 import { useTheme } from '@/contexts/theme-context';
 
-type ThemeMode = 'auto' | 'dark' | 'light';
-
-type ThemeOption = {
-  mode: ThemeMode;
-  title: string;
-  subtitle: string;
-};
-
-const THEME_OPTIONS: ThemeOption[] = [
-  { mode: 'auto', title: 'Auto', subtitle: 'Match your device setting' },
-  { mode: 'dark', title: 'Dark', subtitle: 'Always use dark theme' },
-  { mode: 'light', title: 'Light', subtitle: 'Always use light theme' },
-];
-
 export default function SettingsPage() {
-  const { actualTheme, themeMode, setThemeMode } = useTheme();
+  const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const reminders = useReminders();
   const toast = useToast();
   const router = useRouter();
@@ -71,32 +68,7 @@ export default function SettingsPage() {
         <View style={styles.section}>
           <SectionHeading icon="moon" title="App Theme" colors={colors} styles={styles} />
 
-          <View style={styles.card}>
-            {THEME_OPTIONS.map((option, index) => {
-              const selected = themeMode === option.mode;
-              const isLast = index === THEME_OPTIONS.length - 1;
-
-              return (
-                <TouchableOpacity
-                  key={option.mode}
-                  style={[styles.row, selected && styles.rowSelected, isLast && styles.rowLast]}
-                  onPress={() => setThemeMode(option.mode)}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.rowLeft}>
-                    <Text style={[styles.rowTitle, selected && styles.rowTitleSelected]}>
-                      {option.title}
-                    </Text>
-                    <Text style={styles.rowSubtitle}>{option.subtitle}</Text>
-                  </View>
-
-                  {selected ? (
-                    <Feather name="check" size={IconSize.lg} color={colors.primary} />
-                  ) : null}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          <ThemeDial gutter={Spacing.lg} />
         </View>
 
         <View style={styles.section}>
@@ -195,7 +167,7 @@ function SectionHeading({ icon, title, colors, styles }: SectionHeadingProps) {
   );
 }
 
-const createStyles = (colors: typeof Colors.light) =>
+const createStyles = (colors: typeof Colors.light, radius: RadiusScale) =>
   StyleSheet.create({
     header: {
       paddingHorizontal: Spacing.lg,
@@ -217,7 +189,7 @@ const createStyles = (colors: typeof Colors.light) =>
     sectionIcon: {
       width: 34,
       height: 34,
-      borderRadius: Radius.md,
+      borderRadius: radius.md,
       borderCurve: 'continuous',
       alignItems: 'center',
       justifyContent: 'center',
@@ -231,7 +203,7 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     card: {
       backgroundColor: colors.surface,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,
@@ -247,9 +219,6 @@ const createStyles = (colors: typeof Colors.light) =>
       borderBottomColor: colors.border,
       gap: Spacing.md,
     },
-    rowSelected: {
-      backgroundColor: colors.accentSoft,
-    },
     rowLast: {
       borderBottomWidth: 0,
     },
@@ -261,9 +230,6 @@ const createStyles = (colors: typeof Colors.light) =>
       ...Type.body,
       fontWeight: FontWeight.bold,
       color: colors.text,
-    },
-    rowTitleSelected: {
-      color: colors.primary,
     },
     rowSubtitle: {
       ...Type.label,

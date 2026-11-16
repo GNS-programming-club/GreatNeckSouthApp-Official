@@ -2,13 +2,14 @@ import { Link } from 'expo-router';
 import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import { Colors, Radii, type RadiusScale } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 export default function ModalScreen() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <View style={styles.container}>
@@ -22,7 +23,7 @@ export default function ModalScreen() {
   );
 }
 
-const createStyles = (colors: typeof Colors.light) =>
+const createStyles = (colors: typeof Colors.light, radius: RadiusScale) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -41,8 +42,8 @@ const createStyles = (colors: typeof Colors.light) =>
       marginTop: 15,
       paddingVertical: 15,
       paddingHorizontal: 20,
-      backgroundColor: colors.primary,
-      borderRadius: 12,
+      backgroundColor: colors.primaryFill,
+      borderRadius: radius.custom(12),
       shadowColor: colors.shadow,
       shadowOpacity: 0.15,
       shadowRadius: 8,

@@ -4,7 +4,16 @@ import { StyleSheet, Text, View } from 'react-native';
 import EventRow from '@/components/calendar/event-row';
 import Card from '@/components/ui/card';
 import EmptyState from '@/components/ui/empty-state';
-import { Colors, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
+import ListMarker from '@/components/ui/list-marker';
+import {
+  Colors,
+  FontWeight,
+  Radii,
+  type RadiusScale,
+  Spacing,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useSchoolData } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { dayStatusFor, toIsoDate } from '@/lib/day-letters';
@@ -34,7 +43,8 @@ const MONTHS = [
 export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   const { calendar, dayLetters, status } = useSchoolData();
 
@@ -78,7 +88,7 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
           <View style={styles.itemList}>
             {menuItems.map((item, index) => (
               <View key={`${item}-${index}`} style={styles.itemRow}>
-                <View style={styles.dot} />
+                <ListMarker style={styles.marker} />
                 <Text style={styles.itemText}>{item}</Text>
               </View>
             ))}
@@ -113,7 +123,7 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
           <View style={styles.itemList}>
             {dayHolidays.map((holiday) => (
               <View key={holiday.id} style={styles.itemRow}>
-                <View style={styles.dot} />
+                <ListMarker style={styles.marker} />
                 <Text style={styles.itemText}>{holiday.title}</Text>
               </View>
             ))}
@@ -124,7 +134,7 @@ export default function DayAgenda({ date, menuItems }: DayAgendaProps) {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     headerRow: {
       flexDirection: 'row',
@@ -142,7 +152,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     letterBadge: {
       backgroundColor: colors.accentSoft,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       borderCurve: 'continuous',
       paddingVertical: Spacing.xs,
       paddingHorizontal: Spacing.md,
@@ -173,11 +183,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       alignItems: 'flex-start',
       gap: Spacing.md,
     },
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: colors.primary,
+    marker: {
       marginTop: 7,
     },
     itemText: {
@@ -200,7 +206,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     skeletonLine: {
       height: 12,
-      borderRadius: Radius.sm,
+      borderRadius: radius.sm,
       borderCurve: 'continuous',
       backgroundColor: colors.surfaceAlt,
     },

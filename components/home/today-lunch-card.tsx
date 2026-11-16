@@ -6,6 +6,7 @@ import { getMenuItemsForDay, getParsedMenuForMonth } from '@/api/daily-menu';
 import Card from '@/components/ui/card';
 import Section from '@/components/ui/section';
 import Shimmer from '@/components/ui/shimmer';
+import ListMarker from '@/components/ui/list-marker';
 import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useTodayIso } from '@/hooks/use-today-iso';
@@ -83,7 +84,7 @@ export default function TodayLunchCard() {
           <View style={styles.list}>
             {visibleItems.map((name, index) => (
               <View key={`${name}-${index}`} style={styles.row}>
-                <View style={styles.dot} />
+                <ListMarker />
                 <Text style={styles.itemText}>{name}</Text>
               </View>
             ))}
@@ -117,12 +118,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: Spacing.sm,
-    },
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: colors.primary,
     },
     itemText: {
       flex: 1,

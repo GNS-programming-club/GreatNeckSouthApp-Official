@@ -1,7 +1,8 @@
-import { Colors } from '@/constants/theme';
+import { Colors, Radii, type RadiusScale } from '@/constants/theme';
 import { useDayStatus } from '@/contexts/school-data-context';
 import { useTheme } from '@/contexts/theme-context';
 import { toIsoDate } from '@/lib/day-letters';
+import { acknowledgeLongPress } from '@/lib/haptics';
 import { buildSearchIndex, filterSearchIndex } from '@/lib/search-index';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -88,7 +89,8 @@ export default function ScheduleCard({
 }) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const todayStatus = useDayStatus(toIsoDate(new Date()));
   const todayLetter = todayStatus.kind === 'school' ? todayStatus.letter : '—';
 
@@ -195,6 +197,11 @@ export default function ScheduleCard({
   }
 
   function removeCourseFromPeriod(index: number) {
+    if (schedule[index] == null) {
+      return;
+    }
+
+    acknowledgeLongPress();
     const next = [...schedule];
     next[index] = null;
     setSchedule(next);
@@ -392,11 +399,11 @@ export default function ScheduleCard({
   );
 }
 
-function createStyles(colors: typeof Colors.light) {
+function createStyles(colors: typeof Colors.light, radius: RadiusScale) {
   return StyleSheet.create({
     card: {
       backgroundColor: 'transparent',
-      borderRadius: 16,
+      borderRadius: radius.custom(16),
       padding: 0,
       shadowColor: colors.shadow,
       shadowOpacity: 0,
@@ -424,7 +431,7 @@ function createStyles(colors: typeof Colors.light) {
       justifyContent: 'flex-start',
       paddingVertical: 14,
       paddingHorizontal: 14,
-      borderRadius: 16,
+      borderRadius: radius.custom(16),
       backgroundColor: 'transparent',
       shadowColor: colors.shadow,
       shadowOffset: { width: 0, height: 2 },
@@ -451,8 +458,8 @@ function createStyles(colors: typeof Colors.light) {
       justifyContent: 'center',
     },
     periodBadgeActive: {
-      backgroundColor: colors.primary,
-      borderColor: colors.primary,
+      backgroundColor: colors.primaryFill,
+      borderColor: colors.primaryFill,
     },
     periodNumber: {
       color: colors.text,
@@ -478,7 +485,7 @@ function createStyles(colors: typeof Colors.light) {
       bottom: 0,
       left: 0,
       right: 0,
-      borderRadius: 1,
+      borderRadius: radius.custom(1),
       backgroundColor: colors.border,
       opacity: 0.4,
     },
@@ -487,7 +494,7 @@ function createStyles(colors: typeof Colors.light) {
       top: 5,
       left: 0,
       right: 0,
-      borderRadius: 1,
+      borderRadius: radius.custom(1),
       backgroundColor: colors.primary,
     },
     timelineDot: {
@@ -495,7 +502,7 @@ function createStyles(colors: typeof Colors.light) {
       top: 5,
       width: 15,
       height: 15,
-      borderRadius: 5,
+      borderRadius: radius.custom(5),
       backgroundColor: colors.primary,
       transform: [{ translateY: -5 }],
     },
@@ -504,7 +511,7 @@ function createStyles(colors: typeof Colors.light) {
       top: 5,
       width: 15,
       height: 15,
-      borderRadius: 5,
+      borderRadius: radius.custom(5),
       backgroundColor: colors.border,
       transform: [{ translateY: -10 }],
     },
@@ -572,7 +579,7 @@ function createStyles(colors: typeof Colors.light) {
     clearAllBtn: {
       paddingVertical: 8,
       paddingHorizontal: 12,
-      borderRadius: 8,
+      borderRadius: radius.custom(8),
       backgroundColor: 'transparent',
     },
     clearAllText: {
@@ -631,7 +638,7 @@ function createStyles(colors: typeof Colors.light) {
     searchInput: {
       borderWidth: 1,
       borderColor: colors.border,
-      borderRadius: 14,
+      borderRadius: radius.custom(14),
       paddingVertical: 12,
       paddingHorizontal: 12,
       backgroundColor: colors.surfaceAlt,
@@ -649,7 +656,7 @@ function createStyles(colors: typeof Colors.light) {
       alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: colors.surface,
-      borderRadius: 16,
+      borderRadius: radius.custom(16),
       padding: 16,
       borderWidth: 1,
       borderColor: colors.border,
@@ -687,7 +694,7 @@ function createStyles(colors: typeof Colors.light) {
     clearBtn: {
       padding: 12,
       alignItems: 'center',
-      borderRadius: 14,
+      borderRadius: radius.custom(14),
       backgroundColor: colors.surfaceAlt,
       borderWidth: 1,
       borderColor: colors.border,

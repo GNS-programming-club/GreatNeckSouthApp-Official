@@ -7,7 +7,7 @@ import PageHeader, { useHeaderCollapse } from '@/components/tools/page-header';
 import Section from '@/components/ui/section';
 import DetailSheet, { type DetailSheetHandle } from '@/components/tools/detail-sheet';
 import DirectoryList from '@/components/tools/directory-list';
-import { Colors, FontWeight, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Spacing, Type, Radii, type RadiusScale } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import clubsData from '@/assets/data/club.json';
 
@@ -25,7 +25,8 @@ const clubs: Club[] = clubsData as unknown as Club[];
 function ClubRow({ club }: { club: Club }) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <Card>
@@ -43,7 +44,8 @@ function ClubRow({ club }: { club: Club }) {
 function ClubDetailBody({ club }: { club: Club }) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   const hasMeeting = club.meetinginfo && club.meetinginfo !== 'Unknown';
   const hasCode = Boolean(club.googleclasscode);
@@ -78,7 +80,8 @@ function ClubDetailBody({ club }: { club: Club }) {
 export default function Clubs() {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   const detailRef = useRef<DetailSheetHandle>(null);
   const collapse = useHeaderCollapse();
@@ -111,7 +114,7 @@ export default function Clubs() {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     root: {
       flex: 1,
@@ -159,7 +162,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       backgroundColor: colors.accentSoft,
       paddingHorizontal: Spacing.md,
       paddingVertical: Spacing.sm,
-      borderRadius: Spacing.sm,
+      borderRadius: radius.custom(Spacing.sm),
       alignSelf: 'flex-start',
       overflow: 'hidden',
     },

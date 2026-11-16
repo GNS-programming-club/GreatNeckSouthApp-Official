@@ -11,7 +11,8 @@ import {
   Elevation,
   FontWeight,
   Opacity,
-  Radius,
+  Radii,
+  type RadiusScale,
   Spacing,
   Tracking,
   Type,
@@ -45,7 +46,8 @@ function withoutMeridiem(timeRange: string) {
 const SchedulePage = () => {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const nowSecondsET = useNowSeconds();
   const collapse = useHeaderCollapse();
   const bottomClearance = { paddingBottom: useTabBarClearance() };
@@ -179,7 +181,7 @@ const NODE_SIZE = 14;
 const RAIL_WIDTH = 26;
 const TIME_WIDTH = 74;
 
-const createStyles = (colors: typeof Colors.light) =>
+const createStyles = (colors: typeof Colors.light, radius: RadiusScale) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -196,7 +198,7 @@ const createStyles = (colors: typeof Colors.light) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.surface,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       borderCurve: 'continuous',
       borderWidth: 1,
       borderColor: colors.border,
@@ -291,7 +293,7 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     activeCard: {
       backgroundColor: colors.primaryFill,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       borderCurve: 'continuous',
       paddingVertical: Spacing.lg,
       paddingHorizontal: Spacing.lg,
@@ -302,7 +304,7 @@ const createStyles = (colors: typeof Colors.light) =>
     activePill: {
       alignSelf: 'flex-start',
       backgroundColor: colors.onPrimarySoft,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       paddingVertical: Spacing.xs,
       paddingHorizontal: Spacing.md,
     },
@@ -349,13 +351,13 @@ const createStyles = (colors: typeof Colors.light) =>
     },
     track: {
       height: 6,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       backgroundColor: colors.onPrimaryTrack,
       overflow: 'hidden',
     },
     fill: {
       height: 6,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       backgroundColor: colors.primaryText,
     },
   });

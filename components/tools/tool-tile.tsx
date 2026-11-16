@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import Card from '@/components/ui/card';
-import { Colors, IconSize, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, IconSize, Radii, type RadiusScale, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type ToolTileProps = {
@@ -17,7 +17,8 @@ type ToolTileProps = {
 export default function ToolTile({ icon, label, meta, onPress, full = false }: ToolTileProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   return (
     <Card onPress={onPress} style={[styles.tile, full ? styles.full : styles.half]}>
@@ -32,7 +33,7 @@ export default function ToolTile({ icon, label, meta, onPress, full = false }: T
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     tile: {
       minHeight: 116,
@@ -47,7 +48,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     iconWrap: {
       width: 44,
       height: 44,
-      borderRadius: Radius.md,
+      borderRadius: radius.md,
       borderCurve: 'continuous',
       backgroundColor: colors.accentSoft,
       alignItems: 'center',

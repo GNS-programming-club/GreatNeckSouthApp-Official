@@ -4,10 +4,7 @@ import { Text, useColorScheme as useDeviceColorScheme } from 'react-native';
 
 import { ThemeCrossfade, type ThemeCrossfadeHandle } from '@/components/theme-crossfade';
 import { Colors } from '@/constants/theme';
-
-type ThemeMode = 'light' | 'dark' | 'auto';
-
-type ResolvedTheme = 'light' | 'dark';
+import { isThemeMode, resolveTheme, type ResolvedTheme, type ThemeMode } from '@/lib/theme-modes';
 
 interface ThemeContextType {
   themeMode: ThemeMode;
@@ -19,9 +16,6 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 let baseTextDefaultStyle: unknown = undefined;
 let appliedTextTheme: ResolvedTheme | undefined = undefined;
-
-const resolveTheme = (mode: ThemeMode, deviceColorScheme: string | null | undefined) =>
-  mode === 'auto' ? (deviceColorScheme === 'dark' ? 'dark' : 'light') : mode;
 
 const applyDefaultTextColor = (theme: ResolvedTheme) => {
   if (appliedTextTheme === theme) {
@@ -45,6 +39,7 @@ const applyDefaultTextColor = (theme: ResolvedTheme) => {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const deviceColorScheme = useDeviceColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
+  const [isThemeLoaded, setIsThemeLoaded] = useState(false);
   const crossfadeRef = useRef<ThemeCrossfadeHandle>(null);
 
   const actualTheme: ResolvedTheme = resolveTheme(themeMode, deviceColorScheme);
@@ -55,11 +50,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const loadThemePreference = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem('themeMode');
-        if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto') {
+        if (isThemeMode(savedTheme)) {
           setThemeModeState(savedTheme);
         }
       } catch (error) {
         console.error('Error loading theme preference:', error);
+      } finally {
+        setIsThemeLoaded(true);
       }
     };
 
@@ -80,6 +77,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       console.error('Error saving theme preference:', error);
     });
   };
+
+  if (!isThemeLoaded) {
+    return null;
+  }
 
   return (
     <ThemeContext.Provider value={{ themeMode, actualTheme, setThemeMode }}>

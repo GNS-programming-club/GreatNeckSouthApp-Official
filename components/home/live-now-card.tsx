@@ -2,12 +2,25 @@ import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import MetalRim from '@/components/ui/metal-rim';
 import RollingNumber from '@/components/ui/rolling-number';
-import { Colors, Elevation, FontWeight, Radius, Spacing, Tracking, Type } from '@/constants/theme';
+import {
+  Colors,
+  Elevation,
+  FontWeight,
+  Radii,
+  type RadiusScale,
+  Spacing,
+  ThemeTraits,
+  Tracking,
+  Type,
+} from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 import { useLivePeriod } from '@/hooks/use-live-period';
 import { appClock } from '@/lib/clock';
 import { fromIsoDate, type DayLetter, type DayStatus } from '@/lib/day-letters';
+
+const METAL_RIM_WIDTH = 3;
 
 type LiveNowCardProps = {
   todaySchedule: (string | null)[] | null;
@@ -34,7 +47,8 @@ export default function LiveNowCard({
 }: LiveNowCardProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const router = useRouter();
 
   const { live: livePeriod } = useLivePeriod();
@@ -57,7 +71,7 @@ export default function LiveNowCard({
       : `Day ${todayLetter}`;
   const pillTrail = isNoSchool ? 'Off' : live ? `Period ${live.index + 1}` : 'Done';
 
-  return (
+  const card = (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={() => router.push('/tools/schedule')}
@@ -111,15 +125,27 @@ export default function LiveNowCard({
       )}
     </TouchableOpacity>
   );
+
+  const metalRimColors = ThemeTraits[actualTheme].metalRim;
+
+  if (metalRimColors) {
+    return (
+      <MetalRim colors={metalRimColors} borderWidth={METAL_RIM_WIDTH} borderRadius={radius.lg}>
+        {card}
+      </MetalRim>
+    );
+  }
+
+  return card;
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     field: {
       ...Elevation.raised,
       shadowColor: colors.shadow,
       backgroundColor: colors.primaryFill,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       borderCurve: 'continuous',
       paddingVertical: Spacing.xl,
       paddingHorizontal: Spacing.xl,
@@ -129,7 +155,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     pill: {
       alignSelf: 'flex-start',
       backgroundColor: colors.onPrimarySoft,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       paddingVertical: Spacing.xs + 1,
       paddingHorizontal: Spacing.md,
     },
@@ -182,13 +208,13 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     track: {
       height: 6,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       backgroundColor: colors.onPrimaryTrack,
       overflow: 'hidden',
     },
     fill: {
       height: 6,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       backgroundColor: colors.primaryText,
     },
     between: {

@@ -7,7 +7,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { Colors, Elevation, Motion, Radius, Spacing } from '@/constants/theme';
+import { surfaceShapeStyle } from '@/components/ui/surface-shape';
+import { Colors, Elevation, Motion, Spacing, ThemeTraits } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 const PRESSED_SCALE = 0.97;
@@ -35,10 +36,7 @@ export default function Card({
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  const elevationStyle = {
-    ...Elevation[elevation],
-    shadowColor: colors.shadow,
-  };
+  const elevationStyle = surfaceShapeStyle(ThemeTraits[actualTheme].shape, colors, elevation);
 
   if (onPress) {
     return (
@@ -99,10 +97,6 @@ const createStyles = (colors: (typeof Colors)['light']) =>
   StyleSheet.create({
     card: {
       backgroundColor: colors.surface,
-      borderRadius: Radius.lg,
-      borderCurve: 'continuous',
-      borderWidth: 1,
-      borderColor: colors.border,
       padding: Spacing.lg,
       gap: Spacing.sm,
     },

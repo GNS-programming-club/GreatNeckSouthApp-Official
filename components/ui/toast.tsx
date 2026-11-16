@@ -11,12 +11,14 @@ import {
   FontWeight,
   IconSize,
   Motion,
-  Radius,
+  Radii,
+  type RadiusScale,
   Spacing,
   Type,
 } from '@/constants/theme';
 import { tabBarBottomOffset } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
+import { confirmSuccess } from '@/lib/haptics';
 
 const VISIBLE_DURATION_MS = 2500;
 const TAB_BAR_HEIGHT_ESTIMATE = 72;
@@ -49,6 +51,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const show = useCallback((message: string, icon?: FeatherName) => {
     setToast((current) => ({ id: (current?.id ?? 0) + 1, message, icon }));
+    confirmSuccess();
 
     if (Platform.OS === 'ios') {
       AccessibilityInfo.announceForAccessibility(message);
@@ -78,7 +81,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 function ToastViewport({ toast }: { toast: ToastMessage | null }) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const insets = useSafeAreaInsets();
   const bottom = tabBarBottomOffset(insets.bottom) + TAB_BAR_HEIGHT_ESTIMATE + Spacing.md;
 
@@ -112,7 +116,7 @@ export function useToast(): ToastValue {
   return context;
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     viewport: {
       position: 'absolute',
@@ -130,7 +134,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       borderCurve: 'continuous',
       paddingVertical: Spacing.md,
       paddingHorizontal: Spacing.lg,

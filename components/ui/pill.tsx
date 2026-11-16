@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Colors, FontWeight, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, FontWeight, Radii, type RadiusScale, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type PillTone = 'neutral' | 'success' | 'warn';
@@ -15,7 +15,8 @@ type PillProps = {
 export default function Pill({ label, value, tone = 'neutral' }: PillProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   const toneColor =
     tone === 'success' ? colors.primary : tone === 'warn' ? colors.mutedText : colors.mutedText;
@@ -28,14 +29,14 @@ export default function Pill({ label, value, tone = 'neutral' }: PillProps) {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     pill: {
       flexDirection: 'row',
       alignItems: 'baseline',
       gap: Spacing.sm,
       backgroundColor: colors.surfaceAlt,
-      borderRadius: Radius.pill,
+      borderRadius: radius.pill,
       borderWidth: 1,
       borderColor: colors.border,
       paddingVertical: Spacing.xs + 2,

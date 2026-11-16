@@ -15,7 +15,7 @@ import {
   FontWeight,
   IconSize,
   LineHeight,
-  Radius,
+  Radii,
   Spacing,
   Tracking,
   Type,
@@ -125,12 +125,15 @@ function FilterChip({
   onPress: () => void;
   colors: ThemeColors;
 }) {
+  const { actualTheme } = useTheme();
+
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[
         chipStyles.chip,
         {
+          borderRadius: Radii[actualTheme].pill,
           backgroundColor: selected ? colors.primaryFill : colors.surfaceAlt,
           borderColor: selected ? colors.primary : colors.border,
         },
@@ -147,7 +150,6 @@ const chipStyles = StyleSheet.create({
   chip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: Radius.pill,
     borderWidth: 1,
   },
   chipText: {
@@ -274,6 +276,8 @@ function FilterBar({
   onOpen: () => void;
   colors: ThemeColors;
 }) {
+  const radius = Radii[useTheme().actualTheme];
+
   return (
     <TouchableOpacity
       onPress={onOpen}
@@ -283,7 +287,7 @@ function FilterBar({
         gap: Spacing.sm,
         alignSelf: 'flex-start',
         backgroundColor: activeCount > 0 ? colors.primaryFill : colors.surfaceAlt,
-        borderRadius: Radius.pill,
+        borderRadius: radius.pill,
         borderWidth: 1,
         borderColor: activeCount > 0 ? colors.primary : colors.border,
         paddingHorizontal: Spacing.md,
@@ -319,6 +323,7 @@ function FilterControls({
   onDone: () => void;
   colors: ThemeColors;
 }) {
+  const radius = Radii[useTheme().actualTheme];
   const departments = useMemo(() => Array.from(new Set(allCourses.map((c) => c.dept))).sort(), []);
   const creditOptions = useMemo(
     () => Array.from(new Set(allCourses.map((c) => c.credits))).sort((a, b) => a - b),
@@ -380,7 +385,7 @@ function FilterControls({
             }
             style={{
               backgroundColor: colors.surfaceAlt,
-              borderRadius: Radius.md,
+              borderRadius: radius.md,
               borderWidth: 1,
               borderColor: colors.border,
               paddingHorizontal: Spacing.md,
@@ -487,7 +492,7 @@ function FilterControls({
           style={{
             flex: 1,
             paddingVertical: Spacing.md,
-            borderRadius: Radius.lg,
+            borderRadius: radius.lg,
             borderWidth: 1,
             borderColor: colors.border,
             alignItems: 'center',
@@ -508,7 +513,7 @@ function FilterControls({
           style={{
             flex: 1,
             paddingVertical: Spacing.md,
-            borderRadius: Radius.lg,
+            borderRadius: radius.lg,
             backgroundColor: colors.primaryFill,
             alignItems: 'center',
           }}

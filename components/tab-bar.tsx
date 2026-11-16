@@ -1,12 +1,14 @@
 import { baseTiming } from '@/constants/motion';
-import { Colors, Elevation, IconSize, Motion, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, IconSize, Motion, Spacing, ThemeTraits, Type } from '@/constants/theme';
+import { surfaceShapeStyle } from '@/components/ui/surface-shape';
 import { tabBarBottomOffset, useTabBar } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import Feather from '@expo/vector-icons/Feather';
+import { BlurView } from 'expo-blur';
 import { PlatformPressable } from 'expo-router/react-navigation';
 import type { BottomTabBarProps } from 'expo-router/tabs';
-import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 import Animated, {
   interpolate,
   interpolateColor,
@@ -17,11 +19,40 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+const GLASS_BLUR_INTENSITY = 40;
+const BAR_PADDING = Spacing.sm;
+
+function tabBarRadii(shapeRadius: number) {
+  const barRadius = shapeRadius === 0 ? 0 : shapeRadius + BAR_PADDING;
+
+  return { barRadius, pillRadius: Math.max(0, barRadius - BAR_PADDING) };
+}
+
+function useReduceTransparency() {
+  const [isReduceTransparencyEnabled, setReduceTransparencyEnabled] = useState(false);
+
+  useEffect(() => {
+    AccessibilityInfo.isReduceTransparencyEnabled().then(setReduceTransparencyEnabled);
+    const subscription = AccessibilityInfo.addEventListener(
+      'reduceTransparencyChanged',
+      setReduceTransparencyEnabled
+    );
+
+    return () => subscription.remove();
+  }, []);
+
+  return isReduceTransparencyEnabled;
+}
+
 export default function TabBar({ state, descriptors, emitter, navigateToTab }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { isTabBarVisible, setTabBarHeight } = useTabBar();
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
+  const isReduceTransparencyEnabled = useReduceTransparency();
+  const traits = ThemeTraits[actualTheme];
+  const glass = isReduceTransparencyEnabled ? null : traits.glass;
+  const { barRadius } = tabBarRadii(traits.shape.radius);
 
   const buildHref = (name: string) => (name === 'index' ? './' : `./${name}`);
   const visibleTabs = new Set(['index', 'calendar', 'tools', 'settings']);
@@ -35,14 +66,22 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab }: B
       onLayout={(event) => setTabBarHeight(event.nativeEvent.layout.height)}
       style={[
         styles.bar,
+        surfaceShapeStyle(traits.shape, colors, 'floating', barRadius),
         {
           bottom: tabBarBottomOffset(insets.bottom),
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          shadowColor: colors.shadow,
+          backgroundColor: glass ? glass.fill : colors.surface,
         },
       ]}
     >
+      {glass ? (
+        <View style={[styles.glassClip, { borderRadius: barRadius }]} pointerEvents="none">
+          <BlurView
+            intensity={GLASS_BLUR_INTENSITY}
+            tint={glass.tint}
+            style={StyleSheet.absoluteFill}
+          />
+        </View>
+      ) : null}
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
 
@@ -92,6 +131,7 @@ function TabBarButton({
 }: any) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
+  const { pillRadius } = tabBarRadii(ThemeTraits[actualTheme].shape.radius);
   const scale = useSharedValue(isFocused ? 1 : 0.95);
   const opacity = useSharedValue(isFocused ? 1 : 0);
 
@@ -155,7 +195,7 @@ function TabBarButton({
       onPress={onPress}
       onLongPress={onLongPress}
     >
-      <Animated.View style={[styles.tabButton, animatedButtonStyle]}>
+      <Animated.View style={[styles.tabButton, { borderRadius: pillRadius }, animatedButtonStyle]}>
         <Animated.View style={animatedIconStyle}>{getIcon(route.name, iconColor)}</Animated.View>
         <Animated.Text style={[styles.barItemFocused, { color: textColor }, animatedTextStyle]}>
           {label}
@@ -186,25 +226,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.sm,
-    borderRadius: Radius.xxl,
-    borderCurve: 'continuous',
-    borderWidth: 1,
+    paddingVertical: BAR_PADDING,
+    paddingHorizontal: BAR_PADDING,
     gap: Spacing.xs,
-    ...Elevation.floating,
     overflow: 'visible',
     zIndex: 1000,
   },
 
-  barItem: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    borderRadius: Radius.sm,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
+  glassClip: {
+    ...StyleSheet.absoluteFill,
+    borderCurve: 'continuous',
+    overflow: 'hidden',
   },
 
   barItemFocused: {
@@ -223,7 +255,6 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: Radius.lg,
     borderCurve: 'continuous',
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.sm,

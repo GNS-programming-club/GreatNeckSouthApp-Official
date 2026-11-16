@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import ScreenBackdrop from '@/components/ui/theme-backdrop';
 import { Colors, Spacing } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -15,11 +16,12 @@ type ScreenProps = {
 export default function Screen({ children, scroll = true, header }: ScreenProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const styles = useMemo(() => createStyles(colors.background), [colors]);
   const bottomClearance = { paddingBottom: useTabBarClearance() };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <ScreenBackdrop />
       {header}
       {scroll ? (
         <ScrollView
@@ -35,11 +37,11 @@ export default function Screen({ children, scroll = true, header }: ScreenProps)
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (backgroundColor: string) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor,
     },
     scrollView: {
       flex: 1,

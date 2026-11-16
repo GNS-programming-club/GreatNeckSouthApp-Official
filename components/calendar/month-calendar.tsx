@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
 import Card from '@/components/ui/card';
-import { Colors, Radius } from '@/constants/theme';
+import { Colors, Radii, type RadiusScale } from '@/constants/theme';
 import { useTheme } from '@/contexts/theme-context';
 
 type MonthCalendarProps = {
@@ -21,13 +21,14 @@ export default function MonthCalendar({
 }: MonthCalendarProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
 
   const markedDates = useMemo(() => {
     const marks: Record<string, object> = {
       [selectedDate]: {
         selected: true,
-        selectedColor: colors.primary,
+        selectedColor: colors.primaryFill,
         selectedTextColor: colors.primaryText,
       },
     };
@@ -40,7 +41,7 @@ export default function MonthCalendar({
     }
 
     return marks;
-  }, [colors.primary, colors.primaryText, selectedDate, today]);
+  }, [colors.primary, colors.primaryFill, colors.primaryText, selectedDate, today]);
 
   const calendarTheme = useMemo(
     () => ({
@@ -66,12 +67,12 @@ export default function MonthCalendar({
       textMonthFontSize: 16,
       'stylesheet.day.basic': {
         selected: {
-          borderRadius: Radius.md,
+          borderRadius: radius.md,
           borderCurve: 'continuous',
         },
       },
     }),
-    [colors]
+    [colors, radius.md]
   );
 
   return (
@@ -93,16 +94,16 @@ export default function MonthCalendar({
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     calendarWrapper: {
-      borderRadius: Radius.md,
+      borderRadius: radius.md,
       borderCurve: 'continuous',
       overflow: 'hidden',
       backgroundColor: colors.surface,
     },
     calendar: {
-      borderRadius: Radius.md,
+      borderRadius: radius.md,
       overflow: 'hidden',
     },
   });

@@ -22,7 +22,7 @@ import type { MapSpotlightTarget, ScaleBound } from '@/components/map/map-types'
 import ResultPanel from '@/components/map/result-panel';
 import ZoomControls from '@/components/map/zoom-controls';
 import SearchBar from '@/components/tools/search-bar';
-import { Colors, Elevation, IconSize, Radius, Spacing } from '@/constants/theme';
+import { Colors, Elevation, IconSize, Radii, type RadiusScale, Spacing } from '@/constants/theme';
 import { useTabBarClearance } from '@/contexts/tab-bar-context';
 import { useTheme } from '@/contexts/theme-context';
 import type { Insets } from '@/lib/map-viewport';
@@ -56,7 +56,8 @@ export default function FindARoomScreen() {
   const router = useRouter();
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const radius = Radii[actualTheme];
+  const styles = useMemo(() => createStyles(colors, radius), [colors, radius]);
   const insets = useSafeAreaInsets();
   const tabBarClearance = useTabBarClearance();
   const keyboardHeight = useKeyboardHeight();
@@ -194,7 +195,7 @@ export default function FindARoomScreen() {
   );
 }
 
-const createStyles = (colors: (typeof Colors)['light']) =>
+const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
   StyleSheet.create({
     root: {
       flex: 1,
@@ -225,7 +226,7 @@ const createStyles = (colors: (typeof Colors)['light']) =>
     },
     search: {
       flex: 1,
-      borderRadius: Radius.lg,
+      borderRadius: radius.lg,
       ...Elevation.raised,
     },
     openRegion: {
