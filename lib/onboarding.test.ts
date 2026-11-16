@@ -61,104 +61,36 @@ test('finishes the welcome flow even when storage cannot be written', async () =
 });
 
 test('moves to the next page from an early step', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 0,
-    pageCount: 3,
-    hasAnsweredAlerts: false,
-    isAlertsEnabled: false,
-    isPermissionDenied: false,
-  });
+  const step = describeWelcomeStep({ pageIndex: 0, pageCount: 4, isPermissionDenied: false });
 
   assert.equal(step.primaryAction, 'next');
+  assert.equal(step.primaryLabel, 'Next');
 });
 
-test('offers to turn on alerts on the last step', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 2,
-    pageCount: 3,
-    hasAnsweredAlerts: false,
-    isAlertsEnabled: false,
-    isPermissionDenied: false,
-  });
-
-  assert.equal(step.primaryAction, 'enable-alerts');
-  assert.equal(step.primaryLabel, 'Turn on alerts');
-});
-
-test('lets the student decline alerts on the last step', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 2,
-    pageCount: 3,
-    hasAnsweredAlerts: false,
-    isAlertsEnabled: false,
-    isPermissionDenied: false,
-  });
-
-  assert.equal(step.canSkip, true);
-});
-
-test('hides the decline option on earlier steps', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 1,
-    pageCount: 3,
-    hasAnsweredAlerts: false,
-    isAlertsEnabled: false,
-    isPermissionDenied: false,
-  });
-
-  assert.equal(step.canSkip, false);
-});
-
-test('offers to get started once alerts are on', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 2,
-    pageCount: 3,
-    hasAnsweredAlerts: true,
-    isAlertsEnabled: true,
-    isPermissionDenied: false,
-  });
+test('offers to get started on the last step', () => {
+  const step = describeWelcomeStep({ pageIndex: 3, pageCount: 4, isPermissionDenied: false });
 
   assert.equal(step.primaryAction, 'finish');
   assert.equal(step.primaryLabel, 'Get started');
-  assert.equal(step.statusMessage, 'Alerts are on.');
 });
 
-test('points to Settings and offers to get started when notifications were blocked', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 2,
-    pageCount: 3,
-    hasAnsweredAlerts: true,
-    isAlertsEnabled: false,
-    isPermissionDenied: true,
-  });
+test('points to Settings on the last step when notifications are blocked', () => {
+  const step = describeWelcomeStep({ pageIndex: 3, pageCount: 4, isPermissionDenied: true });
 
-  assert.equal(step.primaryAction, 'finish');
   assert.equal(
     step.statusMessage,
     'Notifications are blocked. You can allow them later in Settings.'
   );
 });
 
-test('skips the alerts question when alerts were already on', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 2,
-    pageCount: 3,
-    hasAnsweredAlerts: false,
-    isAlertsEnabled: true,
-    isPermissionDenied: false,
-  });
+test('says nothing about notifications on earlier steps even when they are blocked', () => {
+  const step = describeWelcomeStep({ pageIndex: 2, pageCount: 4, isPermissionDenied: true });
 
-  assert.equal(step.primaryAction, 'finish');
+  assert.equal(step.statusMessage, null);
 });
 
-test('says nothing about notifications before the student answers', () => {
-  const step = describeWelcomeStep({
-    pageIndex: 2,
-    pageCount: 3,
-    hasAnsweredAlerts: false,
-    isAlertsEnabled: false,
-    isPermissionDenied: true,
-  });
+test('says nothing about notifications when they are allowed', () => {
+  const step = describeWelcomeStep({ pageIndex: 3, pageCount: 4, isPermissionDenied: false });
 
   assert.equal(step.statusMessage, null);
 });

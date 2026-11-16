@@ -1,8 +1,9 @@
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import ReminderSwitches, { type ReminderKind } from '@/components/reminder-switches';
 import ThemeDial from '@/components/theme-dial';
 import Screen from '@/components/ui/screen';
 import Stagger from '@/components/ui/stagger';
@@ -46,14 +47,12 @@ export default function SettingsPage() {
     }
   }, [reminders.isEnabled, toast]);
 
-  const handleDayLetterRemindersChange = (enabled: boolean) => {
-    isAwaitingDayLetterRemindersOn.current = enabled;
-    reminders.setEnabled(enabled);
-  };
-
-  const handleEventRemindersChange = (enabled: boolean) => {
-    isAwaitingEventRemindersOn.current = enabled;
-    reminders.setEventRemindersEnabled(enabled);
+  const handleReminderChange = (kind: ReminderKind, enabled: boolean) => {
+    if (kind === 'dayLetter') {
+      isAwaitingDayLetterRemindersOn.current = enabled;
+    } else {
+      isAwaitingEventRemindersOn.current = enabled;
+    }
   };
 
   const header = (
@@ -74,41 +73,7 @@ export default function SettingsPage() {
         <View style={styles.section}>
           <SectionHeading icon="bell" title="Notifications" colors={colors} styles={styles} />
 
-          <View style={styles.card}>
-            <View style={styles.row}>
-              <View style={styles.rowLeft}>
-                <Text style={styles.rowTitle}>Day Letter Reminder</Text>
-                <Text style={styles.rowSubtitle}>
-                  {reminders.isPermissionDenied
-                    ? 'Turn on notifications for this app in your phone settings'
-                    : 'At 8 PM, get notified on whether tomorrow is an A or B day'}
-                </Text>
-              </View>
-              <Switch
-                value={reminders.isEnabled}
-                onValueChange={handleDayLetterRemindersChange}
-                trackColor={{ false: colors.border, true: colors.primary }}
-                accessibilityLabel="Day letter reminder"
-              />
-            </View>
-
-            <View style={[styles.row, styles.rowLast]}>
-              <View style={styles.rowLeft}>
-                <Text style={styles.rowTitle}>Event Reminders</Text>
-                <Text style={styles.rowSubtitle}>
-                  {reminders.isPermissionDenied
-                    ? 'Turn on notifications for this app in your phone settings'
-                    : "Before school, get notified about the day's highlight events"}
-                </Text>
-              </View>
-              <Switch
-                value={reminders.isEventRemindersEnabled}
-                onValueChange={handleEventRemindersChange}
-                trackColor={{ false: colors.border, true: colors.primary }}
-                accessibilityLabel="Event reminders"
-              />
-            </View>
-          </View>
+          <ReminderSwitches onChange={handleReminderChange} />
         </View>
 
         <View style={styles.section}>

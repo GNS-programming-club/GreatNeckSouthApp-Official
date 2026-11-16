@@ -54,9 +54,10 @@ function indexOfMode(mode: ThemeMode) {
 
 type ThemeDialProps = {
   gutter: number;
+  isOnWelcomeGlow?: boolean;
 };
 
-export default function ThemeDial({ gutter }: ThemeDialProps) {
+export default function ThemeDial({ gutter, isOnWelcomeGlow = false }: ThemeDialProps) {
   const { actualTheme, themeMode, setThemeMode } = useTheme();
   const colors = Colors[actualTheme];
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -143,7 +144,9 @@ export default function ThemeDial({ gutter }: ThemeDialProps) {
       </View>
       <View style={styles.caption} accessibilityLiveRegion="polite">
         <Text style={styles.captionTitle}>{centeredOption.title}</Text>
-        <Text style={styles.captionSubtitle}>{centeredOption.subtitle}</Text>
+        <Text style={[styles.captionSubtitle, isOnWelcomeGlow && { color: colors.text }]}>
+          {centeredOption.subtitle}
+        </Text>
       </View>
     </View>
   );

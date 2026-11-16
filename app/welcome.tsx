@@ -18,6 +18,7 @@ import FeaturesPage from '@/components/welcome/features-page';
 import IntroPage from '@/components/welcome/intro-page';
 import PageDots from '@/components/welcome/page-dots';
 import RemindersPage from '@/components/welcome/reminders-page';
+import ThemePage from '@/components/welcome/theme-page';
 import { completeOnboarding } from '@/components/welcome/use-onboarding-status';
 import WelcomeBackdrop from '@/components/welcome/welcome-backdrop';
 import { Colors, Radii, type RadiusScale, Spacing, Type } from '@/constants/theme';
@@ -25,7 +26,7 @@ import { useReminders } from '@/contexts/reminders-context';
 import { useTheme } from '@/contexts/theme-context';
 import { describeWelcomeStep } from '@/lib/onboarding';
 
-const PAGE_COUNT = 3;
+const PAGE_COUNT = 4;
 const PRESSED_SCALE = 0.98;
 
 export default function WelcomeScreen() {
@@ -37,18 +38,11 @@ export default function WelcomeScreen() {
   const reduceMotion = useReducedMotion();
   const { width } = useWindowDimensions();
   const pagerRef = useRef<ScrollViewInstance>(null);
-  const { isEventRemindersEnabled, isPermissionDenied, setEventRemindersEnabled } = useReminders();
+  const { isPermissionDenied } = useReminders();
   const [pageIndex, setPageIndex] = useState(0);
-  const [hasAnsweredAlerts, setHasAnsweredAlerts] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
 
-  const step = describeWelcomeStep({
-    pageIndex,
-    pageCount: PAGE_COUNT,
-    hasAnsweredAlerts,
-    isAlertsEnabled: isEventRemindersEnabled,
-    isPermissionDenied,
-  });
+  const step = describeWelcomeStep({ pageIndex, pageCount: PAGE_COUNT, isPermissionDenied });
 
   const goToPage = (index: number) => {
     pagerRef.current?.scrollTo({ x: index * width, animated: !reduceMotion });
@@ -65,21 +59,10 @@ export default function WelcomeScreen() {
     router.replace('/');
   };
 
-  const turnOnAlerts = async () => {
-    setIsBusy(true);
-    await setEventRemindersEnabled(true).catch(() => undefined);
-    setHasAnsweredAlerts(true);
-    setIsBusy(false);
-  };
-
   const handlePrimaryPress = () => {
     switch (step.primaryAction) {
       case 'next':
         goToPage(pageIndex + 1);
-        break;
-
-      case 'enable-alerts':
-        turnOnAlerts();
         break;
 
       case 'finish':
@@ -103,9 +86,10 @@ export default function WelcomeScreen() {
       >
         <IntroPage width={width} isActive={pageIndex === 0} />
         <FeaturesPage width={width} isActive={pageIndex === 1} />
+        <ThemePage width={width} isActive={pageIndex === 2} />
         <RemindersPage
           width={width}
-          isActive={pageIndex === 2}
+          isActive={pageIndex === 3}
           statusMessage={step.statusMessage}
         />
       </ScrollView>
@@ -119,16 +103,6 @@ export default function WelcomeScreen() {
           style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryButtonPressed]}
         >
           <Text style={styles.primaryLabel}>{step.primaryLabel}</Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityElementsHidden={!step.canSkip}
-          importantForAccessibility={step.canSkip ? 'auto' : 'no-hide-descendants'}
-          disabled={!step.canSkip || isBusy}
-          onPress={finish}
-          style={[styles.secondaryButton, !step.canSkip && styles.hidden]}
-        >
-          <Text style={styles.secondaryLabel}>Not now</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -163,16 +137,5 @@ const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
     primaryLabel: {
       ...Type.heading,
       color: colors.background,
-    },
-    secondaryButton: {
-      alignItems: 'center',
-      paddingVertical: Spacing.sm,
-    },
-    hidden: {
-      opacity: 0,
-    },
-    secondaryLabel: {
-      ...Type.label,
-      color: colors.text,
     },
   });

@@ -22,52 +22,30 @@ export async function markOnboardingComplete(store: KeyValueStore): Promise<void
 export type WelcomeStepInput = {
   pageIndex: number;
   pageCount: number;
-  hasAnsweredAlerts: boolean;
-  isAlertsEnabled: boolean;
   isPermissionDenied: boolean;
 };
 
 export type WelcomeStep = {
-  primaryAction: 'next' | 'enable-alerts' | 'finish';
+  primaryAction: 'next' | 'finish';
   primaryLabel: string;
-  canSkip: boolean;
   statusMessage: string | null;
 };
 
-const ALERTS_ON_MESSAGE = 'Alerts are on.';
-const ALERTS_BLOCKED_MESSAGE = 'Notifications are blocked. You can allow them later in Settings.';
+const NOTIFICATIONS_BLOCKED_MESSAGE =
+  'Notifications are blocked. You can allow them later in Settings.';
 
-function alertsStatusMessage({
-  hasAnsweredAlerts,
-  isAlertsEnabled,
+export function describeWelcomeStep({
+  pageIndex,
+  pageCount,
   isPermissionDenied,
-}: WelcomeStepInput): string | null {
-  if (isAlertsEnabled) {
-    return ALERTS_ON_MESSAGE;
-  }
-
-  if (hasAnsweredAlerts && isPermissionDenied) {
-    return ALERTS_BLOCKED_MESSAGE;
-  }
-
-  return null;
-}
-
-export function describeWelcomeStep(input: WelcomeStepInput): WelcomeStep {
-  if (input.pageIndex < input.pageCount - 1) {
-    return { primaryAction: 'next', primaryLabel: 'Next', canSkip: false, statusMessage: null };
-  }
-
-  const statusMessage = alertsStatusMessage(input);
-
-  if (input.hasAnsweredAlerts || input.isAlertsEnabled) {
-    return { primaryAction: 'finish', primaryLabel: 'Get started', canSkip: false, statusMessage };
+}: WelcomeStepInput): WelcomeStep {
+  if (pageIndex < pageCount - 1) {
+    return { primaryAction: 'next', primaryLabel: 'Next', statusMessage: null };
   }
 
   return {
-    primaryAction: 'enable-alerts',
-    primaryLabel: 'Turn on alerts',
-    canSkip: true,
-    statusMessage,
+    primaryAction: 'finish',
+    primaryLabel: 'Get started',
+    statusMessage: isPermissionDenied ? NOTIFICATIONS_BLOCKED_MESSAGE : null,
   };
 }
