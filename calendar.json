@@ -1,15 +1,6 @@
 {
-  "generatedAt": "2026-11-15T11:12:02.205Z",
+  "generatedAt": "2026-11-16T11:41:46.008Z",
   "events": [
-    {
-      "id": "0192a43b-04e5-553b-a59b-c1eab7cccaaa",
-      "title": "Diwali",
-      "source": "holiday",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-08",
-      "end": "2026-11-08"
-    },
     {
       "id": "535e3ba2-9181-5309-833d-e1c0edac1e35",
       "title": "SECOND QUARTER MARKING PERIOD BEGINS",
