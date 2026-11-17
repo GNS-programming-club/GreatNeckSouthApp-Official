@@ -1,24 +1,6 @@
 {
-  "generatedAt": "2026-11-16T11:41:46.008Z",
+  "generatedAt": "2026-11-17T05:08:11.134Z",
   "events": [
-    {
-      "id": "535e3ba2-9181-5309-833d-e1c0edac1e35",
-      "title": "SECOND QUARTER MARKING PERIOD BEGINS",
-      "source": "district",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-09",
-      "end": "2026-11-09"
-    },
-    {
-      "id": "d1c325fb-fbdd-593d-b600-d6395232e2bd",
-      "title": "Fall Sports Awards Night",
-      "source": "school",
-      "location": "East Gym",
-      "allDay": false,
-      "start": "2026-11-09T18:30:00-05:00",
-      "end": "2026-11-09T20:30:00-05:00"
-    },
     {
       "id": "1d406866-fef3-5395-b059-5485e5407828",
       "title": "Veterans Day",
