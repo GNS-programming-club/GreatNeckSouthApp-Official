@@ -1,24 +1,6 @@
 {
-  "generatedAt": "2026-11-17T05:08:11.134Z",
+  "generatedAt": "2026-11-19T13:28:20.842Z",
   "events": [
-    {
-      "id": "1d406866-fef3-5395-b059-5485e5407828",
-      "title": "Veterans Day",
-      "source": "holiday",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-11",
-      "end": "2026-11-11"
-    },
-    {
-      "id": "4fa807d0-ee46-5cb2-9d71-bdac5b80af49",
-      "title": "SCHOOLS CLOSED",
-      "source": "district",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-11",
-      "end": "2026-11-11"
-    },
     {
       "id": "54ecd623-6ec5-54ce-a8d6-aa65b433af6f",
       "title": "Gr. 9-11 Photo Make-ups",
