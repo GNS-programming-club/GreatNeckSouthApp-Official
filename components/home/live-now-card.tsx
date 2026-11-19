@@ -23,7 +23,6 @@ import { fromIsoDate, type DayLetter, type DayStatus } from '@/lib/day-letters';
 const METAL_RIM_WIDTH = 3;
 
 type LiveNowCardProps = {
-  todaySchedule: (string | null)[] | null;
   todayStatus: DayStatus;
   nextSchoolDay: { date: string; letter: DayLetter } | null;
 };
@@ -40,11 +39,7 @@ function nextSchoolDayLabel(nextSchoolDay: LiveNowCardProps['nextSchoolDay']): s
   return `Next: ${nextSchoolDay.letter} day, ${weekday}`;
 }
 
-export default function LiveNowCard({
-  todaySchedule,
-  todayStatus,
-  nextSchoolDay,
-}: LiveNowCardProps) {
+export default function LiveNowCard({ todayStatus, nextSchoolDay }: LiveNowCardProps) {
   const { actualTheme } = useTheme();
   const colors = Colors[actualTheme];
   const radius = Radii[actualTheme];
@@ -59,7 +54,6 @@ export default function LiveNowCard({
   const live = isNoSchool ? null : livePeriod;
   const todayLetter = todayStatus.kind === 'school' ? todayStatus.letter : '—';
   const nextLabel = nextSchoolDayLabel(nextSchoolDay);
-  const courseId = live ? (todaySchedule?.[live.index] ?? null) : null;
 
   const isCurrent = live?.kind === 'current';
   const pillLead = isNoSchool
@@ -90,19 +84,9 @@ export default function LiveNowCard({
             <Text style={styles.numeralLabel}>min to {isCurrent ? 'bell' : 'start'}</Text>
           </View>
 
-          {courseId ? (
-            <View style={styles.rangeRow}>
-              <Text style={styles.rangeCourse}>{courseId}</Text>
-              <View style={styles.rangeDivider} />
-              <Text style={styles.range}>
-                {live.period.start} – {live.period.end}
-              </Text>
-            </View>
-          ) : (
-            <Text style={styles.range}>
-              {live.period.start} – {live.period.end}
-            </Text>
-          )}
+          <Text style={styles.range}>
+            {live.period.start} – {live.period.end}
+          </Text>
 
           {isCurrent ? (
             <View style={styles.track}>
@@ -190,21 +174,6 @@ const createStyles = (colors: (typeof Colors)['light'], radius: RadiusScale) =>
       color: colors.onPrimaryMuted,
       fontSize: Type.body.fontSize,
       fontWeight: FontWeight.semibold,
-    },
-    rangeRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: Spacing.sm,
-    },
-    rangeCourse: {
-      color: colors.primaryText,
-      fontSize: Type.body.fontSize,
-      fontWeight: FontWeight.bold,
-    },
-    rangeDivider: {
-      width: 1,
-      height: 13,
-      backgroundColor: colors.onPrimaryTrack,
     },
     track: {
       height: 6,

@@ -1,6 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect, useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import AnnouncementsCard from '@/components/home/announcements-card';
@@ -21,8 +20,6 @@ import { useTodayIso } from '@/hooks/use-today-iso';
 import { appClock } from '@/lib/clock';
 import { fromIsoDate, nextSchoolDay, toIsoDate } from '@/lib/day-letters';
 
-const STORAGE_KEY = 'userSchedule_v1';
-
 function greetingForHour(hour: number) {
   if (hour < 12) return 'Good morning!';
 
@@ -37,11 +34,6 @@ export default function HomeScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
   const onboardingStatus = useOnboardingStatus();
-
-  const [loadedSchedule, setLoadedSchedule] = useState<{
-    letter: string;
-    entries: (string | null)[] | null;
-  } | null>(null);
 
   const todayIso = useTodayIso();
   useClockVersion();
@@ -66,30 +58,6 @@ export default function HomeScreen() {
   const { items: lunchItems, hasError: lunchError } = useTodayLunch();
   const lunchLines = useMemo(() => (lunchItems ? lunchItems.slice(0, 3) : []), [lunchItems]);
 
-  useEffect(() => {
-    if (!todayLetter) {
-      return;
-    }
-
-    AsyncStorage.getItem(`${STORAGE_KEY}_${todayLetter}`)
-      .then((raw) => {
-        const parsed = raw ? (JSON.parse(raw) as unknown) : null;
-
-        setLoadedSchedule({
-          letter: todayLetter,
-          entries: Array.isArray(parsed) ? (parsed as (string | null)[]) : null,
-        });
-      })
-      .catch(() => setLoadedSchedule({ letter: todayLetter, entries: null }));
-  }, [todayLetter]);
-
-  const todaySchedule =
-    todayLetter && loadedSchedule?.letter === todayLetter ? loadedSchedule.entries : null;
-
-  const periodCount = todaySchedule
-    ? todaySchedule.filter((entry) => entry != null && entry !== '').length
-    : 0;
-
   if (onboardingStatus === 'loading') {
     return null;
   }
@@ -108,11 +76,7 @@ export default function HomeScreen() {
 
         <WeekStrip />
 
-        <LiveNowCard
-          todaySchedule={todaySchedule}
-          todayStatus={todayStatus}
-          nextSchoolDay={upcomingSchoolDay}
-        />
+        <LiveNowCard todayStatus={todayStatus} nextSchoolDay={upcomingSchoolDay} />
 
         <View style={styles.row}>
           <StatTile
@@ -146,11 +110,7 @@ export default function HomeScreen() {
           >
             <Text style={styles.dayGlyph}>{dayGlyph}</Text>
             <Text style={styles.daySub}>
-              {periodCount > 0
-                ? `${periodCount} periods`
-                : todayStatus.kind === 'no-school'
-                  ? 'No school'
-                  : 'Day type'}
+              {todayStatus.kind === 'no-school' ? 'No school' : 'Day type'}
             </Text>
           </StatTile>
         </View>

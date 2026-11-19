@@ -13,7 +13,7 @@ import React, {
 import { Platform } from 'react-native';
 
 import { useSchoolData } from '@/contexts/school-data-context';
-import type { DayLetter, DayLetters } from '@/lib/day-letters';
+import type { DayLetters } from '@/lib/day-letters';
 import { planEventReminders } from '@/lib/event-reminders';
 import { planEveningReminders } from '@/lib/reminders';
 import type { CalendarEvent } from '@/lib/school-data';
@@ -27,7 +27,6 @@ type RemindersValue = {
 };
 
 const ENABLED_STORAGE_KEY = 'eveningReminderEnabled';
-const SCHEDULE_STORAGE_KEY = 'userSchedule_v1';
 const ANDROID_CHANNEL_ID = 'reminders';
 const PLANNING_WINDOW_DAYS = 14;
 const REMINDER_IDENTIFIER_PREFIX = 'evening-reminder-';
@@ -45,18 +44,6 @@ Notifications.setNotificationHandler({
 
 const RemindersContext = createContext<RemindersValue | undefined>(undefined);
 
-async function readFirstPeriod(letter: DayLetter): Promise<string | null> {
-  try {
-    const raw = await AsyncStorage.getItem(`${SCHEDULE_STORAGE_KEY}_${letter}`);
-    const parsed = raw ? (JSON.parse(raw) as unknown) : null;
-    const first = Array.isArray(parsed) ? parsed[0] : null;
-
-    return typeof first === 'string' && first !== '' ? first : null;
-  } catch {
-    return null;
-  }
-}
-
 async function cancelRemindersWithPrefix(identifierPrefix: string): Promise<void> {
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
 
@@ -71,12 +58,6 @@ async function scheduleEveningReminders(
   letters: DayLetters,
   isStale: () => boolean
 ): Promise<void> {
-  const [firstA, firstB] = await Promise.all([readFirstPeriod('A'), readFirstPeriod('B')]);
-
-  if (isStale()) {
-    return;
-  }
-
   await cancelRemindersWithPrefix(REMINDER_IDENTIFIER_PREFIX);
 
   if (isStale()) {
@@ -86,7 +67,6 @@ async function scheduleEveningReminders(
   const reminders = planEveningReminders({
     now: new Date(),
     letters,
-    firstPeriodByLetter: { A: firstA, B: firstB },
     days: PLANNING_WINDOW_DAYS,
   });
 

@@ -10,7 +10,6 @@ export type EveningReminder = {
 export type EveningReminderInput = {
   now: Date;
   letters: DayLetters | null;
-  firstPeriodByLetter: Record<DayLetter, string | null>;
   days: number;
 };
 
@@ -23,7 +22,6 @@ function articleFor(letter: DayLetter): string {
 export function planEveningReminders({
   now,
   letters,
-  firstPeriodByLetter,
   days,
 }: EveningReminderInput): EveningReminder[] {
   if (!letters) {
@@ -49,13 +47,11 @@ export function planEveningReminders({
       continue;
     }
 
-    const firstPeriod = firstPeriodByLetter[letter];
-
     reminders.push({
       schoolDate,
       fireAt,
       title: `Tomorrow is ${articleFor(letter)} ${letter} day`,
-      body: firstPeriod ? `First period: ${firstPeriod}` : 'Check your schedule in the app',
+      body: 'Check your schedule in the app',
     });
   }
 
