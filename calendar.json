@@ -1,15 +1,6 @@
 {
-  "generatedAt": "2026-11-20T13:08:31.656Z",
+  "generatedAt": "2026-11-24T13:56:41.194Z",
   "events": [
-    {
-      "id": "7a01e76e-4b7f-52f8-a54a-9b9bc0ae6f1d",
-      "title": "HS Winter Sports Begin",
-      "source": "district",
-      "location": null,
-      "allDay": true,
-      "start": "2026-11-16",
-      "end": "2026-11-16"
-    },
     {
       "id": "c773147a-85b0-5ea1-9571-b12739ef2ce0",
       "title": "Gr. 12 Herff Jones Cap/Gown Rep",
