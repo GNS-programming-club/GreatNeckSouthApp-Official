@@ -1,24 +1,6 @@
 {
-  "generatedAt": "2026-11-24T13:56:41.194Z",
+  "generatedAt": "2026-11-25T08:49:53.437Z",
   "events": [
-    {
-      "id": "c773147a-85b0-5ea1-9571-b12739ef2ce0",
-      "title": "Gr. 12 Herff Jones Cap/Gown Rep",
-      "source": "school",
-      "location": "Main Lobby",
-      "allDay": false,
-      "start": "2026-11-17T09:30:00-05:00",
-      "end": "2026-11-17T14:00:00-05:00"
-    },
-    {
-      "id": "cf3789e5-b75c-52ab-a31c-4c8072d31c73",
-      "title": "Board of Education Public Action Mtg at EMB",
-      "source": "district",
-      "location": "EMB",
-      "allDay": false,
-      "start": "2026-11-17T19:30:00-05:00",
-      "end": "2026-11-17T20:30:00-05:00"
-    },
     {
       "id": "5c286d45-84fa-525c-a111-d408b9568a21",
       "title": "Musical: Rock of Ages",
