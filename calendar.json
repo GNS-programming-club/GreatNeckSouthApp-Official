@@ -1,15 +1,6 @@
 {
-  "generatedAt": "2026-11-25T08:49:53.437Z",
+  "generatedAt": "2026-11-28T08:02:33.767Z",
   "events": [
-    {
-      "id": "5c286d45-84fa-525c-a111-d408b9568a21",
-      "title": "Musical: Rock of Ages",
-      "source": "school",
-      "location": "South Middle",
-      "allDay": false,
-      "start": "2026-11-20T19:00:00-05:00",
-      "end": "2026-11-20T21:00:00-05:00"
-    },
     {
       "id": "c5f0b101-0cd7-5f23-82e2-cd62f4aa160e",
       "title": "Musical: Rock of Ages",
